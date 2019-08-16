@@ -11,13 +11,33 @@ Just a test repository to test a few things I'm not confident in.  This repo may
 
 
 # How run
+
+## Install dependencies
+It is recommended that you make a virtual env for the dependencies, to not
+pollute your system wide dependencies.
+
+```
+pip install -r requirements.txt
+```
+
+## Install git hooks
+Assuming you've set up the python virtual env correctly, you should now have `pre-commit` in your path
+Run the command in the root git directory
+```
+pre-commit install
+```
+
 ## Setting up environment variables
 Run the following command to copy the example environment
-`cp ./.env.example .env`
+```
+cp .env.example .env
+```
 
 ## Starting docker
 Firstly ensure you have docker-compose installed on your system
-cd to ./docker/ and execute the command
+Then run:
 ```
+cd ./docker
 docker-compose up
 ```
+
