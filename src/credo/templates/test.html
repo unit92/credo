@@ -1,0 +1,28 @@
+{% load static %}
+
+<head>
+  <link
+    href="{% static 'credo/materialize.min.css' %}"
+    rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"/>
+  <!-- <script src="{% static 'credo/materialize.min.js' %}" /> -->
+</head>
+
+<nav>
+  <div class="nav-warpper">
+    <a href="#" class="brand-logo left">
+      <i class="material-icons">audiotrack</i>
+      Credo
+    </a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a href="#">Critical Editions</a></li>
+      <li><a href="#">Log In</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <p>Value: {{ value }}</p>
+</div>
