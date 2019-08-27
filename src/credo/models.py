@@ -12,7 +12,8 @@ class Composer(models.Model):
 
 class Song(models.Model):
     name = models.TextField()
-    composer = models.ForeignKey(Composer, on_delete=models.CASCADE)
+    composer = models.ForeignKey(
+        Composer, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField()
 
     def __str__(self):
@@ -30,8 +31,8 @@ class MEI(models.Model):
 class Edition(models.Model):
     name = models.TextField()
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    mei = models.ForeignKey(MEI, on_delete=models.CASCADE)
-    uploader = models.ForeignKey(User, on_delete=models.CASCADE)
+    mei = models.ForeignKey(MEI, on_delete=models.SET_NULL, null=True)
+    uploader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField()
 
     def __str__(self):
@@ -41,7 +42,7 @@ class Edition(models.Model):
 class Comment(models.Model):
     edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
     text = models.TextField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     position = models.IntegerField()
     created_at = models.DateTimeField()
 
