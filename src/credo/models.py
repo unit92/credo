@@ -43,6 +43,20 @@ class Edition(models.Model):
         return f'{self.name} - {self.song.name} - {self.uploader}'
 
 
+class Revision(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    mei = models.ForeignKey(MEI, on_delete=models.CASCADE)
+    editions = models.ManyToManyField(Edition)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def song(self):
+        return list({x.song for x in self.editions.all()})[0]
+
+    def __str__(self):
+        return f'Revision on {self.song()}'
+
+
 class Comment(models.Model):
     edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
     text = models.TextField()
@@ -55,27 +69,3 @@ class Comment(models.Model):
         return f'Comment on {self.edition} by {self.user}'
 
 
-class Revision(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    mei = models.ForeignKey(MEI, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def editions(self):
-        return [x.edition for x in
-                EditionRevision.objects.filter(revision=self)]
-
-    def __str__(self):
-        editions = self.editions()
-        if len(editions) > 0:
-            return f'Revision on {list(self.editions())} by {self.user}'
-        else:
-            return f'Revision by {self.user}'
-
-
-class EditionRevision(models.Model):
-    edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
-    revision = models.ForeignKey(Revision, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'Revision on {self.edition} by {self.revision.user}'

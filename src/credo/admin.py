@@ -5,8 +5,7 @@ from .models import (Composer,
                      MEI,
                      Edition,
                      Comment,
-                     Revision,
-                     EditionRevision)
+                     Revision)
 
 
 class ComposerAdmin(admin.ModelAdmin):
@@ -29,14 +28,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class RevisionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'editions', 'created_at', 'updated_at']
-
-    def editions(self, obj):
-        return [f'{x.name} - {x.song}' for x in obj.editions()]
-
-
-class EditionRevisionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'edition', 'revision']
+    list_display = ['id', 'user', 'created_at', 'updated_at']
 
 
 admin.site.register(Composer, ComposerAdmin)
@@ -45,4 +37,3 @@ admin.site.register(MEI, MEIAdmin)
 admin.site.register(Edition, EditionAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Revision, RevisionAdmin)
-admin.site.register(EditionRevision, EditionRevisionAdmin)
