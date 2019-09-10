@@ -1,0 +1,31 @@
+{% include 'header.html' %}
+
+<h2>{{ song }}</h2>
+
+<div class="collection with-header">
+  <div class="collection-header"><h4>Editions</h4></div>
+
+  {% for edition in editions %}
+  <a
+    href="/songs/{{ edition.song.id }}/editions/{{ edition.id }}"
+    class="collection-item">
+    {{ edition }}
+  </a>
+  {% endfor %}
+
+</div>
+
+<div class="collection with-header">
+  <div class="collection-header"><h4>Revisions</h4></div>
+
+  {% for revision in revisions %}
+  <a
+    href="/songs/{{ revision.song.id }}/revisions/{{ revision.id }}"
+    class="collection-item">
+    {{ revision }}
+  </a>
+  {% endfor %}
+
+</div>
+
+{% include 'footer.html' %}

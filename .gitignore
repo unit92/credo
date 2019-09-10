@@ -1,3 +1,4 @@
 .env
 __pycache__/
+mei_files/
 .mypy_cache/

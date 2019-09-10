@@ -1,0 +1,15 @@
+{% include 'header.html' %}
+
+<h2>Songs</h2>
+
+<div class="collection">
+  {% for song in songs %}
+    <a
+      href="/songs/{{ song.id }}"
+      class="collection-item">
+      {{ song }}
+    </a>
+  {% endfor %}
+</div>
+
+{% include 'footer.html' %}
