@@ -22,4 +22,9 @@ urlpatterns = [
     path('admin/docs/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('songs/', views.song_list),
+    path('songs/<song_id>', views.song),
+    path('songs/<song_id>/editions/<edition_id>', views.edition),
+    path('songs/<song_id>/revisions/<revision_id>', views.revision),
+    path('mei/<mei_id>', views.mei),
 ]

@@ -23,7 +23,7 @@ class Song(models.Model):
 
 
 class MEI(models.Model):
-    data = models.BinaryField()
+    data = models.FileField(upload_to='mei_files')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

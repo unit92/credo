@@ -38,3 +38,23 @@ cd ./docker
 docker-compose up
 ```
 
+# Testing
+
+## Unit tests
+
+### Running tests
+
+```python -Wa manage.py test```
+Note that the -Wa flag tells Python to display deprecation warnings for postgres etc.
+
+Make sure to run tests before each pull request. This is the responsibility of the person logging the PR, however reviewers should double check with the logger.
+
+### Adding new test cases
+
+All unit tests should be created inside `./src/tests/*`.
+
+Test discovery is based on the `unittest` module’s built-in test discovery. By default, this will discover tests in any file named “test*.py” under the current working directory.
+
+See the [Django docs](https://docs.djangoproject.com/en/2.2/topics/testing/overview/) for more information on writing test cases.
+
+
