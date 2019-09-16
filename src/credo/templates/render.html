@@ -32,7 +32,11 @@
 <script type="text/javascript">
   const toolkit = new CredoToolkit(
     '/mei/{{ to_render.mei.id }}',
-    null,
+    {% if comments %}
+      'revisions/{{ revision.id }}/comments',
+    {% else %}
+      null,
+    {% endif %}
     'renderDiv'
   )
   toolkit.render()

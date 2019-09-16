@@ -38,7 +38,8 @@ def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
     revision = Revision.objects.get(id=revision_id, editions__song=song)
     return render(request, 'render.html', {
-        'to_render': revision
+        'to_render': revision,
+        'comments': True
     })
 
 
