@@ -53,8 +53,8 @@ def revision_comments(request, revision_id):
     json += '['
     for comment in comments:
         json += f'{{\
-            "position": {comment.mei_element_id},\
-            "text": {comment.text}\
+            "position": "{comment.mei_element_id}",\
+            "text": "{comment.text}"\
         }},'
     json = json[:-1]
     json += ']'
