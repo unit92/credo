@@ -33,7 +33,7 @@
   const toolkit = new CredoToolkit(
     '/mei/{{ to_render.mei.id }}',
     {% if comments %}
-      'revisions/{{ to_render.id }}/comments',
+      '/revisions/{{ to_render.id }}/comments',
     {% else %}
       null,
     {% endif %}
