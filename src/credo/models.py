@@ -58,14 +58,12 @@ class Revision(models.Model):
 
 
 class Comment(models.Model):
-    edition = models.ForeignKey(Edition, on_delete=models.CASCADE)
+    revision = models.ForeignKey(Revision, on_delete=models.CASCADE)
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    position = models.IntegerField()
+    mei_element_id = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Comment on {self.edition} by {self.user}'
-
-
+        return f'Comment on {self.revision} by {self.user}'
