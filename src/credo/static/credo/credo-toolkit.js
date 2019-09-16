@@ -109,7 +109,7 @@ class CredoToolkit {
 
     if (this.commentsUrl) {
       // if there are comments, load the comments
-      if (!comments) {
+      if (!this.comments) {
         await this.loadAndSaveComments()
       }
 
