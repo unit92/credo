@@ -16,7 +16,9 @@ class CredoToolkit {
 
   verovioToolkit
 
-  commentSvg
+  commentSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+ `
 
   /**
    * Constructs the Credo Toolkit.
@@ -66,6 +68,34 @@ class CredoToolkit {
   }
 
   /**
+   * Loads the comments from the URL.
+   *
+   * @return {Promise<Object[]>} A promise resolving to a series of comments.
+   */
+  loadComments () {
+    return new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          resolve(this.responseText)
+        }
+      }
+      xhttp.open('GET', this.commentsUrl, true)
+      xhttp.send()
+    })
+  }
+
+  /**
+   * Loads the comments, and saves them to the class.
+   *
+   * @return {Promise<void>} A promise to resolve upon completion.
+   */
+  loadAndSaveComments () {
+    return this.loadComments()
+      .then(comments => this.comments = JSON.parse(comments))
+  }
+
+  /**
    * Renders the MEI file, and any comments associated.
    */
   async render () {
@@ -78,7 +108,12 @@ class CredoToolkit {
     this.renderMei()
 
     if (this.commentsUrl) {
-      // TODO
+      // if there are comments, load the comments
+      if (!comments) {
+        await this.loadAndSaveComments()
+      }
+
+      this.renderComments()
     }
   }
 
@@ -95,7 +130,7 @@ class CredoToolkit {
   }
 
   renderComments () {
-
+    // TODO
   }
 
   renderComment (comment) {
