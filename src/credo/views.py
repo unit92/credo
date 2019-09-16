@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Edition, MEI, Revision, Song
+from .models import Comment, Edition, MEI, Revision, Song
 
 
 def index(request):
@@ -41,6 +41,25 @@ def revision(request, song_id, revision_id):
         'to_render': revision,
         'comments': True
     })
+
+
+def revision_comments(request, revision_id):
+    revision = Revision.objects.get(id=revision_id)
+    comments = Comment.objects.filter(revision=revision)
+
+    response = HttpResponse()
+    response['Content-Type'] = 'application/json'
+    json = ''
+    json += '['
+    for comment in comments:
+        json += f'{{\
+            "position": {comment.mei_element_id},\
+            "text": {comment.text}\
+        }},'
+    json = json[:-1]
+    json += ']'
+    response.write(json)
+    return response
 
 
 def mei(request, mei_id):

@@ -16,6 +16,8 @@ class CredoToolkit {
 
   verovioToolkit
 
+  commentSvg
+
   /**
    * Constructs the Credo Toolkit.
    *
