@@ -175,6 +175,8 @@ class CredoToolkit {
       }
 
       this.renderComments()
+    } else {
+      this.comments = {}
     }
   }
 
