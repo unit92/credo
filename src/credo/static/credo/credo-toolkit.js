@@ -141,6 +141,7 @@ class CredoToolkit {
     M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
 
     Object.entries(this.comments)
+      .forEach(this.attachTooltipPositioningListener.bind(this))
   }
 
   /**
@@ -165,5 +166,29 @@ class CredoToolkit {
 
     // set the comment text
     commentElement.setAttribute('data-tooltip', text)
+  }
+
+  /**
+   * Attaches a listener to position the tooltip popover as it renders.
+   *
+   * @param {string} elementId The ID of the MEI element whose tooltip we wish
+   * to position.
+   */
+  attachTooltipPositioningListener ([elementId]) {
+    // get the tooltip element
+    const notationElement = document.getElementById(elementId)
+    const commentIcon = notationElement
+      .children[notationElement.childElementCount - 1]
+    const tooltipElement = M.Tooltip.getInstance(commentIcon).tooltipEl
+
+    commentIcon.addEventListener('mousemove', () => {
+      const notationElement = document.getElementById(elementId)
+      const commentIcon = notationElement
+        .children[notationElement.childElementCount - 1]
+
+      const position = commentIcon.getBoundingClientRect()
+      tooltipElement.style.marginLeft = `${position.x - 100}px`
+      tooltipElement.style.marginTop = `${position.y + 20}px`
+    })
   }
 }
