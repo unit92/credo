@@ -296,7 +296,11 @@ class CredoToolkit {
         .children[notationElement.childElementCount - 1]
 
       const position = commentIcon.getBoundingClientRect()
-      tooltipElement.style.marginLeft = `${position.x - 100}px`
+      let xPosition = position.x - 100
+      if (xPosition < 0) {
+        xPosition = 0
+      }
+      tooltipElement.style.marginLeft = `${xPosition}px`
       tooltipElement.style.marginTop = `${position.y + 20 + (window.pageYOffset || 0)}px`
     })
   }
@@ -312,7 +316,7 @@ class CredoToolkit {
    */
   getNotation (event) {
     let element = event.target
-    while (!element.id && !element.id.match(/m-[0-9]*/)) {
+    while (!element.id || !element.id.match(/m-[0-9]*/)) {
       element = element.parentElement
       if (element.id === this.renderDiv) {
         return null
