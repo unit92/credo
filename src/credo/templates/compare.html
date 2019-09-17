@@ -24,7 +24,7 @@
 
   {% for source in sources %}
 
-  <h3>MEI {{ source.id }}</h3>
+  <h3>Source {{ forloop.counter }}</h3>
   <div id='source{{ forloop.counter }}RenderDiv'>
     <div class="preloader-wrapper big active">
       <div class="spinner-layer spinner-blue-only">
@@ -44,7 +44,6 @@
   {% endfor %}
 
 </div>
-
 
 
 {% include 'footer.html' %}
