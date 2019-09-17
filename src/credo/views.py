@@ -59,32 +59,27 @@ def mei(request, mei_id):
 
 
 def compare(request):
-    a_id = 5
-    b_id = 6
+    sources = request.GET.getlist('s')
+
+    # TODO Nicer rendering for bad source ids
+    try:
+        sources = [int(sources[i]) for i in range(len(sources))]
+    except ValueError:
+        return HttpResponseBadRequest()
 
     return render(request, 'compare.html', {
-        'sources': [
-            {
-                'id': a_id
-            },
-            {
-                'id': b_id
-            },
-        ]
+        'sources': list(map(lambda x: {'id': x}, sources))
     })
 
 # TODO: Authenticate?
 @require_http_methods(['GET'])
 def diff(request):
-    diff_only = request.GET.get('diffonly')
     sources = request.GET.getlist('s')
 
     try:
         sources = [int(sources[i]) for i in range(len(sources))]
     except ValueError:
         return HttpResponseBadRequest(content_type='application/json')
-
-    print(diff_only)
 
     try:
         meis = [MEI.objects.get(id=sources[i]) for i in range(len(sources))]
