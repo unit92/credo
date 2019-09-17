@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 from .models import Comment, Edition, MEI, Revision, Song
 
 
@@ -34,6 +35,21 @@ def edition(request, song_id, edition_id):
     })
 
 
+@require_POST
+def add_revision(request, song_id):
+    # body = json.loads(request.body)
+
+    # TODO: save the MEI
+
+    # TODO: save the revision
+
+    # TODO: save the comments
+
+    response = HttpResponse()
+    response.write(f'/songs/{song_id}')
+    return response
+
+
 def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
     revision = Revision.objects.get(id=revision_id, editions__song=song)
@@ -49,13 +65,13 @@ def revision_comments(request, revision_id):
 
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
-    json = ''
-    json += '{'
+    json_response = ''
+    json_response += '{'
     for comment in comments:
-        json += f'"{comment.mei_element_id}": "{comment.text}",'
-    json = json[:-1]
-    json += '}'
-    response.write(json)
+        json_response += f'"{comment.mei_element_id}": "{comment.text}",'
+    json_response = json_response[:-1]
+    json_response += '}'
+    response.write(json_response)
     return response
 
 

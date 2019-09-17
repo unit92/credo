@@ -28,6 +28,9 @@ class CredoToolkit {
     </svg>
  `
 
+  // used for saving revisions
+  csrftoken
+
   /**
    * Constructs the Credo Toolkit.
    *
@@ -58,6 +61,9 @@ class CredoToolkit {
     // attach a comment submitting method to the submit button in the modal
     document.getElementById('comment-modal-submit')
       .addEventListener('click', this.updateCommentFromModal.bind(this))
+
+    // get the CSRF token
+    this.csrftoken = getCookie('csrftoken')
   }
 
   commmentEventListener (event) {
@@ -325,4 +331,42 @@ class CredoToolkit {
 
     return element
   }
+
+  /**
+   * Save revision by making a POST request to the server, and then redirect to
+   * the saved revision.
+   */
+  saveRevision () {
+    const mei = this.mei
+    const comments = this.comments
+
+    const request = new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          resolve(this.responseText)
+        }
+      }
+
+      xhttp.open('POST', '../revisions/', true)
+      xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
+      xhttp.send(JSON.stringify({
+        mei,
+        comments,
+      }))
+    })
+      .then(responseText => {
+        window.location.replace(responseText)
+      })
+  }
+}
+
+const getCookie = name => {
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';')
+      const cookie = cookies.find(cookie =>
+        cookie.trim().substring(0, name.length + 1) === (name + '='))
+      return decodeURIComponent(cookie.trim().substring(name.length + 1))
+    }
 }
