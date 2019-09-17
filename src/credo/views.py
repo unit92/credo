@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
+import json
 from .models import Edition, MEI, Revision, Song
 
 
@@ -49,3 +51,19 @@ def mei(request, mei_id):
     with mei.data.open() as f:
         response.write(f.read())
     return response
+
+
+@require_http_methods(['GET'])
+def diff(request):
+    diff_only = request.GET.get('diffonly')
+    sources = request.GET.getlist('s')
+    print(diff_only)
+    print(sources)
+    data = {
+        'content': {
+            'name': 'diff',
+            'details': '',
+            'encoding': 'base64'
+        }
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')

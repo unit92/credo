@@ -27,4 +27,5 @@ urlpatterns = [
     path('songs/<song_id>/editions/<edition_id>', views.edition),
     path('songs/<song_id>/revisions/<revision_id>', views.revision),
     path('mei/<mei_id>', views.mei),
+    path('diff', views.diff),
 ]
