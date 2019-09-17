@@ -1,7 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+import lxml.etree as et
 import json
+import base64
+from credo.utils.mei.tree_comparison import TreeComparison
+
+
 from .models import Edition, MEI, Revision, Song
 
 
@@ -53,17 +58,43 @@ def mei(request, mei_id):
     return response
 
 
+# TODO: Authenticate?
 @require_http_methods(['GET'])
 def diff(request):
     diff_only = request.GET.get('diffonly')
     sources = request.GET.getlist('s')
+
+    try:
+        sources = [int(sources[i]) for i in range(len(sources))]
+    except ValueError:
+        return HttpResponseBadRequest(content_type='application/json')
+
     print(diff_only)
-    print(sources)
+
+    try:
+        meis = [MEI.objects.get(id=sources[i]) for i in range(len(sources))]
+    except MEI.DoesNotExist:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    if len(meis) != 2:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    engine = TreeComparison()
+    out = engine.compare_meis(meis[0], meis[1])
+    d, *s = [et.tostring(out[i], encoding='utf-8') for i in range(len(out))]
+    d = str(base64.b64encode(d), encoding='utf-8')
+    s = [{
+            'details': str(base64.b64encode(s[i]), encoding='utf-8'),
+            'encoding': 'base64'
+        } for i in range(len(s))]
+
     data = {
         'content': {
-            'name': 'diff',
-            'details': '',
-            'encoding': 'base64'
+            'diff': {
+                'details': d,
+                'encoding': 'base64'
+            },
+            'sources': s
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
