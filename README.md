@@ -1,10 +1,11 @@
 # Credo
 
-Our stack consists of
-* Django
-* Postgres Docker
-* Unit tests with PyTest [None so far]
-* Bitbucket Pipelines for CI/CD [Not yet implemented]
+Our stack consists of:
+
+- Django
+- Postgres Docker
+- Unit tests with PyTest [In Progress]
+- Bitbucket Pipelines for CI/CD [In Progress]
 
 
 # How run
