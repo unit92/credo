@@ -40,9 +40,27 @@ renderMei = (url, id) => {
     if (this.readyState === 4 && this.status === 200) {
       // store the data on the toolkit
       toolkit.loadData(data)
-
-      const renderDiv = document.getElementById(id)
-      renderDiv.innerHTML = toolkit.renderData(this.responseText, {svgViewBox: true})
+      console.log(url.split('/')[1])
+      if (url.split('/')[1] === 'mei') {
+        // TODO Update /mei endpoint to be more like the diff endpoint with b64 encoding
+        const renderDiv = document.getElementById(id)
+        renderDiv.innerHTML = toolkit.renderData(this.responseText, {svgViewBox: true})
+      } else {
+        meiJson = JSON.parse(this.responseText)
+        const childDivs = document.querySelectorAll(`#${id} > div`)
+        if (childDivs.length === meiJson['content']['sources'].length + 1) {
+          for (let i = 0; i < childDivs.length; ++i) {
+            if (i === 0) {
+              diff = atob(meiJson['content']['diff']['details'])
+              childDivs[i].innerHTML = toolkit.renderData(diff, {svgViewBox: true})
+            } else {
+              source = atob(meiJson['content']['sources'][i-1]['details'])
+              childDivs[i].innerHTML = toolkit.renderData(source, {svgViewBox: true})
+            }
+          }
+        }
+      }
+      
     }
   }
   xhttp.open('GET', url, true)

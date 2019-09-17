@@ -1,0 +1,62 @@
+{% include 'header.html' %}
+{% load static %}
+
+<h2>{{ to_render }}</h2>
+
+<div id="renderDiv">
+  
+  <h3>Difference</h3>
+  <div id='diffRenderDiv'>
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  {% for source in sources %}
+
+  <h3>MEI {{ source.id }}</h3>
+  <div id='source{{ forloop.counter }}RenderDiv'>
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+</div>
+
+
+
+{% include 'footer.html' %}
+
+<script
+  src="{% static 'credo/verovio/verovio-toolkit.js' %}"
+  type="text/javascript">
+</script>
+<script
+  src="{% static 'credo/render.js' %}"
+  type="text/javascript">
+</script>
+<script type="text/javascript">
+  renderMei('/diff?{% for source in sources %}s={{ source.id }}{% if not forloop.last %}&{% endif %}{% endfor %}', 'renderDiv')
+</script>

@@ -58,6 +58,21 @@ def mei(request, mei_id):
     return response
 
 
+def compare(request):
+    a_id = 5
+    b_id = 6
+
+    return render(request, 'compare.html', {
+        'sources': [
+            {
+                'id': a_id
+            },
+            {
+                'id': b_id
+            },
+        ]
+    })
+
 # TODO: Authenticate?
 @require_http_methods(['GET'])
 def diff(request):
