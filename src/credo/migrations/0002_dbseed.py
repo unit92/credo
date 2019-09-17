@@ -3,12 +3,7 @@
 import datetime
 from django.utils import timezone
 from django.db import migrations, models
-
-# Notes:
-# Since our models contain dateField autonow = true, the date field is
-# uneditable on insertion.
-# Therefore to create unique dates, record must be saved and then updated
-# seperately (It is also possible to obtain all obejcts and adjust time at once)
+from django.core.files import File
 
 #MIGRATE FUNCTIONS
 def load_composers(apps, schema_editor):
@@ -18,15 +13,11 @@ def load_composers(apps, schema_editor):
     c1 = Composer(id=0, name='John Doe', created_at=time, updated_at=time)
     c1.save()
 
-    time += datetime.timedelta(days=-1, hours=-1)
     c2 = Composer(id=1, name='Jane Doe', created_at=time, updated_at=time)
     c2.save()
-    Composer.objects.filter(id=1).update(created_at=time, updated_at=time)
 
-    time += datetime.timedelta(days=-1, hours=-1)
     c3 = Composer(id=2, name='Jason Hopper', created_at=time, updated_at=time)
     c3.save()
-    Composer.objects.filter(id=2).update(created_at=time, updated_at=time)
 
 
 def load_songs(apps, schema_editor):
@@ -43,21 +34,33 @@ def load_songs(apps, schema_editor):
     s2 = Song(id=1, name='John Song 2', composer=composer, created_at=time,
             updated_at=time)
     s2.save()
-    Song.objects.filter(id=1).update(created_at=time, updated_at=time)
 
-    time += datetime.timedelta(days=-1, hours=-1)
     composer = Composer.objects.get(id=1)
     s3 = Song(id=2, name='Jane Song 1', composer=composer, created_at=time,
             updated_at=time)
     s3.save()
-    Song.objects.filter(id=2).update(created_at=time, updated_at=time)
 
-    time += datetime.timedelta(days=-1, hours=-1)
     composer = Composer.objects.get(id=2)
     s4 = Song(id=3, name='Jason Song 1', composer=composer, created_at=time,
             updated_at=time)
     s4.save()
-    Song.objects.filter(id=3).update(created_at=time, updated_at=time)
+
+
+def load_mei(apps, schema_editor):
+    MEI = apps.get_model('credo', 'MEI')
+
+    time = timezone.now()
+    m1 = MEI(id=0, data='./credo/migrations/seed_mei/SourceA.mei', created_at=time,
+            updated_at=time)
+    m1.save()
+
+    m2 = MEI(id=1, data='./credo/migrations/seed_mei/SourceB.mei', created_at=time,
+            updated_at=time)
+    m2.save()
+
+    m3 = MEI(id=2, data='./credo/migrations/seed_mei/SourceC.mei', created_at=time,
+            updated_at=time)
+    m3.save()
 
 #ROLLBACK FUNCTIONS
 def delete_composers(apps, schema_editor):
@@ -68,6 +71,10 @@ def delete_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
     Song.objects.all().delete()
 
+def delete_mei(apps, schema_editor):
+    MEI = apps.get_model('credo', 'MEI')
+    MEI.objects.all().delete()
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -77,4 +84,5 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(load_composers, delete_composers),
         migrations.RunPython(load_songs, delete_songs),
+        migrations.RunPython(load_mei, delete_mei),
     ]
