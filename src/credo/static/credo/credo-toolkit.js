@@ -135,13 +135,23 @@ class CredoToolkit {
 
   renderComments () {
     Object.entries(this.comments)
-      .forEach(this.renderComment.bind(this))
+      .forEach(this.renderCommentIcon.bind(this))
 
     // render the tooltip showing the comment text
     M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
+
+    Object.entries(this.comments)
   }
 
-  renderComment ([elementId, text]) {
+  /**
+   * Renders the comment icon onto the rendered SVG. Also does some tooltip text
+   * setup.
+   *
+   * @param {string} elementId The ID of the MEI element to which we attach the
+   * comment icon.
+   * @param {string} text The comment text.
+   */
+  renderCommentIcon ([elementId, text]) {
     // get the element to which we want to attack the comment
     const element = document.getElementById(elementId)
     const position = element.getBBox()
