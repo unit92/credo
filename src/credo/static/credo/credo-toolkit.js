@@ -141,8 +141,7 @@ class CredoToolkit {
     M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
   }
 
-  renderComment (comment) {
-    const [elementId, text] = comment
+  renderComment ([elementId, text]) {
     // get the element to which we want to attack the comment
     const element = document.getElementById(elementId)
     const position = element.getBBox()
