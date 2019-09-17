@@ -52,10 +52,10 @@ renderMei = (url, id) => {
           for (let i = 0; i < childDivs.length; ++i) {
             if (i === 0) {
               diff = atob(meiJson['content']['diff']['details'])
-              childDivs[i].innerHTML = toolkit.renderData(diff, {svgViewBox: true})
+              childDivs[i].innerHTML = toolkit.renderData(diff, {svgViewBox: true, adjustPageHeight: true})
             } else {
               source = atob(meiJson['content']['sources'][i-1]['details'])
-              childDivs[i].innerHTML = toolkit.renderData(source, {svgViewBox: true})
+              childDivs[i].innerHTML = toolkit.renderData(source, {svgViewBox: true, adjustPageHeight: true})
             }
           }
         }
