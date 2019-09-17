@@ -188,7 +188,7 @@ class CredoToolkit {
 
       const position = commentIcon.getBoundingClientRect()
       tooltipElement.style.marginLeft = `${position.x - 100}px`
-      tooltipElement.style.marginTop = `${position.y + 20}px`
+      tooltipElement.style.marginTop = `${position.y + 20 + (window.pageYOffset || 0)}px`
     })
   }
 }
