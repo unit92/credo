@@ -19,6 +19,9 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
+
+    path(r'^jet/', include('jet.urls', 'jet')),
+    path(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/docs/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
