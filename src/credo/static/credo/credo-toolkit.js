@@ -134,15 +134,17 @@ class CredoToolkit {
   }
 
   renderComments () {
-    this.comments.forEach(this.renderComment.bind(this))
+    Object.entries(this.comments)
+      .forEach(this.renderComment.bind(this))
 
     // render the tooltip showing the comment text
     M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
   }
 
   renderComment (comment) {
+    const [elementId, text] = comment
     // get the element to which we want to attack the comment
-    const element = document.getElementById(comment.position)
+    const element = document.getElementById(elementId)
     const position = element.getBBox()
 
     element.innerHTML += this.commentSvg
@@ -153,6 +155,6 @@ class CredoToolkit {
     commentElement.setAttribute('y', position.y)
 
     // set the comment text
-    commentElement.setAttribute('data-tooltip', comment.text)
+    commentElement.setAttribute('data-tooltip', text)
   }
 }

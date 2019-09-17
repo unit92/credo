@@ -50,14 +50,11 @@ def revision_comments(request, revision_id):
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
     json = ''
-    json += '['
+    json += '{'
     for comment in comments:
-        json += f'{{\
-            "position": "{comment.mei_element_id}",\
-            "text": "{comment.text}"\
-        }},'
+        json += f'"{comment.mei_element_id}": "{comment.text}",'
     json = json[:-1]
-    json += ']'
+    json += '}'
     response.write(json)
     return response
 
