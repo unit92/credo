@@ -3,22 +3,23 @@
 import datetime
 from django.utils import timezone
 from django.db import migrations, models
-from django.core.files import File
 
 #MIGRATE FUNCTIONS
 def load_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
 
     time = timezone.now()
-    c1 = Composer(id=0, name='John Doe', created_at=time, updated_at=time)
+    c1 = Composer(id=0, name='Craig Smith', created_at=time, updated_at=time)
     c1.save()
 
-    c2 = Composer(id=1, name='Jane Doe', created_at=time, updated_at=time)
+    c2 = Composer(id=1, name='Luke Tuthill', created_at=time, updated_at=time)
     c2.save()
 
-    c3 = Composer(id=2, name='Jason Hopper', created_at=time, updated_at=time)
+    c3 = Composer(id=2, name='Joel Aquilina', created_at=time, updated_at=time)
     c3.save()
 
+    c4 = Composer(id=3, name='Alex Mirrington', created_at=time, updated_at=time)
+    c4.save()
 
 def load_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
@@ -26,22 +27,22 @@ def load_songs(apps, schema_editor):
 
     time = timezone.now()
     composer = Composer.objects.get(id=0)
-    s1 = Song(id=0, name='John Song 1', composer=composer, created_at=time,
+    s1 = Song(id=0, name='JS Standard', composer=composer, created_at=time,
             updated_at=time)
     s1.save()
 
-    time = timezone.now() + datetime.timedelta(days=-1, hours=-1)
-    s2 = Song(id=1, name='John Song 2', composer=composer, created_at=time,
+    composer = Composer.objects.get(id=1)
+    s2 = Song(id=1, name='Jingle Django', composer=composer, created_at=time,
             updated_at=time)
     s2.save()
 
-    composer = Composer.objects.get(id=1)
-    s3 = Song(id=2, name='Jane Song 1', composer=composer, created_at=time,
+    composer = Composer.objects.get(id=2)
+    s3 = Song(id=2, name='Environment Song', composer=composer, created_at=time,
             updated_at=time)
     s3.save()
 
-    composer = Composer.objects.get(id=2)
-    s4 = Song(id=3, name='Jason Song 1', composer=composer, created_at=time,
+    composer = Composer.objects.get(id=3)
+    s4 = Song(id=3, name='Diffing Song', composer=composer, created_at=time,
             updated_at=time)
     s4.save()
 
@@ -65,15 +66,23 @@ def load_mei(apps, schema_editor):
 #ROLLBACK FUNCTIONS
 def delete_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
-    Composer.objects.all().delete()
+    Composer.objects.get(id=0).delete()
+    Composer.objects.get(id=1).delete()
+    Composer.objects.get(id=2).delete()
+    Composer.objects.get(id=3).delete()
 
 def delete_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
-    Song.objects.all().delete()
+    Song.objects.get(id=0).delete()
+    Song.objects.get(id=1).delete()
+    Song.objects.get(id=2).delete()
+    Song.objects.get(id=3).delete()
 
 def delete_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
-    MEI.objects.all().delete()
+    MEI.objects.get(id=0).delete()
+    MEI.objects.get(id=1).delete()
+    MEI.objects.get(id=2).delete()
 
 class Migration(migrations.Migration):
 
