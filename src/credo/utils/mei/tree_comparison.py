@@ -1,5 +1,6 @@
 from .comparison_strategy import ComparisonStrategy
 import lxml.etree as et
+import typing as t
 
 
 class TreeComparison(ComparisonStrategy):
@@ -7,7 +8,8 @@ class TreeComparison(ComparisonStrategy):
     def __init__(self):
         return
 
-    def compare_trees(self, a: et.ElementTree, b: et.ElementTree) -> tuple:
+    def compare_trees(self, a: et.ElementTree, b: et.ElementTree) \
+            -> t.Tuple[et.ElementTree, et.ElementTree, et.ElementTree]:
 
         a = self.strip_tree(a)
         b = self.strip_tree(b)
