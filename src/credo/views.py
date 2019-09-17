@@ -51,11 +51,19 @@ def revision(request, song_id, revision_id):
 
 def mei(request, mei_id):
     mei = MEI.objects.get(id=mei_id)
-    response = HttpResponse()
-    response['Content-Disposition'] = 'attachment; filename=file.mei'
     with mei.data.open() as f:
-        response.write(f.read())
-    return response
+        mei_data = f.read()
+    mei_data = str(base64.b64encode(mei_data), encoding='utf-8')
+    print(mei_data)
+    data = {
+        'content': {
+            'mei': {
+                'detail': mei_data,
+                'encoding': 'base64'
+            }
+        }
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def compare(request):
@@ -94,14 +102,14 @@ def diff(request):
     d, *s = [et.tostring(out[i], encoding='utf-8') for i in range(len(out))]
     d = str(base64.b64encode(d), encoding='utf-8')
     s = [{
-            'details': str(base64.b64encode(s[i]), encoding='utf-8'),
+            'detail': str(base64.b64encode(s[i]), encoding='utf-8'),
             'encoding': 'base64'
         } for i in range(len(s))]
 
     data = {
         'content': {
             'diff': {
-                'details': d,
+                'detail': d,
                 'encoding': 'base64'
             },
             'sources': s

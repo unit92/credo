@@ -57,5 +57,5 @@
   type="text/javascript">
 </script>
 <script type="text/javascript">
-  renderMei('/diff?{% for source in sources %}s={{ source.id }}{% if not forloop.last %}&{% endif %}{% endfor %}', 'renderDiv')
+  renderDiff('/diff?{% for source in sources %}s={{ source.id }}{% if not forloop.last %}&{% endif %}{% endfor %}', 'renderDiv')
 </script>

@@ -26,7 +26,7 @@ getToolkit = id => {
 }
 
 /**
- * Renders the given MEI file (currently from URL) to an inline SVG to be
+ * Renders the given base64 encoded MEI file to an inline SVG to be
  * contained in an element by the given ID.
  *
  * @param {string} url The URL of the MEI file.
@@ -38,29 +38,50 @@ renderMei = (url, id) => {
   const xhttp = new XMLHttpRequest()
   xhttp.onreadystatechange = function () {
     if (this.readyState === 4 && this.status === 200) {
-      // store the data on the toolkit
+
+      // Store the data on the toolkit
       toolkit.loadData(data)
-      console.log(url.split('/')[1])
-      if (url.split('/')[1] === 'mei') {
-        // TODO Update /mei endpoint to be more like the diff endpoint with b64 encoding
-        const renderDiv = document.getElementById(id)
-        renderDiv.innerHTML = toolkit.renderData(this.responseText, {svgViewBox: true})
-      } else {
-        meiJson = JSON.parse(this.responseText)
-        const childDivs = document.querySelectorAll(`#${id} > div`)
-        if (childDivs.length === meiJson['content']['sources'].length + 1) {
-          for (let i = 0; i < childDivs.length; ++i) {
-            if (i === 0) {
-              diff = atob(meiJson['content']['diff']['details'])
-              childDivs[i].innerHTML = toolkit.renderData(diff, {svgViewBox: true, adjustPageHeight: true})
-            } else {
-              source = atob(meiJson['content']['sources'][i-1]['details'])
-              childDivs[i].innerHTML = toolkit.renderData(source, {svgViewBox: true, adjustPageHeight: true})
-            }
+
+      meiJson = JSON.parse(this.responseText)
+      const renderDiv = document.getElementById(id)
+      mei = atob(meiJson['content']['mei']['detail'])
+      renderDiv.innerHTML = toolkit.renderData(mei, {svgViewBox: true})
+    }
+  }
+  xhttp.open('GET', url, true)
+  xhttp.send()
+}
+
+/**
+ * Renders the given base64 encoded MEI files and their difference
+ * to three separate inline SVGs to be contained in an element by the given ID.
+ *
+ * @param {string} url The URL of the MEI file.
+ * @param {string} id The element ID into which we insert the rendered image.
+ */
+renderDiff = (url, id) => {
+  const toolkit = getToolkit(id)
+
+  const xhttp = new XMLHttpRequest()
+  xhttp.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+
+      // Store the data on the toolkit
+      toolkit.loadData(data)
+      meiJson = JSON.parse(this.responseText)
+      const childDivs = document.querySelectorAll(`#${id} > div`)
+      
+      if (childDivs.length === meiJson['content']['sources'].length + 1) {
+        for (let i = 0; i < childDivs.length; ++i) {
+          if (i === 0) {
+            diff = atob(meiJson['content']['diff']['detail'])
+            childDivs[i].innerHTML = toolkit.renderData(diff, {svgViewBox: true, adjustPageHeight: true})
+          } else {
+            source = atob(meiJson['content']['sources'][i-1]['detail'])
+            childDivs[i].innerHTML = toolkit.renderData(source, {svgViewBox: true, adjustPageHeight: true})
           }
         }
       }
-      
     }
   }
   xhttp.open('GET', url, true)
