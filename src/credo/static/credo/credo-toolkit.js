@@ -38,6 +38,10 @@ class CredoToolkit {
     this.renderDiv = renderDiv
 
     this.verovioToolkit = new verovio.toolkit()
+    
+    // attach the note grabbing listener to the event div
+    document.getElementById(renderDiv)
+      .addEventListener('click', this.getNotation.bind(this))
   }
 
   /**
@@ -205,5 +209,26 @@ class CredoToolkit {
       tooltipElement.style.marginLeft = `${position.x - 100}px`
       tooltipElement.style.marginTop = `${position.y + 20 + (window.pageYOffset || 0)}px`
     })
+  }
+
+  /**
+   * Gets the commentable notation from the event target. This method will read
+   * the target and proceed upward until it finds an element with tag structure
+   * 'm-[0-9]*'.
+   *
+   * @param {Event} event The event for which we want
+   * @return {DOMElement} The clickable note element. Returns null if none
+   * found.
+   */
+  getNotation (event) {
+    let element = event.target
+    while (!element.id && !element.id.match(/m-[0-9]*/)) {
+      element = element.parentElement
+      if (element.id === this.renderDiv) {
+        return null
+      }
+    }
+
+    return element
   }
 }
