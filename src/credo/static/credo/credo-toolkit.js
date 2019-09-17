@@ -137,11 +137,7 @@ class CredoToolkit {
     Object.entries(this.comments)
       .forEach(this.renderCommentIcon.bind(this))
 
-    // render the tooltip showing the comment text
-    M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
-
-    Object.entries(this.comments)
-      .forEach(this.attachTooltipPositioningListener.bind(this))
+    this.handleTooltips()
   }
 
   /**
@@ -166,6 +162,25 @@ class CredoToolkit {
 
     // set the comment text
     commentElement.setAttribute('data-tooltip', text)
+  }
+
+  addComment (elementId, text) {
+    this.comments[elementId] = text
+
+    this.renderCommentIcon([elementId, text])
+
+    this.handleTooltips()
+  }
+
+  /**
+   * Handles the tooltips' rendering and positioning.
+   */
+  handleTooltips () {
+    // render the tooltip showing the comment text
+    M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
+
+    Object.entries(this.comments)
+      .forEach(this.attachTooltipPositioningListener.bind(this))
   }
 
   /**
