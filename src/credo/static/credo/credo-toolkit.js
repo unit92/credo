@@ -14,6 +14,10 @@ class CredoToolkit {
   mei
   comments
 
+  commentModalInstance
+  // ID of the thing on which we are commenting
+  commentModalId
+
   verovioToolkit
 
   // Sourced from https://material.io/resources/icons/
@@ -38,10 +42,59 @@ class CredoToolkit {
     this.renderDiv = renderDiv
 
     this.verovioToolkit = new verovio.toolkit()
+
+    // initialise modal
+    document.addEventListener('DOMContentLoaded', () => {
+      const modals = document.querySelectorAll('.modal')
+      M.Modal.init(modals)
+      this.commentModalInstance = M.Modal
+        .getInstance(document.getElementById('comment-modal'))
+    })
     
     // attach the note grabbing listener to the event div
     document.getElementById(renderDiv)
-      .addEventListener('click', this.getNotation.bind(this))
+      .addEventListener('click', this.commmentEventListener.bind(this))
+
+    // attach a comment submitting method to the submit button in the modal
+    document.getElementById('comment-modal-submit')
+      .addEventListener('click', this.updateCommentFromModal.bind(this))
+  }
+
+  commmentEventListener (event) {
+    // get the notation being clicked on, do nothing if nothing found
+    const notation = this.getNotation(event)
+    if (!notation) {
+      return
+    }
+
+    // TODO: things with the current note
+    this.commentModalId = notation.id
+    document.getElementById('comment-modal-text').value =
+      this.comments[this.commentModalId] || ''
+    this.commentModalInstance.open()
+  }
+
+  /**
+   * Updates the comments from the modal.
+   */
+  updateCommentFromModal () {
+    const alreadyExisting = !!this.comments[this.commentModalId]
+
+    this.comments[this.commentModalId] = document
+      .getElementById('comment-modal-text').value
+
+    console.log(this.comments[this.commentModalId])
+
+    if (alreadyExisting) {
+      this.updateComment(
+        this.commentModalId,
+        this.comments[this.commentModalId]
+      )
+    } else {
+      this.addComment(this.commentModalId, this.comments[this.commentModalId])
+    }
+
+    this.commentModalInstance.close()
   }
 
   /**
@@ -168,6 +221,13 @@ class CredoToolkit {
     commentElement.setAttribute('data-tooltip', text)
   }
 
+  /**
+   * Adds a new comment.
+   *
+   * @param {string} elementId The MEI element upon which we wish to add a
+   * comment.
+   * @param {string} text The comment text.
+   */
   addComment (elementId, text) {
     this.comments[elementId] = text
 
@@ -177,11 +237,41 @@ class CredoToolkit {
   }
 
   /**
+   * Updates an already existing comment.
+   *
+   * @param {string} elementId The MEI element whose comment we wish to update.
+   * @param {string} text The new comment text.
+   */
+  updateComment (elementId, text) {
+    if (text) {
+      this.comments[elementId] = text
+    } else {
+      // delete if being removed
+      delete this.comments[elementId]
+    }
+
+    // get the element
+    const element = document.getElementById(elementId)
+
+    // get the comment on the element
+    const commentElement = element.children[(element.children.length - 1)]
+
+    // set the comment text or remove if no text
+    if (text) {
+      commentElement.setAttribute('data-tooltip', text)
+    } else {
+      commentElement.remove()
+    }
+
+    this.handleTooltips()
+  }
+
+  /**
    * Handles the tooltips' rendering and positioning.
    */
   handleTooltips () {
     // render the tooltip showing the comment text
-    M.Tooltip.init(document.querySelectorAll('.tooltipped', undefined))
+    M.Tooltip.init(document.querySelectorAll('.tooltipped'))
 
     Object.entries(this.comments)
       .forEach(this.attachTooltipPositioningListener.bind(this))
