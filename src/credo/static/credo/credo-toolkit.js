@@ -83,8 +83,6 @@ class CredoToolkit {
     this.comments[this.commentModalId] = document
       .getElementById('comment-modal-text').value
 
-    console.log(this.comments[this.commentModalId])
-
     if (alreadyExisting) {
       this.updateComment(
         this.commentModalId,
