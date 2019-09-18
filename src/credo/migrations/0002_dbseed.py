@@ -3,12 +3,12 @@
 import datetime
 from django.utils import timezone
 from django.db import migrations, models
+from django.contrib.auth.models import User
 
 #MIGRATE FUNCTIONS
 def load_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
 
-    time = timezone.now()
     c1 = Composer(name='Craig Smith')
     c1.save()
 
@@ -25,7 +25,6 @@ def load_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
     Composer = apps.get_model('credo', 'Composer')
 
-    time = timezone.now()
     composer = Composer.objects.get(name='Craig Smith')
     s1 = Song(name='JS Standard', composer=composer)
     s1.save()
@@ -46,7 +45,6 @@ def load_songs(apps, schema_editor):
 def load_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
 
-    time = timezone.now()
     path = './credo/migrations/seed_mei/'
     m1 = MEI(data=path + 'SourceA.mei')
     m1.save()
@@ -56,6 +54,46 @@ def load_mei(apps, schema_editor):
 
     m3 = MEI(data=path + 'SourceC.mei')
     m3.save()
+
+    m4 = MEI(data=path + 'Default.mei')
+    m4.save()
+
+def load_editions(apps, schema_editor):
+    Edition = apps.get_model('credo', 'Edition')
+    Song = apps.get_model('credo', 'Song')
+    MEI = apps.get_model('credo', 'MEI')
+    User = apps.get_model('auth', 'User')
+
+    path = './credo/migrations/seed_mei/'
+
+    user = User(username='Craig', password='1234')
+    user.save()
+    piece = MEI.objects.get(data=path + 'SourceA.mei')
+    song = Song.objects.get(name='JS Standard')
+    e1 = Edition(name='Christmas JS', song=song, mei=piece, uploader=user)
+    e1.save()
+
+    user = User(username='Luke', password='1234')
+    user.save()
+    piece = MEI.objects.get(data=path + 'SourceB.mei')
+    song = Song.objects.get(name='Jingle Django')
+    e2 = Edition(name='Python Play', song=song, mei=piece, uploader=user)
+    e2.save()
+
+    user = User(username='Joel', password='1234')
+    user.save()
+    piece = MEI.objects.get(data=path + 'SourceC.mei')
+    song = Song.objects.get(name='Environment Song')
+    e3 = Edition(name='Green Edition', song=song, mei=piece, uploader=user)
+    e3.save()
+
+    user = User(username='Alex', password='1234')
+    user.save()
+    piece = MEI.objects.get(data=path + 'Default.mei')
+    song = Song.objects.get(name='Diffing Song')
+    e4 = Edition(name='Congruent Edition', song=song, mei=piece, uploader=user)
+    e4.save()
+
 
 #ROLLBACK FUNCTIONS
 def delete_composers(apps, schema_editor):
@@ -71,7 +109,6 @@ def delete_songs(apps, schema_editor):
     Song.objects.get(name='Jingle Django').delete()
     Song.objects.get(name='Environment Song').delete()
     Song.objects.get(name='Diffing Song').delete()
-    # Song.objects.all().delete()
 
 def delete_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
@@ -79,6 +116,23 @@ def delete_mei(apps, schema_editor):
     MEI.objects.get(data=path + 'SourceA.mei').delete()
     MEI.objects.get(data=path + 'SourceB.mei').delete()
     MEI.objects.get(data=path + 'SourceC.mei').delete()
+    MEI.objects.get(data=path + 'Default.mei').delete()
+
+def delete_editions(apps, schema_editor):
+    Edition = apps.get_model('credo', 'Edition')
+
+    Edition.objects.get(name='Christmas JS').delete()
+    User.objects.get(username='Craig').delete()
+
+    Edition.objects.get(name='Python Play').delete()
+    User.objects.get(username='Luke').delete()
+
+    Edition.objects.get(name='Green Edition').delete()
+    User.objects.get(username='Joel').delete()
+
+    Edition.objects.get(name='Congruent Edition').delete()
+    User.objects.get(username='Alex').delete()
+
 
 class Migration(migrations.Migration):
 
@@ -90,4 +144,5 @@ class Migration(migrations.Migration):
         migrations.RunPython(load_composers, delete_composers),
         migrations.RunPython(load_songs, delete_songs),
         migrations.RunPython(load_mei, delete_mei),
+        migrations.RunPython(load_editions, delete_editions)
     ]
