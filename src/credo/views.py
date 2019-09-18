@@ -1,7 +1,10 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
+from django.core.files.base import ContentFile
 from .models import Comment, Edition, MEI, Revision, Song
+
+import json
 
 
 def index(request):
@@ -37,13 +40,34 @@ def edition(request, song_id, edition_id):
 
 @require_POST
 def add_revision(request, song_id):
-    # body = json.loads(request.body)
+    body = json.loads(request.body)
 
-    # TODO: save the MEI
+    mei_file = ContentFile(body['mei'])
+    mei_object = MEI()
+    mei_object.data.save('mei', mei_file)
+    mei_object.save()
 
     # TODO: save the revision
+    #  - can't do this until we have edition data
+
+    '''
+    revision_object = Revision()
+    revision_object.mei = mei_object
+    revision_object.song_id = song_id
+    # revision_object.user =  # who knows lmao
+    '''
 
     # TODO: save the comments
+    #  - can't do this until we save the revisions
+
+    '''
+    for mei_elem in body['comments']:
+        comment = Comment()
+        comment.mei_element_id = mei_elem
+        comment.text = body['comments'][mei_elem]
+        comment.revision = revision_object
+        # revision_object.user =  # who knows lmao
+    '''
 
     response = HttpResponse()
     response.write(f'/songs/{song_id}')
