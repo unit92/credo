@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 from .models import Comment, Edition, MEI, Revision, Song
@@ -63,16 +63,14 @@ def revision_comments(request, revision_id):
     revision = Revision.objects.get(id=revision_id)
     comments = Comment.objects.filter(revision=revision)
 
-    response = HttpResponse()
-    response['Content-Type'] = 'application/json'
-    json_response = ''
-    json_response += '{'
-    for comment in comments:
-        json_response += f'"{comment.mei_element_id}": "{comment.text}",'
-    json_response = json_response[:-1]
-    json_response += '}'
-    response.write(json_response)
-    return response
+    """
+    yeah, this is big brain time
+    https://i.kym-cdn.com/entries/icons/original/000/030/525/cover5.png
+    """
+    return JsonResponse({
+        comment.mei_element_id: comment.text
+        for comment in comments
+    })
 
 
 def mei(request, mei_id):
