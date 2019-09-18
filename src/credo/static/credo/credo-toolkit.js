@@ -302,7 +302,7 @@ class CredoToolkit {
         .children[notationElement.childElementCount - 1]
 
       const position = commentIcon.getBoundingClientRect()
-      let xPosition = position.x - 100
+      let xPosition = position.x - tooltipElement.getBoundingClientRect().width / 2 + commentIcon.getBoundingClientRect().width / 2
       if (xPosition < 0) {
         xPosition = 0
       }
