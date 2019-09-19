@@ -4,8 +4,9 @@ Our stack consists of:
 
 - Django
 - Postgres Docker
-- Unit tests with PyTest [In Progress]
-- Bitbucket Pipelines for CI/CD [In Progress]
+- Unit tests with unittest
+- Bitbucket Pipelines for CI
+- Bitbucket Pipelines for CD [In Progress]
 
 
 # How run
