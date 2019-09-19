@@ -41,7 +41,6 @@ def load_songs(apps, schema_editor):
     s4 = Song(name='Diffing Song', composer=composer)
     s4.save()
 
-
 def load_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
 
@@ -58,6 +57,21 @@ def load_mei(apps, schema_editor):
     m4 = MEI(data=path + 'Default.mei')
     m4.save()
 
+def load_users(apps, schema_editor):
+    User = apps.get_model('auth', 'User')
+
+    u1 = User(username='Craig', password='1234')
+    u1.save()
+
+    u2 = User(username='Luke', password='1234')
+    u2.save()
+
+    u3 = User(username='Joel', password='1234')
+    u3.save()
+
+    u4 = User(username='Alex', password='1234')
+    u4.save()
+
 def load_editions(apps, schema_editor):
     Edition = apps.get_model('credo', 'Edition')
     Song = apps.get_model('credo', 'Song')
@@ -66,33 +80,67 @@ def load_editions(apps, schema_editor):
 
     path = './credo/migrations/seed_mei/'
 
-    user = User(username='Craig', password='1234')
-    user.save()
+    user = User.objects.get(username='Craig')
     piece = MEI.objects.get(data=path + 'SourceA.mei')
     song = Song.objects.get(name='JS Standard')
     e1 = Edition(name='Christmas JS', song=song, mei=piece, uploader=user)
     e1.save()
 
-    user = User(username='Luke', password='1234')
-    user.save()
+    user = User.objects.get(username='Luke')
     piece = MEI.objects.get(data=path + 'SourceB.mei')
     song = Song.objects.get(name='Jingle Django')
     e2 = Edition(name='Python Play', song=song, mei=piece, uploader=user)
     e2.save()
 
-    user = User(username='Joel', password='1234')
-    user.save()
+    user = User.objects.get(username='Joel')
     piece = MEI.objects.get(data=path + 'SourceC.mei')
     song = Song.objects.get(name='Environment Song')
     e3 = Edition(name='Green Edition', song=song, mei=piece, uploader=user)
     e3.save()
 
-    user = User(username='Alex', password='1234')
-    user.save()
+    user = User.objects.get(username='Alex')
     piece = MEI.objects.get(data=path + 'Default.mei')
     song = Song.objects.get(name='Diffing Song')
     e4 = Edition(name='Congruent Edition', song=song, mei=piece, uploader=user)
     e4.save()
+
+def load_revisions(apps, schema_editor):
+    Revision = apps.get_model('credo', 'Revision')
+    Edition = apps.get_model('credo', 'Edition')
+    MEI = apps.get_model('credo', 'MEI')
+    User = apps.get_model('auth', 'User')
+
+    path = './credo/migrations/seed_mei/'
+
+    craig_edition = Edition.objects.get(name='Christmas JS')
+    luke_edition = Edition.objects.get(name='Python Play')
+    joel_edition = Edition.objects.get(name='Green Edition')
+    alex_edition = Edition.objects.get(name='Congruent Edition')
+
+    account = User.objects.get(username='Craig')
+    rev_file =  MEI.objects.get(data=path + 'SourceB.mei')
+    r1 = Revision(user=account, mei=rev_file)
+    r1.save()
+    r1.editions.add(craig_edition)
+
+    account = User.objects.get(username='Luke')
+    rev_file = MEI.objects.get(data=path + 'SourceC.mei')
+    r2 = Revision(user=account, mei=rev_file)
+    r2.save()
+    r2.editions.add(luke_edition)
+
+    account = User.objects.get(username='Joel')
+    rev_file = MEI.objects.get(data=path + 'Default.mei')
+    r3 = Revision(user=account, mei=rev_file)
+    r3.save()
+    r3.editions.add(joel_edition)
+
+    account = User.objects.get(username='Alex')
+    rev_file = MEI.objects.get(data=path + 'SourceA.mei')
+    r4 = Revision(user=account, mei=rev_file)
+    r4.save()
+    r4.editions.add(alex_edition)
+
 
 
 #ROLLBACK FUNCTIONS
@@ -118,20 +166,26 @@ def delete_mei(apps, schema_editor):
     MEI.objects.get(data=path + 'SourceC.mei').delete()
     MEI.objects.get(data=path + 'Default.mei').delete()
 
+def delete_users(apps, schema_editor):
+    User = apps.get_model('auth', 'User')
+    User.objects.get(username='Craig').delete()
+    User.objects.get(username='Luke').delete()
+    User.objects.get(username='Joel').delete()
+    User.objects.get(username='Alex').delete()
+
 def delete_editions(apps, schema_editor):
     Edition = apps.get_model('credo', 'Edition')
-
     Edition.objects.get(name='Christmas JS').delete()
-    User.objects.get(username='Craig').delete()
-
     Edition.objects.get(name='Python Play').delete()
-    User.objects.get(username='Luke').delete()
-
     Edition.objects.get(name='Green Edition').delete()
-    User.objects.get(username='Joel').delete()
-
     Edition.objects.get(name='Congruent Edition').delete()
-    User.objects.get(username='Alex').delete()
+
+# No delete needed in this function, edition deletion cascades on
+# the revisions, hence delete_editions function does the work.
+# Function created to suppress rollback error
+def delete_revisions(apps, schema_editor):
+    Revision = apps.get_model('credo', 'Revision')
+
 
 
 class Migration(migrations.Migration):
@@ -144,5 +198,7 @@ class Migration(migrations.Migration):
         migrations.RunPython(load_composers, delete_composers),
         migrations.RunPython(load_songs, delete_songs),
         migrations.RunPython(load_mei, delete_mei),
-        migrations.RunPython(load_editions, delete_editions)
+        migrations.RunPython(load_users, delete_users),
+        migrations.RunPython(load_editions, delete_editions),
+        migrations.RunPython(load_revisions, delete_revisions),
     ]
