@@ -16,6 +16,7 @@ pollute your system wide dependencies.
 
 ```
 pip install -r requirements.txt
+pip install -r dev-requirements.txt
 ```
 
 ## Install git hooks
