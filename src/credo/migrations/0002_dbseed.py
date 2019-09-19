@@ -141,7 +141,32 @@ def load_revisions(apps, schema_editor):
     r4.save()
     r4.editions.add(alex_edition)
 
+def load_comments(apps, schema_editor):
+    Comment = apps.get_model('credo', 'Comment')
+    Edition = apps.get_model('credo', 'Edition')
+    User = apps.get_model('auth', 'User')
 
+    path = './credo/migrations/seed_mei/'
+
+    piece = Edition.objects.get(name='Christmas JS')
+    account = User.objects.get(username='Craig')
+    c1 = Comment(edition=piece, text='Comment A', user=account, position=1)
+    c1.save()
+
+    piece = Edition.objects.get(name='Python Play')
+    account = User.objects.get(username='Luke')
+    c2 = Comment(edition=piece, text='Comment B', user=account, position=2)
+    c2.save()
+
+    piece = Edition.objects.get(name='Green Edition')
+    account = User.objects.get(username='Joel')
+    c3 = Comment(edition=piece, text='Comment C', user=account, position=3)
+    c3.save()
+
+    piece = Edition.objects.get(name='Congruent Edition')
+    account = User.objects.get(username='Alex')
+    c4 = Comment(edition=piece, text='Comment D', user=account, position=4)
+    c4.save()
 
 #ROLLBACK FUNCTIONS
 def delete_composers(apps, schema_editor):
@@ -186,6 +211,9 @@ def delete_editions(apps, schema_editor):
 def delete_revisions(apps, schema_editor):
     Revision = apps.get_model('credo', 'Revision')
 
+# Function created to suppress rollback error
+def delete_comments(apps, schema_editor):
+    Comment = apps.get_model('credo', 'Comment')
 
 
 class Migration(migrations.Migration):
@@ -201,4 +229,5 @@ class Migration(migrations.Migration):
         migrations.RunPython(load_users, delete_users),
         migrations.RunPython(load_editions, delete_editions),
         migrations.RunPython(load_revisions, delete_revisions),
+        migrations.RunPython(load_comments, delete_comments),
     ]
