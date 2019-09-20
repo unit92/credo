@@ -1,10 +1,12 @@
 # Credo
 
-Our stack consists of
-* Django
-* Postgres Docker
-* Unit tests with PyTest [None so far]
-* Bitbucket Pipelines for CI/CD [Not yet implemented]
+Our stack consists of:
+
+- Django
+- Postgres Docker
+- Unit tests with unittest
+- Bitbucket Pipelines for CI
+- Bitbucket Pipelines for CD [In Progress]
 
 
 # How run
@@ -15,6 +17,7 @@ pollute your system wide dependencies.
 
 ```
 pip install -r requirements.txt
+pip install -r dev-requirements.txt
 ```
 
 ## Install git hooks

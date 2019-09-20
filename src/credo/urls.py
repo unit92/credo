@@ -15,12 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic.base import RedirectView
 
 from . import views
 
+favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
+
 urlpatterns = [
+
+    path('jet/', include('jet.urls', 'jet')),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/docs/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
+    path('favicon.ico', favicon_view),
     path('', views.index, name='index'),
     path('songs/', views.song_list),
     path('songs/<song_id>', views.song),
