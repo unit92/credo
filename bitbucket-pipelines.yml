@@ -11,7 +11,9 @@ pipelines:
           - pip install -r requirements.txt
           - pip install -r ci-requirements.txt
           - mv .env.example .env
-          - cd src && ./manage.py test
+          - cd src
+          - coverage3 run manage.py test
+          - coverage3 report
         services:
           - postgres
 definitions:
