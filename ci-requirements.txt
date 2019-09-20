@@ -1,0 +1,2 @@
+coverage==4.5.4
+unittest-xml-reporting==2.5.1

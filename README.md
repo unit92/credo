@@ -17,6 +17,7 @@ pollute your system wide dependencies.
 
 ```
 pip install -r requirements.txt
+pip install -r ci-requirements.txt
 pip install -r dev-requirements.txt
 ```
 
@@ -56,7 +57,7 @@ Make sure to run tests before each pull request. This is the responsibility of t
 
 All unit tests should be created inside `./src/tests/*`.
 
-Test discovery is based on the `unittest` module’s built-in test discovery. By default, this will discover tests in any file named “test*.py” under the current working directory.
+Test discovery is based on the `unittest` module’s built-in test discovery. By default, this will discover tests in any file named "test*.py" under the current working directory.
 
 See the [Django docs](https://docs.djangoproject.com/en/2.2/topics/testing/overview/) for more information on writing test cases.
 

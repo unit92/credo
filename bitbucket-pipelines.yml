@@ -9,6 +9,7 @@ pipelines:
           - pip
         script:
           - pip install -r requirements.txt
+          - pip install -r ci-requirements.txt
           - mv .env.example .env
           - cd src && ./manage.py test
         services:
@@ -21,5 +22,3 @@ definitions:
         POSTGRES_DB: $POSTGRES_DB
         POSTGRES_USER: $POSTGRES_USER
         POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-
-
