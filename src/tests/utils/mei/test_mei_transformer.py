@@ -10,7 +10,7 @@ class TestMeiTransformer(TestCase):
     def setUp(self):
         # Set up the MEI file
         self.meiTransformer = MeiTransformer.\
-            parse_xml_file("./tests/utils/mei/data/test.mei")
+            from_xml_file("./tests/utils/mei/data/test.mei")
 
     def test_normalise_removes_header(self):
         """
@@ -54,13 +54,13 @@ class TestMeiTransformer(TestCase):
         self.assertFalse(self.meiTransformer.is_intermediate)
         self.meiTransformer.to_intermediate()
         self.assertTrue(self.meiTransformer.is_intermediate)
-        self.meiTransformer.to_plain_MEI()
+        self.meiTransformer.to_plain_mei()
         self.assertFalse(self.meiTransformer.is_intermediate)
         self.meiTransformer.to_intermediate()
         mt1 = MeiTransformer(self.meiTransformer.tree)
         self.assertTrue(self.meiTransformer.is_intermediate)
         self.assertTrue(mt1.is_intermediate)
-        mt1.to_plain_MEI()
+        mt1.to_plain_mei()
         self.assertTrue(self.meiTransformer.is_intermediate)
         self.assertFalse(mt1.is_intermediate)
 

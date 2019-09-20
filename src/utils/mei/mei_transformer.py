@@ -22,7 +22,7 @@ class MeiTransformer:
         self._tree = tree
 
     @classmethod
-    def parse_xml_file(cls, filename: str) -> MeiTransformer:
+    def from_xml_file(cls, filename: str) -> MeiTransformer:
         """
         Construct an MeiTransformer from a file existing on disk
         """
@@ -31,7 +31,7 @@ class MeiTransformer:
         return cls(tree)
 
     @classmethod
-    def parse_xml_string(cls, xml_string: str) -> MeiTransformer:
+    def from_xml_string(cls, xml_string: str) -> MeiTransformer:
         """
         Construct an MeiTransformer from a string
         """
@@ -77,7 +77,7 @@ class MeiTransformer:
             octname = f'{octave}:{pname}'
             elem.set('octname', octname)
 
-    def to_plain_MEI(self) -> None:
+    def to_plain_mei(self) -> None:
         if not self.is_intermediate:
             raise ValueError('MEI is not in intermediate representation')
         for elem in self._tree.findall('.//mei:note[@octname]', ns):
@@ -122,7 +122,7 @@ def main():
     if argc >= 3:
         input_path = argv[1]
         output_path = argv[2]
-        mt = MeiTransformer.parse_xml_file(input_path)
+        mt = MeiTransformer.from_xml_file(input_path)
         mt.normalise()
         mt.save_xml_file(output_path)
         return mt
