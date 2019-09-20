@@ -54,7 +54,6 @@ def mei(request, mei_id):
     with mei.data.open() as f:
         mei_data = f.read()
     mei_data = str(base64.b64encode(mei_data), encoding='utf-8')
-    print(mei_data)
     data = {
         'content': {
             'mei': {
@@ -67,30 +66,30 @@ def mei(request, mei_id):
 
 
 def compare(request):
-    sources = request.GET.getlist('s')
+    source_ids = request.GET.getlist('s')
 
     # TODO Nicer rendering for bad source ids
     try:
-        sources = [int(sources[i]) for i in range(len(sources))]
+        source_ids = [int(s) for s in source_ids]
     except ValueError:
         return HttpResponseBadRequest()
 
     return render(request, 'compare.html', {
-        'sources': list(map(lambda x: {'id': x}, sources))
+        'sources': [{'id': s} for s in source_ids]
     })
 
-# TODO: Authenticate?
+
 @require_http_methods(['GET'])
 def diff(request):
     sources = request.GET.getlist('s')
 
     try:
-        sources = [int(sources[i]) for i in range(len(sources))]
+        sources = [int(s) for s in sources]
     except ValueError:
         return HttpResponseBadRequest(content_type='application/json')
 
     try:
-        meis = [MEI.objects.get(id=sources[i]) for i in range(len(sources))]
+        meis = [MEI.objects.get(id=s) for s in sources]
     except MEI.DoesNotExist:
         return HttpResponseBadRequest(content_type='application/json')
 
@@ -98,21 +97,24 @@ def diff(request):
         return HttpResponseBadRequest(content_type='application/json')
 
     engine = TreeComparison()
-    out = engine.compare_meis(meis[0], meis[1])
-    d, *s = [et.tostring(out[i], encoding='utf-8') for i in range(len(out))]
-    d = str(base64.b64encode(d), encoding='utf-8')
-    s = [{
-            'detail': str(base64.b64encode(s[i]), encoding='utf-8'),
+    out_meis = engine.compare_meis(meis[0], meis[1])
+    diff, *sources = [et.tostring(mei, encoding='utf-8') for mei in out_meis]
+    diff = str(base64.b64encode(diff), encoding='utf-8')
+    sources = [
+        {
+            'detail': str(base64.b64encode(s), encoding='utf-8'),
             'encoding': 'base64'
-        } for i in range(len(s))]
+        }
+        for s in sources
+    ]
 
     data = {
         'content': {
             'diff': {
-                'detail': d,
+                'detail': diff,
                 'encoding': 'base64'
             },
-            'sources': s
+            'sources': sources
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
