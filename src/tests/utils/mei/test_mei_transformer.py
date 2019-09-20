@@ -10,7 +10,7 @@ class TestMeiTransformer(TestCase):
     def setUp(self):
         # Set up the MEI file
         self.meiTransformer = MeiTransformer.\
-            parse_xml_file("./tests/test_mei_files/test.mei")
+            parse_xml_file("./tests/utils/mei/data/test.mei")
 
     def test_normalise_removes_header(self):
         """
