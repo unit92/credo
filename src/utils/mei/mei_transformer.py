@@ -70,6 +70,7 @@ class MeiTransformer:
         """
         self._remove_meiHead()
         self._remove_MIDI_data()
+        self._generate_ids()
 
     def to_intermediate(self) -> None:
         if self.is_intermediate:
@@ -118,6 +119,38 @@ class MeiTransformer:
             elem.attrib.pop('pnum')
         for elem in self._tree.findall('.//mei:instrDef', ns):
             elem.getparent().remove(elem)
+
+    def _strip_ids(self) -> None:
+        """
+        Strip xml:id attributes for all elements in the tree to
+        ensure they don't affect the diff algorithm.
+        """
+        class_lookup = etree.ElementDefaultClassLookup()
+
+        for elem in self._tree.iter():
+            class_lookup.entity_class
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                id_attrib = etree.QName(ns['xml'], 'id')
+                elem.attrib.pop(id_attrib.text)
+
+    def _generate_ids(self) -> None:
+        """
+        Create/recreate xml:id attributes for all elements in the tree to
+        ensure they are all unique, and that every elements has an id.
+        """
+        class_lookup = etree.ElementDefaultClassLookup()
+
+        index = 0
+        for elem in self._tree.iter():
+            class_lookup.entity_class
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                id_attrib = etree.QName(ns['xml'], 'id')
+                elem.set(id_attrib.text, str(index))
+            index += 1
 
 
 def main():
