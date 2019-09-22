@@ -14,7 +14,7 @@ class TrackedPatcher(Patcher):
             self.modifications.append(action)
 
     def __init__(self):
-        self.modfications = []
+        self.modifications = []
 
     def patch(self, actions, tree, copy=True):
         result = deepcopy(tree) if copy else tree
@@ -23,20 +23,17 @@ class TrackedPatcher(Patcher):
             print(action)
             self.handle_action(action, result)
 
-        for mod in self.modfications:
-            print(mod.node, mod.modifications)
-
         return result
 
     def register_action(self, action, tree, node):
-        modified_nodes = [x.node for x in self.modfications]
+        modified_nodes = [x.node for x in self.modifications]
         if node in modified_nodes:
             i = modified_nodes.index(node)
-            self.modfications[i].register_modification(action)
+            self.modifications[i].register_modification(action)
         else:
             modified_node = TrackedPatcher.ModifiedNode(node)
             modified_node.register_modification(action)
-            self.modfications.append(modified_node)
+            self.modifications.append(modified_node)
 
     def handle_action(self, action, tree):
         super().handle_action(action, tree)
