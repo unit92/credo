@@ -11,8 +11,11 @@ from lxml import etree
 from lxml.etree import ElementTree
 
 # Shorthand XML namespaces
-ns = {'mei': 'http://www.music-encoding.org/ns/mei',
-      'xml': 'http://www.w3.org/1999/xlink'}
+ns = {
+    'xml': 'http://www.w3.org/XML/1998/namespace',
+    'mei': 'http://www.music-encoding.org/ns/mei',
+    'xlink': 'http://www.w3.org/1999/xlink'
+}
 
 
 class MeiTransformer:
@@ -26,8 +29,8 @@ class MeiTransformer:
         """
         Construct an MeiTransformer from a file existing on disk
         """
-        tree = ElementTree()
-        tree.parse(filename)
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(filename, parser=parser)
         return cls(tree)
 
     @classmethod
@@ -35,8 +38,8 @@ class MeiTransformer:
         """
         Construct an MeiTransformer from a string
         """
-        root = etree.fromstring(xml_string)
-        tree = ElementTree(root)
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.fromstring(xml_string, parser=parser)
         return cls(tree)
 
     @property
@@ -82,7 +85,7 @@ class MeiTransformer:
             raise ValueError('MEI is not in intermediate representation')
         for elem in self._tree.findall('.//mei:note[@octname]', ns):
             octname = elem.attrib.pop('octname')
-            pname, octave = octname.split(':')
+            octave, pname = octname.split(':')
             elem.set('pname', pname)
             elem.set('oct', octave)
 
