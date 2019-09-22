@@ -1,6 +1,7 @@
-from xmldiff import main
+from xmldiff import main, actions
 import lxml.etree as et
 import typing as t
+from pprint import pprint
 
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
@@ -26,7 +27,7 @@ class TreeComparison(ComparisonStrategy):
     A_COLOR = 'hsl(195, 100%, 47%)'
     B_COLOR = 'hsl(274, 100%, 56%)'
     DELETE_COLOR = 'hsl(12, 100%, 53%)'
-    INSERT_COLOR = 'hsl(12, 100%, 53%)'
+    INSERT_COLOR = 'hsl(95, 100%, 42%)'
 
     def __init__(self):
         return
@@ -68,6 +69,43 @@ class TreeComparison(ComparisonStrategy):
 
         patcher = TrackedPatcher()
         diff = patcher.patch(diff_actions, a, copy=True)
+
+        action_classes = {
+            'insert': [
+                actions.InsertNode,
+                actions.InsertComment
+            ],
+            'delete': [
+                actions.DeleteNode
+            ],
+            'update': [
+                actions.RenameNode,
+                actions.MoveNode,
+                actions.UpdateTextIn,
+                actions.UpdateTextAfter,
+                actions.UpdateAttrib,
+                actions.DeleteAttrib,
+                actions.InsertAttrib,
+                actions.RenameAttrib
+            ]
+        }
+
+        for modified in patcher.modifications:
+            first = True
+            print()
+            print(modified.node.tag)
+            pprint(modified.modifications)
+            for mod in modified.modifications:
+                if first:
+                    if type(mod) in action_classes['insert']:
+                        modified.node.set('color', TreeComparison.INSERT_COLOR)
+                    elif type(mod) in action_classes['delete']:
+                        modified.node.set('color', TreeComparison.DELETE_COLOR)
+                    elif type(mod) in action_classes['update']:
+                        modified.node.set('color', TreeComparison.B_COLOR)
+                    first = False
+        print()
+        print()
 
         print('A:\n', et.tostring(a, pretty_print=True).decode(), '\n')
         print('B:\n', et.tostring(b, pretty_print=True).decode(), '\n')
