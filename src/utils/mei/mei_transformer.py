@@ -80,6 +80,7 @@ class MeiTransformer:
             octave = elem.attrib.pop('oct')
             octname = f'{octave}:{pname}'
             elem.set('octname', octname)
+        self._strip_ids()
 
     def to_plain_mei(self) -> None:
         if not self.is_intermediate:
@@ -89,6 +90,7 @@ class MeiTransformer:
             octave, pname = octname.split(':')
             elem.set('pname', pname)
             elem.set('oct', octave)
+        self._generate_ids()
 
     def save_xml_file(self, filename: str, encoding='UTF-8') -> None:
         """
