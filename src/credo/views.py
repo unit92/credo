@@ -73,6 +73,15 @@ def add_revision(request, song_id):
     response.write(f'/songs/{song_id}')
     return response
 
+@require_POST
+def add_revision_comment(request, revision_id):
+    body = json.loads(request.body)
+    comment = Comment()
+    comment.text = body['text']
+    comment.mei_element_id = body['elementId']
+    comment.save()
+    return JsonResponse({'ok': True})
+
 
 def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
