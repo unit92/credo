@@ -1,7 +1,7 @@
+from django.core.files.base import ContentFile
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
-from django.core.files.base import ContentFile
 from .models import Comment, Edition, MEI, Revision, Song
 
 import json
@@ -73,6 +73,7 @@ def add_revision(request, song_id):
     response.write(f'/songs/{song_id}')
     return response
 
+
 @require_POST
 def add_revision_comment(request, revision_id):
     body = json.loads(request.body)
@@ -86,9 +87,10 @@ def add_revision_comment(request, revision_id):
 def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
     revision = Revision.objects.get(id=revision_id, editions__song=song)
-    return render(request, 'render.html', {
+    return render(request, 'revision.html', {
         'to_render': revision,
-        'comments': True
+        'comments': True,
+        'authenticated': request.user.is_authenticated
     })
 
 

@@ -1,0 +1,17 @@
+{% extends 'render.html' %}
+
+{% block toolbar %}
+{% if authenticated %}
+
+<div id="toolbar">
+  <span id="tools">
+    <a class="waves-effect waves-light btn" id="inspect">Inspect</a>
+    <a class="waves-effect waves-teal btn-flat" id="comment">Comment</a>
+    <a class="waves-effect waves-teal btn-flat" id="resolve">Resolve</a>
+  </span>
+  <a class="waves-effect waves-light btn" id="saveButton">Save</a>
+</div>
+
+{% endif %}
+
+{% endblock toolbar %}

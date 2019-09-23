@@ -20,6 +20,12 @@ class CredoToolkit {
 
   verovioToolkit
 
+  // toolbar stuff
+  tools
+
+  // editing mode
+  currentToolMode = 'inspect'
+
   // Sourced from https://material.io/resources/icons/
   commentSvg = `
     <svg class="tooltipped" data-position="bottom" xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 24 24">
@@ -56,16 +62,52 @@ class CredoToolkit {
     
     // attach the note grabbing listener to the event div
     document.getElementById(renderDiv)
-      .addEventListener('click', this.commmentEventListener.bind(this))
+      .addEventListener('click', this.scoreInteractionListener.bind(this))
 
     // attach a comment submitting method to the submit button in the modal
     document.getElementById('comment-modal-submit')
       .addEventListener('click', this.updateCommentFromModal.bind(this))
 
+    // set up the toolbar listening, if applicable
+    this.tools = document.getElementById('tools')
+    const saveButton = document.getElementById('saveButton')
+
+    if (this.tools) {
+      // attach an event listener to handle tool switching
+      this.tools.addEventListener(
+        'click',
+        this.updateCurrentToolMode.bind(this)
+      )
+    }
+
+    if (saveButton) {
+      saveButton.addEventListener(
+        'click',
+        this.saveRevision.bind(this)
+      )
+    }
+
     // get the CSRF token
     this.csrftoken = getCookie('csrftoken')
   }
 
+  /**
+   * Listens to click events on the score, and performs behaviour appropriate to
+   * the current editing mode.
+   *
+   * @param {Event} event A HTML DOM event.
+   */
+  scoreInteractionListener (event) {
+    if (this.currentToolMode === 'comment') {
+      this.commmentEventListener(event)
+    }
+  }
+
+  /**
+   * Reacts to the click event by reacting as if in comment mode.
+   *
+   * @param {Event} event A HTML DOM event.
+   */
   commmentEventListener (event) {
     // get the notation being clicked on, do nothing if nothing found
     const notation = this.getNotation(event)
@@ -365,6 +407,27 @@ class CredoToolkit {
       .then(responseText => {
         window.location.replace(responseText)
       })
+  }
+
+  /**
+   * Depending on what toolbar button was pressed, update the currentToolMode
+   * property on this object.
+   *
+   * @param {Event} event A DOM event.
+   */
+  updateCurrentToolMode (event) {
+    for (let child of this.tools.children) {
+      // find the pressed button
+      if (event.target.id === child.id) {
+        // make the button look selected
+        child.className = 'waves-effect waves-light btn'
+        // set the current tool mode to that button
+        this.currentToolMode = event.target.id
+      } else {
+        // make the button look unselected
+        child.className = 'waves-effect waves-teal btn-flat'
+      }
+    }
   }
 }
 
