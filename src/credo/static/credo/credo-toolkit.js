@@ -86,8 +86,14 @@ class CredoToolkit {
   updateCommentFromModal () {
     const alreadyExisting = !!this.comments[this.commentModalId]
 
-    this.comments[this.commentModalId] = document
-      .getElementById('comment-modal-text').value
+    const commentTextElement = document.getElementById('comment-modal-text')
+
+    if (!commentTextElement.value) {
+      this.commentModalInstance.close()
+      return
+    }
+
+    this.comments[this.commentModalId] = commentTextElement.value
 
     if (alreadyExisting) {
       this.updateComment(
