@@ -33,8 +33,8 @@ def song(request, song_id):
 def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
-    return render(request, 'render.html', {
-        'to_render': edition,
+    return render(request, 'edition.html', {
+        'edition': edition,
     })
 
 
@@ -88,7 +88,7 @@ def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
     revision = Revision.objects.get(id=revision_id, editions__song=song)
     return render(request, 'revision.html', {
-        'to_render': revision,
+        'revision': revision,
         'comments': True,
         'authenticated': request.user.is_authenticated
     })

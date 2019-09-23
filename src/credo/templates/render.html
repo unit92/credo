@@ -1,7 +1,13 @@
 {% include 'header.html' %}
 {% load static %}
 
-<h2>{{ to_render }}</h2>
+<h2>{% block title %}
+  {% if title %}
+  {{ title }}
+  {% else %}
+  Render Output
+  {% endif %}
+{% endblock title %}</h2>
 
 {% block toolbar %}{% endblock toolbar %}
 
@@ -42,15 +48,13 @@
   src="{% static 'credo/credo-toolkit.js' %}"
   type="text/javascript">
 </script>
+{% block scripts %}
 <script type="text/javascript">
   const toolkit = new CredoToolkit(
-    '/mei/{{ to_render.mei.id }}',
-    {% if comments %}
-      '/revisions/{{ to_render.id }}/comments',
-    {% else %}
-      null,
-    {% endif %}
+    '{{ meiUrl }}',
+    null,
     'renderDiv'
   )
   toolkit.render()
 </script>
+{% endblock scripts %}

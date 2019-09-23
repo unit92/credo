@@ -1,5 +1,9 @@
 {% extends 'render.html' %}
 
+{% block title %}
+{{ revision }}
+{% endblock title %}
+
 {% block toolbar %}
 {% if authenticated %}
 
@@ -27,3 +31,14 @@
 {% endif %}
 
 {% endblock toolbar %}
+
+{% block scripts %}
+<script type="text/javascript">
+  const toolkit = new CredoToolkit(
+    '/mei/{{ revision.mei.id }}',
+    '/revisions/{{ revision.id }}/comments',
+    'renderDiv'
+  )
+  toolkit.render()
+</script>
+{% endblock scripts %}
