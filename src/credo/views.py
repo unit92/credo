@@ -34,7 +34,8 @@ def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
     return render(request, 'edition.html', {
-        'edition': edition,
+        'authenticated': request.user.is_authenticated,
+        'edition': edition
     })
 
 

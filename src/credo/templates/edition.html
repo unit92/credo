@@ -15,16 +15,16 @@
 
 {% else %}
 
-<span
-  id="makeRevisionButton"
+<div
+  id="makeRevisionSpan"
   data-position="bottom"
   data-tooltip="Log in to revise editions">
   <a
-    class="waves-effect waves-light btn disabled">
+    class="waves-effect waves-light btn disabled makeRevisionButton">
     <i class="material-icons left">create</i>
     Make Revision
   </a>
-</span>
+</div>
 
 {% endif %}
 
@@ -40,7 +40,7 @@
   toolkit.render()
 
   document.addEventListener('DOMContentLoaded', () => {
-    const elements = document.querySelectorAll('#makeRevisionButton')
+    const elements = document.querySelectorAll('#makeRevisionSpan')
     M.Tooltip.init(elements)
   })
 </script>
