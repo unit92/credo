@@ -5,6 +5,8 @@ from django.utils import timezone
 from django.db import migrations, models
 from django.contrib.auth.models import User
 
+MEI_SEED_PATH = './credo/migrations/seed_mei/'
+
 #MIGRATE FUNCTIONS
 def load_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
@@ -44,17 +46,16 @@ def load_songs(apps, schema_editor):
 def load_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
 
-    path = './credo/migrations/seed_mei/'
-    m1 = MEI(data=path + 'SourceA.mei')
+    m1 = MEI(data=f'{MEI_SEED_PATH}diffA.mei')
     m1.save()
 
-    m2 = MEI(data=path + 'SourceB.mei')
+    m2 = MEI(data=f'{MEI_SEED_PATH}diffB.mei')
     m2.save()
 
-    m3 = MEI(data=path + 'SourceC.mei')
+    m3 = MEI(data=f'{MEI_SEED_PATH}diffC.mei')
     m3.save()
 
-    m4 = MEI(data=path + 'Default.mei')
+    m4 = MEI(data=f'{MEI_SEED_PATH}diffD.mei')
     m4.save()
 
 def load_users(apps, schema_editor):
@@ -78,28 +79,26 @@ def load_editions(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
     User = apps.get_model('auth', 'User')
 
-    path = './credo/migrations/seed_mei/'
-
     user = User.objects.get(username='Craig')
-    piece = MEI.objects.get(data=path + 'SourceA.mei')
+    piece = MEI.objects.get(data=f'{MEI_SEED_PATH}diffA.mei')
     song = Song.objects.get(name='JS Standard')
     e1 = Edition(name='Christmas JS', song=song, mei=piece, uploader=user)
     e1.save()
 
     user = User.objects.get(username='Luke')
-    piece = MEI.objects.get(data=path + 'SourceB.mei')
+    piece = MEI.objects.get(data=f'{MEI_SEED_PATH}diffB.mei')
     song = Song.objects.get(name='Jingle Django')
     e2 = Edition(name='Python Play', song=song, mei=piece, uploader=user)
     e2.save()
 
     user = User.objects.get(username='Joel')
-    piece = MEI.objects.get(data=path + 'SourceC.mei')
+    piece = MEI.objects.get(data=f'{MEI_SEED_PATH}diffC.mei')
     song = Song.objects.get(name='Environment Song')
     e3 = Edition(name='Green Edition', song=song, mei=piece, uploader=user)
     e3.save()
 
     user = User.objects.get(username='Alex')
-    piece = MEI.objects.get(data=path + 'Default.mei')
+    piece = MEI.objects.get(data=f'{MEI_SEED_PATH}diffD.mei')
     song = Song.objects.get(name='Diffing Song')
     e4 = Edition(name='Congruent Edition', song=song, mei=piece, uploader=user)
     e4.save()
@@ -110,33 +109,31 @@ def load_revisions(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
     User = apps.get_model('auth', 'User')
 
-    path = './credo/migrations/seed_mei/'
-
     craig_edition = Edition.objects.get(name='Christmas JS')
     luke_edition = Edition.objects.get(name='Python Play')
     joel_edition = Edition.objects.get(name='Green Edition')
     alex_edition = Edition.objects.get(name='Congruent Edition')
 
     account = User.objects.get(username='Craig')
-    rev_file =  MEI.objects.get(data=path + 'SourceB.mei')
+    rev_file =  MEI.objects.get(data=f'{MEI_SEED_PATH}diffB.mei')
     r1 = Revision(user=account, mei=rev_file)
     r1.save()
     r1.editions.add(craig_edition)
 
     account = User.objects.get(username='Luke')
-    rev_file = MEI.objects.get(data=path + 'SourceC.mei')
+    rev_file = MEI.objects.get(data=f'{MEI_SEED_PATH}diffC.mei')
     r2 = Revision(user=account, mei=rev_file)
     r2.save()
     r2.editions.add(luke_edition)
 
     account = User.objects.get(username='Joel')
-    rev_file = MEI.objects.get(data=path + 'Default.mei')
+    rev_file = MEI.objects.get(data=f'{MEI_SEED_PATH}diffD.mei')
     r3 = Revision(user=account, mei=rev_file)
     r3.save()
     r3.editions.add(joel_edition)
 
     account = User.objects.get(username='Alex')
-    rev_file = MEI.objects.get(data=path + 'SourceA.mei')
+    rev_file = MEI.objects.get(data=f'{MEI_SEED_PATH}diffA.mei')
     r4 = Revision(user=account, mei=rev_file)
     r4.save()
     r4.editions.add(alex_edition)
@@ -145,8 +142,6 @@ def load_comments(apps, schema_editor):
     Comment = apps.get_model('credo', 'Comment')
     Edition = apps.get_model('credo', 'Edition')
     User = apps.get_model('auth', 'User')
-
-    path = './credo/migrations/seed_mei/'
 
     piece = Edition.objects.get(name='Christmas JS')
     account = User.objects.get(username='Craig')
@@ -185,11 +180,10 @@ def delete_songs(apps, schema_editor):
 
 def delete_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
-    path = './credo/migrations/seed_mei/'
-    MEI.objects.get(data=path + 'SourceA.mei').delete()
-    MEI.objects.get(data=path + 'SourceB.mei').delete()
-    MEI.objects.get(data=path + 'SourceC.mei').delete()
-    MEI.objects.get(data=path + 'Default.mei').delete()
+    MEI.objects.get(data=f'{MEI_SEED_PATH}diffA.mei').delete()
+    MEI.objects.get(data=f'{MEI_SEED_PATH}diffB.mei').delete()
+    MEI.objects.get(data=f'{MEI_SEED_PATH}diffC.mei').delete()
+    MEI.objects.get(data=f'{MEI_SEED_PATH}diffD.mei').delete()
 
 def delete_users(apps, schema_editor):
     User = apps.get_model('auth', 'User')
