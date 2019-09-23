@@ -418,7 +418,8 @@ class CredoToolkit {
   updateCurrentToolMode (event) {
     for (let child of this.tools.children) {
       // find the pressed button
-      if (event.target.id === child.id) {
+      if (event.target.id === child.id ||
+        event.target.parentElement.id === child.id) {
         // make the button look selected
         child.className = 'waves-effect waves-light btn'
         // set the current tool mode to that button
