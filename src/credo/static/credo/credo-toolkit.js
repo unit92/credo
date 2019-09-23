@@ -88,7 +88,7 @@ class CredoToolkit {
 
     const commentTextElement = document.getElementById('comment-modal-text')
 
-    if (!commentTextElement.value) {
+    if (!commentTextElement.value && !alreadyExisting) {
       this.commentModalInstance.close()
       return
     }
