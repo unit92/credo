@@ -1,10 +1,13 @@
-from django.core.files.base import ContentFile
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
-from .models import Comment, Edition, MEI, Revision, Song
+from django.views.decorators.http import require_http_methods, require_POST
 
+import base64
 import json
+import lxml.etree as et
+
+from credo.utils.mei.tree_comparison import TreeComparison
+from .models import Comment, Edition, MEI, Revision, Song
 
 
 def index(request):
@@ -37,42 +40,6 @@ def edition(request, song_id, edition_id):
         'authenticated': request.user.is_authenticated,
         'edition': edition
     })
-
-
-@require_POST
-def add_revision(request, song_id):
-    body = json.loads(request.body)
-
-    mei_file = ContentFile(body['mei'])
-    mei_object = MEI()
-    mei_object.data.save('mei', mei_file)
-    mei_object.save()
-
-    # TODO: save the revision
-    #  - can't do this until we have edition data
-
-    '''
-    revision_object = Revision()
-    revision_object.mei = mei_object
-    revision_object.song_id = song_id
-    # revision_object.user =  # who knows lmao
-    '''
-
-    # TODO: save the comments
-    #  - can't do this until we save the revisions
-
-    '''
-    for mei_elem in body['comments']:
-        comment = Comment()
-        comment.mei_element_id = mei_elem
-        comment.text = body['comments'][mei_elem]
-        comment.revision = revision_object
-        # revision_object.user =  # who knows lmao
-    '''
-
-    response = HttpResponse()
-    response.write(f'/songs/{song_id}')
-    return response
 
 
 @require_POST
@@ -111,8 +78,70 @@ def revision_comments(request, revision_id):
 
 def mei(request, mei_id):
     mei = MEI.objects.get(id=mei_id)
-    response = HttpResponse()
-    response['Content-Disposition'] = 'attachment; filename=file.mei'
     with mei.data.open() as f:
-        response.write(f.read())
-    return response
+        mei_data = f.read()
+    mei_data = str(base64.b64encode(mei_data), encoding='utf-8')
+    data = {
+        'content': {
+            'mei': {
+                'detail': mei_data,
+                'encoding': 'base64'
+            }
+        }
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def compare(request):
+    source_ids = request.GET.getlist('s')
+
+    # TODO Nicer rendering for bad source ids
+    try:
+        source_ids = [int(s) for s in source_ids]
+    except ValueError:
+        return HttpResponseBadRequest()
+
+    return render(request, 'compare.html', {
+        'sources': [{'id': s} for s in source_ids]
+    })
+
+
+@require_http_methods(['GET'])
+def diff(request):
+    sources = request.GET.getlist('s')
+
+    try:
+        sources = [int(s) for s in sources]
+    except ValueError:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    try:
+        meis = [MEI.objects.get(id=s) for s in sources]
+    except MEI.DoesNotExist:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    if len(meis) != 2:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    engine = TreeComparison()
+    out_meis = engine.compare_meis(meis[0], meis[1])
+    diff, *sources = [et.tostring(mei, encoding='utf-8') for mei in out_meis]
+    diff = str(base64.b64encode(diff), encoding='utf-8')
+    sources = [
+        {
+            'detail': str(base64.b64encode(s), encoding='utf-8'),
+            'encoding': 'base64'
+        }
+        for s in sources
+    ]
+
+    data = {
+        'content': {
+            'diff': {
+                'detail': diff,
+                'encoding': 'base64'
+            },
+            'sources': sources
+        }
+    }
+    return HttpResponse(json.dumps(data), content_type='application/json')

@@ -65,8 +65,10 @@ class CredoToolkit {
       .addEventListener('click', this.scoreInteractionListener.bind(this))
 
     // attach a comment submitting method to the submit button in the modal
-    document.getElementById('comment-modal-submit')
-      .addEventListener('click', this.updateCommentFromModal.bind(this))
+    const commentModalSubmit = document.getElementById('comment-modal-submit')
+    if (commentModalSubmit) {
+      commentModalSubmit.addEventListener('click', this.updateCommentFromModal.bind(this))
+    }
 
     // set up the toolbar listening, if applicable
     this.tools = document.getElementById('tools')
@@ -155,16 +157,8 @@ class CredoToolkit {
    * @return {Promise<string>} A promise resolving to the MEI.
    */
   loadMei () {
-    return new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest()
-      xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-          resolve(this.responseText)
-        }
-      }
-      xhttp.open('GET', this.meiUrl, true)
-      xhttp.send()
-    })
+    return jsonRequest(this.meiUrl)
+      .then(json => atob(json.content.mei.detail))
   }
 
   /**
@@ -186,16 +180,7 @@ class CredoToolkit {
    * @return {Promise<Object[]>} A promise resolving to a series of comments.
    */
   loadComments () {
-    return new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest()
-      xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-          resolve(this.responseText)
-        }
-      }
-      xhttp.open('GET', this.commentsUrl, true)
-      xhttp.send()
-    })
+    return jsonRequest(this.commentsUrl)
   }
 
   /**
@@ -205,7 +190,9 @@ class CredoToolkit {
    */
   loadAndSaveComments () {
     return this.loadComments()
-      .then(comments => this.comments = JSON.parse(comments))
+      .then(comments => {
+        this.comments = comments
+      })
   }
 
   /**
@@ -230,6 +217,23 @@ class CredoToolkit {
     } else {
       this.comments = {}
     }
+  }
+
+  /**
+   * Renders the MEI diffs, to a list of inline SVGs.
+   */
+  async renderDiff () {
+    const meiJson = await jsonRequest(this.meiUrl)
+    const childDivs = Array.from(document.querySelectorAll(`#${this.renderDiv} > div`))
+    childDivs.forEach((div, index) => {
+      if (index === 0) {
+        const diff = atob(meiJson.content.diff.detail)
+        div.innerHTML = this.verovioToolkit.renderData(diff, {svgViewBox: true, adjustPageHeight: true})
+      } else {
+        const source = atob(meiJson.content.sources[index - 1].detail)
+        div.innerHTML = this.verovioToolkit.renderData(source, {svgViewBox: true, adjustPageHeight: true})
+      }
+    })
   }
 
   /**
@@ -384,32 +388,11 @@ class CredoToolkit {
   }
 
   /**
-   * Save revision by making a POST request to the server, and then redirect to
-   * the saved revision.
+   * Save revision by making a request to the server, giving the revision ID
+   * that we are saving over.
    */
   saveRevision () {
-    const mei = this.mei
-    const comments = this.comments
-
-    const request = new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest()
-      xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-          resolve(this.responseText)
-        }
-      }
-
-      xhttp.open('POST', '../revisions/', true)
-      xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
-      xhttp.send(JSON.stringify({
-        mei,
-        comments,
-      }))
-    })
-      .then(responseText => {
-        window.location.replace(responseText)
-      })
+    // TODO
   }
 
   /**
@@ -440,6 +423,32 @@ class CredoToolkit {
   }
 }
 
+
+/**
+ * Makes a GET request, and parses the response as JSON.
+ *
+ * @param {string} url The URL to request.
+ * @return {Promise<Object>} The JSON object retrieved.
+ */
+const jsonRequest = url =>
+  new Promise((resolve, reject) => {
+    const xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        const json = JSON.parse(this.responseText)
+        resolve(json)
+      }
+    }
+    xhttp.open('GET', url, true)
+    xhttp.send()
+  })
+
+/**
+ * Gets the value of a cookie with given name.
+ *
+ * @param {string} name The cookie name whose value we wish to retrieve.
+ * @return {string} The cookie value.
+ */
 const getCookie = name => {
     if (document.cookie && document.cookie !== '') {
       const cookies = document.cookie.split(';')

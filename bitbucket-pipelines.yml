@@ -1,0 +1,23 @@
+# The python version here must match the development server
+image: python:3.7.4
+pipelines:
+  default:
+    - step:
+        caches:
+          - pip
+        script:
+          - pip install -r requirements.txt
+          - mv .env.example .env
+          - cd src && ./manage.py test
+        services:
+          - postgres
+definitions:
+  services:
+    postgres:
+      image: "postgres:11.5-alpine"
+      environment:
+        POSTGRES_DB: $POSTGRES_DB
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+
+
