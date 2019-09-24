@@ -419,6 +419,11 @@ class CredoToolkit {
    * @param {Event} event A DOM event.
    */
   updateCurrentToolMode (event) {
+    // if none of the buttons are pressed, abort
+    if (event.target.id === 'tools') {
+      return
+    }
+
     for (let child of this.tools.children) {
       // find the pressed button
       if (event.target.id === child.id ||
