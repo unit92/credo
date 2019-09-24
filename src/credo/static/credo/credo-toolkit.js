@@ -238,8 +238,9 @@ class CredoToolkit {
    */
   renderMei () {
     const renderElement = document.getElementById(this.renderDiv)
+    this.verovioToolkit.loadData(this.mei)
     renderElement.innerHTML = this.verovioToolkit.renderData(
-          this.responseText,
+          this.mei,
           {svgViewBox: true}
     )
   }
@@ -350,7 +351,9 @@ class CredoToolkit {
         .children[notationElement.childElementCount - 1]
 
       const position = commentIcon.getBoundingClientRect()
-      let xPosition = position.x - tooltipElement.getBoundingClientRect().width / 2 + commentIcon.getBoundingClientRect().width / 2
+      let xPosition = position.x -
+        tooltipElement.getBoundingClientRect().width / 2 +
+        commentIcon.getBoundingClientRect().width / 2
       if (xPosition < 0) {
         xPosition = 0
       }
