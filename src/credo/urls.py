@@ -36,4 +36,5 @@ urlpatterns = [
     path('compare', views.compare),
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
+    path('login', views.login),
 ]
