@@ -2,3 +2,6 @@
 __pycache__/
 mei_files/
 .mypy_cache/
+test-reports/
+.coverage
+htmlcov
