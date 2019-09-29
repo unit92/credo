@@ -140,10 +140,16 @@ class CredoToolkit {
     this.comments[this.commentModalId] = commentTextElement.value
 
     if (alreadyExisting) {
-      this.updateComment(
-        this.commentModalId,
-        this.comments[this.commentModalId]
-      )
+      // if there is a text value, update it
+      if (this.comments[this.commentModalId]) {
+        this.updateComment(
+          this.commentModalId,
+          this.comments[this.commentModalId]
+        )
+      } else {
+        // delete it, there is no comment text
+        this.deleteComment(this.commentModalId)
+      }
     } else {
       this.addComment(this.commentModalId, this.comments[this.commentModalId])
     }
@@ -302,12 +308,7 @@ class CredoToolkit {
    * @param {string} text The new comment text.
    */
   updateComment (elementId, text) {
-    if (text) {
-      this.comments[elementId] = text
-    } else {
-      // delete if being removed
-      delete this.comments[elementId]
-    }
+    this.comments[elementId] = text
 
     // get the element
     const element = document.getElementById(elementId)
@@ -315,12 +316,27 @@ class CredoToolkit {
     // get the comment on the element
     const commentElement = element.children[(element.children.length - 1)]
 
-    // set the comment text or remove if no text
-    if (text) {
-      commentElement.setAttribute('data-tooltip', text)
-    } else {
-      commentElement.remove()
-    }
+    commentElement.setAttribute('data-tooltip', text)
+
+    this.handleTooltips()
+  }
+
+  /**
+   * Deletes an existing comment.
+   *
+   * @param {string} elementId The MEI ID whose comment we wish to delete.
+   */
+  deleteComment (elementId) {
+    delete this.comments[elementId]
+
+    // get the element
+    const element = document.getElementById(elementId)
+
+    // get the comment on the element
+    const commentElement = element.children[(element.children.length - 1)]
+
+    // remove it
+    commentElement.remove()
 
     this.handleTooltips()
   }
