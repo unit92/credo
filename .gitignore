@@ -5,3 +5,4 @@ mei_files/
 test-reports/
 .coverage
 htmlcov
+src/static
