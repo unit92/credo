@@ -168,11 +168,11 @@ class CredoToolkit {
   }
 
   /**
-   * Loads the MEI, and saves it to the class and the Verovio toolkit.
+   * Loads the MEI, and stores it on the object  and the Verovio toolkit.
    *
    * @return {Promise<void>} A promise to resolve upon completion.
    */
-  loadAndSaveMei () {
+  loadAndStoreMei () {
     return this.loadMei()
       .then(mei => {
         this.mei = mei
@@ -190,11 +190,11 @@ class CredoToolkit {
   }
 
   /**
-   * Loads the comments, and saves them to the class.
+   * Loads the comments, and saves them to a member variable.
    *
    * @return {Promise<void>} A promise to resolve upon completion.
    */
-  loadAndSaveComments () {
+  loadAndStoreComments () {
     return this.loadComments()
       .then(comments => {
         this.comments = comments
@@ -207,7 +207,7 @@ class CredoToolkit {
   async render () {
     // load the MEI if it hasn't been loaded yet
     if (!this.mei) {
-      await this.loadAndSaveMei()
+      await this.loadAndStoreMei()
     }
 
     // render the MEI
@@ -216,7 +216,7 @@ class CredoToolkit {
     if (this.commentsUrl) {
       // if there are comments, load the comments
       if (!this.comments) {
-        await this.loadAndSaveComments()
+        await this.loadAndStoreComments()
       }
 
       this.renderComments()
