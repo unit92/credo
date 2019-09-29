@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.http import require_http_methods
 
 import base64
 import json
@@ -42,7 +42,7 @@ def edition(request, song_id, edition_id):
     })
 
 
-@require_POST
+@require_http_methods(['POST'])
 def add_revision_comment(request, revision_id):
     body = json.loads(request.body)
     comment = Comment()
