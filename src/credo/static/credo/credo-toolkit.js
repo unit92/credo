@@ -52,9 +52,9 @@ class CredoToolkit {
 
     this.verovioToolkit = new verovio.toolkit()
 
-    // initialise modal
+    // initialise the comment modal
     document.addEventListener('DOMContentLoaded', () => {
-      const modals = document.querySelectorAll('.modal')
+      const modals = document.querySelectorAll('.modal#comment-modal')
       M.Modal.init(modals)
       this.commentModalInstance = M.Modal
         .getInstance(document.getElementById('comment-modal'))
