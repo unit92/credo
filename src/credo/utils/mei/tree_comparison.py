@@ -39,9 +39,6 @@ class TreeComparison(ComparisonStrategy):
         a_transformer = MeiTransformer(a)
         b_transformer = MeiTransformer(b)
 
-        a_transformer.normalise()  # TODO Normalise on add to database instead
-        b_transformer.normalise()  # TODO Normalise on add to database instead
-
         a_transformer.to_intermediate()
         b_transformer.to_intermediate()
 
@@ -52,6 +49,10 @@ class TreeComparison(ComparisonStrategy):
         diff_transformer.to_plain_mei()
         a_transformer.to_plain_mei()
         b_transformer.to_plain_mei()
+
+        diff_transformer.generate_ids(keep_existing=True)
+        a_transformer.generate_ids(keep_existing=False)
+        b_transformer.generate_ids(keep_existing=False)
 
         return diff_transformer.tree, a_transformer.tree, b_transformer.tree
 
@@ -71,6 +72,16 @@ class TreeComparison(ComparisonStrategy):
         patcher = TrackedPatcher()
         a_modded = deepcopy(a)
         b_modded = patcher.patch(diff_actions, a_modded)
+        # Make all nodes in b_modded invisible by default
+        # to avoid layer clashes
+
+        class_lookup = et.ElementDefaultClassLookup()
+
+        for elem in b_modded.iter():
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                elem.set('visible', 'false')
 
         action_classes = {
             'insert': [
@@ -92,6 +103,7 @@ class TreeComparison(ComparisonStrategy):
             ]
         }
 
+        # Apply colours to modified nodes in a_modded and b_modded trees
         for node in patcher.nodes:
             first = True
             if len(node.modifications) > 0:
@@ -104,17 +116,21 @@ class TreeComparison(ComparisonStrategy):
                     if type(mod) in action_classes['insert']:
                         # Set colours in b_modded
                         node.modified.set('color', TreeComparison.INSERT_COLOR)
+                        node.modified.set('visible', 'true')
                     elif type(mod) in action_classes['delete']:
                         # Set colours in a_modded
                         node.original.set('color', TreeComparison.DELETE_COLOR)
                     elif type(mod) in action_classes['update']:
                         # Set colours in b_modded
                         node.modified.set('color', TreeComparison.B_COLOR)
+                        node.modified.set('visible', 'true')
                         # Set colours in a_modded
                         node.original.set('color', TreeComparison.A_COLOR)
                     first = False
                 else:
                     break
+
+        # Merge a_modded and b_modded into a single diff tree
 
         print()
         print()
@@ -132,7 +148,89 @@ class TreeComparison(ComparisonStrategy):
             '\n'
         )
 
-        return a_modded
+        diff = self.__naive_layer_merge(a_modded, b_modded)
+
+        print(
+            'Diff:\n',
+            et.tostring(diff, pretty_print=True).decode(),
+            '\n'
+        )
+
+        return diff
+
+    def __naive_layer_merge(self, a: et.ElementTree, b: et.ElementTree) \
+            -> et.ElementTree:
+
+        base = deepcopy(a)
+        insert = b
+        base_id_prefix = 'a'
+        insert_id_prefix = 'b'
+
+        bar_qry = et.XPath('//mei:measure', namespaces=self.ns)
+        base_bars = bar_qry(base)
+        insert_bars = bar_qry(insert)
+
+        # Loop through all bars in the piece
+        id_idx = 0
+        bar_idx = 0
+        while bar_idx < min(len(base_bars), len(insert_bars)):  # TODO Rethink
+            base_bar = base_bars[bar_idx]
+            insert_bar = insert_bars[bar_idx]
+
+            # Loop through each staff in the bar
+            staff_qry = et.XPath('child::mei:staff', namespaces=self.ns)
+            base_staffs = staff_qry(base_bar)
+            insert_staffs = staff_qry(insert_bar)
+
+            if len(base_staffs) != len(insert_staffs):
+                raise ValueError(
+                    'Unequal staff count in bar {}'.format(bar_idx)
+                )
+
+            staff_idx = 0
+            while staff_idx < len(base_staffs):
+                base_staff = base_staffs[staff_idx]
+                insert_staff = insert_staffs[staff_idx]
+
+                # Loop through each layer in the staff
+
+                layer_qry = et.XPath('child::mei:layer', namespaces=self.ns)
+                base_layers = layer_qry(base_staff)
+                insert_layers = layer_qry(insert_staff)
+
+                if len(base_layers) != len(insert_layers):
+                    raise ValueError(
+                        'Unequal layer count in staff {}, bar {}'.format(
+                            staff_idx,
+                            bar_idx
+                        )
+                    )
+
+                id_attrib = et.QName(self.ns['xml'], 'id')
+
+                layer_idx = 0
+                while layer_idx < len(base_layers):
+                    base_layer = base_layers[layer_idx]
+                    insert_layer = deepcopy(insert_layers[layer_idx])
+                    base_layer.set(
+                        id_attrib.text,
+                        base_id_prefix + str(id_idx)
+                    )
+                    insert_layer.set(
+                        id_attrib.text,
+                        insert_id_prefix + str(id_idx)
+                    )
+                    id_idx += 1
+                    base_staff.append(insert_layer)
+                    layer_idx += 1
+
+                staff_idx += 1
+
+            # TODO Merge trills
+
+            bar_idx += 1
+
+        return base
 
     # def __get_diff_layers(self, diff: et.ElementTree, layer_id: str):
     #     # Find the corresponding layer in the diff tree
