@@ -118,3 +118,7 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+def signup(request):
+    return render(request, 'signup.html')
