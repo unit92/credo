@@ -134,7 +134,8 @@ class MeiTransformer:
             if (not isinstance(elem, class_lookup.comment_class) and
                     not isinstance(elem, class_lookup.entity_class)):
                 id_attrib = etree.QName(ns['xml'], 'id')
-                elem.attrib.pop(id_attrib.text)
+                if elem.attrib.get(id_attrib.text) is not None:
+                    elem.attrib.pop(id_attrib.text)
 
     def generate_ids(self, keep_existing=False) -> None:
         """
