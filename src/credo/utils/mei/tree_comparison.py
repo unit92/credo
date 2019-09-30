@@ -72,11 +72,10 @@ class TreeComparison(ComparisonStrategy):
         patcher = TrackedPatcher()
         a_modded = deepcopy(a)
         b_modded = patcher.patch(diff_actions, a_modded)
+
         # Make all nodes in b_modded invisible by default
-        # to avoid layer clashes
-
+        # to avoid visual layer clashes
         class_lookup = et.ElementDefaultClassLookup()
-
         for elem in b_modded.iter():
             # Ensure element can have attributes
             if (not isinstance(elem, class_lookup.comment_class) and
@@ -105,32 +104,28 @@ class TreeComparison(ComparisonStrategy):
 
         # Apply colours to modified nodes in a_modded and b_modded trees
         for node in patcher.nodes:
-            first = True
             if len(node.modifications) > 0:
                 print()
                 print('Original:', node.original)
                 print('Modified:', node.modified)
                 pprint(node.modifications)
-            for mod in node.modifications:
-                if first:
-                    if type(mod) in action_classes['insert']:
-                        # Set colours in b_modded
-                        node.modified.set('color', TreeComparison.INSERT_COLOR)
-                        node.modified.set('visible', 'true')
-                    elif type(mod) in action_classes['delete']:
-                        # Set colours in a_modded
-                        node.original.set('color', TreeComparison.DELETE_COLOR)
-                    elif type(mod) in action_classes['update']:
-                        # Set colours in b_modded
-                        node.modified.set('color', TreeComparison.B_COLOR)
-                        node.modified.set('visible', 'true')
-                        # Set colours in a_modded
-                        node.original.set('color', TreeComparison.A_COLOR)
-                    first = False
-                else:
-                    break
+                mod = node.modifications[0]
+                if type(mod) in action_classes['insert']:
+                    # Set colours in b_modded
+                    node.modified.set('color', TreeComparison.INSERT_COLOR)
+                    node.modified.set('visible', 'true')
+                elif type(mod) in action_classes['delete']:
+                    # Set colours in a_modded
+                    node.original.set('color', TreeComparison.DELETE_COLOR)
+                elif type(mod) in action_classes['update']:
+                    # Set colours in b_modded
+                    node.modified.set('color', TreeComparison.B_COLOR)
+                    node.modified.set('visible', 'true')
+                    # Set colours in a_modded
+                    node.original.set('color', TreeComparison.A_COLOR)
 
         # Merge a_modded and b_modded into a single diff tree
+        diff = self.__naive_layer_merge(a_modded, b_modded)
 
         print()
         print()
@@ -147,8 +142,6 @@ class TreeComparison(ComparisonStrategy):
             et.tostring(b_modded, pretty_print=True).decode(),
             '\n'
         )
-
-        diff = self.__naive_layer_merge(a_modded, b_modded)
 
         print(
             'Diff:\n',
@@ -212,14 +205,22 @@ class TreeComparison(ComparisonStrategy):
                 while layer_idx < len(base_layers):
                     base_layer = base_layers[layer_idx]
                     insert_layer = deepcopy(insert_layers[layer_idx])
+
                     base_layer.set(
                         id_attrib.text,
                         base_id_prefix + str(id_idx)
                     )
+
                     insert_layer.set(
                         id_attrib.text,
                         insert_id_prefix + str(id_idx)
                     )
+                    # Update n tag on layer to allow trills to connect properly
+                    insert_layer.set(
+                        'n',
+                        str(len(base_layers) + layer_idx + 1)
+                    )
+
                     id_idx += 1
                     base_staff.append(insert_layer)
                     layer_idx += 1
