@@ -2,6 +2,7 @@ from xmldiff import main, actions
 import lxml.etree as et
 import typing as t
 from pprint import pprint
+from copy import deepcopy
 
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
@@ -68,7 +69,8 @@ class TreeComparison(ComparisonStrategy):
         )
 
         patcher = TrackedPatcher()
-        diff = patcher.patch(diff_actions, a, copy=True)
+        a_modded = deepcopy(a)
+        b_modded = patcher.patch(diff_actions, a_modded)
 
         action_classes = {
             'insert': [
@@ -90,28 +92,47 @@ class TreeComparison(ComparisonStrategy):
             ]
         }
 
-        for modified in patcher.modifications:
+        for node in patcher.nodes:
             first = True
-            print()
-            print(modified.node.tag)
-            pprint(modified.modifications)
-            for mod in modified.modifications:
+            if len(node.modifications) > 0:
+                print()
+                print('Original:', node.original)
+                print('Modified:', node.modified)
+                pprint(node.modifications)
+            for mod in node.modifications:
                 if first:
                     if type(mod) in action_classes['insert']:
-                        modified.node.set('color', TreeComparison.INSERT_COLOR)
+                        # Set colours in b_modded
+                        node.modified.set('color', TreeComparison.INSERT_COLOR)
                     elif type(mod) in action_classes['delete']:
-                        modified.node.set('color', TreeComparison.DELETE_COLOR)
+                        # Set colours in a_modded
+                        node.original.set('color', TreeComparison.DELETE_COLOR)
                     elif type(mod) in action_classes['update']:
-                        modified.node.set('color', TreeComparison.B_COLOR)
+                        # Set colours in b_modded
+                        node.modified.set('color', TreeComparison.B_COLOR)
+                        # Set colours in a_modded
+                        node.original.set('color', TreeComparison.A_COLOR)
                     first = False
+                else:
+                    break
+
         print()
         print()
 
         print('A:\n', et.tostring(a, pretty_print=True).decode(), '\n')
         print('B:\n', et.tostring(b, pretty_print=True).decode(), '\n')
-        print('Diff:\n', et.tostring(diff, pretty_print=True).decode(), '\n')
+        print(
+            'A Modded:\n',
+            et.tostring(a_modded, pretty_print=True).decode(),
+            '\n'
+        )
+        print(
+            'B Modded:\n',
+            et.tostring(b_modded, pretty_print=True).decode(),
+            '\n'
+        )
 
-        return diff
+        return a_modded
 
     # def __get_diff_layers(self, diff: et.ElementTree, layer_id: str):
     #     # Find the corresponding layer in the diff tree
