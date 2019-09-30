@@ -1,0 +1,44 @@
+{% extends 'render.html' %}
+
+{% block title %}
+{{ revision }}
+{% endblock title %}
+
+{% block toolbar %}
+{% if authenticated %}
+
+<div id="toolbar">
+  <span id="tools">
+    <a class="waves-effect waves-light btn" id="inspect">
+      <i class="material-icons left">pan_tool</i>
+      Inspect
+    </a>
+    <a class="waves-effect waves-teal btn-flat" id="comment">
+      <i class="material-icons left">comment</i>
+      Comment
+    </a>
+    <a class="waves-effect waves-teal btn-flat" id="resolve">
+      <i class="material-icons left">done</i>
+      Resolve
+    </a>
+  </span>
+  <a class="waves-effect waves-light btn" id="saveButton">
+    <i class="material-icons left">save</i>
+    Save
+  </a>
+</div>
+
+{% endif %}
+
+{% endblock toolbar %}
+
+{% block scripts %}
+<script type="text/javascript">
+  const toolkit = new CredoToolkit(
+    '/mei/{{ revision.mei.id }}',
+    '/revisions/{{ revision.id }}/comments',
+    'renderDiv'
+  )
+  toolkit.render()
+</script>
+{% endblock scripts %}

@@ -1,5 +1,7 @@
 # The python version here must match the development server
 image: python:3.7.4
+clone:
+  depth: 1
 pipelines:
   default:
     - step:
@@ -7,8 +9,11 @@ pipelines:
           - pip
         script:
           - pip install -r requirements.txt
+          - pip install -r ci-requirements.txt
           - mv .env.example .env
-          - cd src && ./manage.py test
+          - cd src
+          - coverage3 run manage.py test
+          - coverage3 report
         services:
           - postgres
 definitions:
@@ -19,5 +24,3 @@ definitions:
         POSTGRES_DB: $POSTGRES_DB
         POSTGRES_USER: $POSTGRES_USER
         POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-
-

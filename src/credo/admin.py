@@ -15,16 +15,24 @@ class ComposerAdmin(admin.ModelAdmin):
 class SongAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'composer', 'created_at', 'updated_at']
 
+
 class MEIAdmin(admin.ModelAdmin):
     list_display = ['id', 'created_at', 'updated_at']
 
 
 class EditionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'song', 'uploader', 'created_at', 'updated_at']
+    list_display = [
+            'id',
+            'name',
+            'song',
+            'uploader',
+            'created_at',
+            'updated_at'
+    ]
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'edition', 'user', 'created_at', 'updated_at']
+    list_display = ['id', 'revision', 'user', 'created_at', 'updated_at']
 
 
 class RevisionAdmin(admin.ModelAdmin):
