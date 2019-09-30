@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
+from django.views import View
 from django.views.decorators.http import require_http_methods
 
 import base64
@@ -52,14 +53,18 @@ def add_revision_comment(request, revision_id):
     return JsonResponse({'ok': True})
 
 
-def revision(request, song_id, revision_id):
-    song = Song.objects.get(id=song_id)
-    revision = Revision.objects.get(id=revision_id, editions__song=song)
-    return render(request, 'revision.html', {
-        'revision': revision,
-        'comments': True,
-        'authenticated': request.user.is_authenticated
-    })
+class RevisionView(View):
+    def get(self, request, song_id, revision_id):
+        song = Song.objects.get(id=song_id)
+        revision = Revision.objects.get(id=revision_id, editions__song=song)
+        return render(request, 'revision.html', {
+            'revision': revision,
+            'comments': True,
+            'authenticated': request.user.is_authenticated
+        })
+
+    def post(self, request, song_id, revision_id):
+        ...
 
 
 def revision_comments(request, revision_id):
@@ -145,3 +150,4 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
