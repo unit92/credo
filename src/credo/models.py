@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import os
 
 class Composer(models.Model):
     name = models.TextField()
@@ -28,7 +29,8 @@ class MEI(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'MEI object created at {self.created_at}'
+        file_id = os.path.split(self.data.name)[-1].split("_")[-1]
+        return f'MEI object {file_id} created at {self.created_at}'
 
 
 class Edition(models.Model):
