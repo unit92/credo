@@ -44,11 +44,13 @@ class CredoToolkit {
    * @param {string} commentsUrl The URL of any associated comments, can be
    * null to indicate no comments.
    * @param {string} renderDiv The ID of the div to which we wish to render.
+   * @param {string} saveUrl Optional. The URL to POST to when saving revisions.
    */
-  constructor (meiUrl, commentsUrl, renderDiv) {
+  constructor (meiUrl, commentsUrl, renderDiv, saveUrl) {
     this.meiUrl = meiUrl
     this.commentsUrl = commentsUrl
     this.renderDiv = renderDiv
+    this.saveUrl = saveUrl
 
     this.verovioToolkit = new verovio.toolkit()
 
@@ -408,7 +410,17 @@ class CredoToolkit {
    * that we are saving over.
    */
   saveRevision () {
-    // TODO
+    new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          // successfully saved
+        }
+      }
+
+      xhttp.open('POST', this.saveUrl, true)
+      xhttp.send()
+    })
   }
 
   /**
