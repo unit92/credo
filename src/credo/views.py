@@ -1,13 +1,13 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
-import lxml.etree as et
-import json
+
 import base64
+import json
+import lxml.etree as et
+
 from credo.utils.mei.tree_comparison import TreeComparison
-
-
-from .models import Edition, MEI, Revision, Song
+from .models import Comment, Edition, MEI, Revision, Song
 
 
 def index(request):
@@ -36,16 +36,43 @@ def song(request, song_id):
 def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
-    return render(request, 'render.html', {
-        'to_render': edition,
+    return render(request, 'edition.html', {
+        'authenticated': request.user.is_authenticated,
+        'edition': edition
     })
+
+
+@require_http_methods(['POST'])
+def add_revision_comment(request, revision_id):
+    body = json.loads(request.body)
+    comment = Comment()
+    comment.text = body['text']
+    comment.mei_element_id = body['elementId']
+    comment.save()
+    return JsonResponse({'ok': True})
 
 
 def revision(request, song_id, revision_id):
     song = Song.objects.get(id=song_id)
     revision = Revision.objects.get(id=revision_id, editions__song=song)
-    return render(request, 'render.html', {
-        'to_render': revision
+    return render(request, 'revision.html', {
+        'revision': revision,
+        'comments': True,
+        'authenticated': request.user.is_authenticated
+    })
+
+
+def revision_comments(request, revision_id):
+    revision = Revision.objects.get(id=revision_id)
+    comments = Comment.objects.filter(revision=revision)
+
+    """
+    yeah, this is big brain time
+    https://i.kym-cdn.com/entries/icons/original/000/030/525/cover5.png
+    """
+    return JsonResponse({
+        comment.mei_element_id: comment.text
+        for comment in comments
     })
 
 
