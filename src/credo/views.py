@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
 import base64
@@ -145,3 +145,25 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['GET'])
+def make_revision(request):
+    editions = request.GET.getlist('e')
+
+    if len(editions) == 1:
+        # only one edition to base revision from, no need to invoke diffing
+        edition = Edition.objects.get(id=editions[0])
+
+        # duplicate the mei
+        new_mei = MEI(data=edition.mei.data)
+        new_mei.save()
+
+        new_revision = Revision(user=request.user,
+                                mei=new_mei)
+        new_revision.save()
+        new_revision.editions.set([edition])
+        new_revision.save()
+
+        return redirect(
+                f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
