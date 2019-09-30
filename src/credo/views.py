@@ -58,7 +58,8 @@ def revision(request, song_id, revision_id):
     return render(request, 'revision.html', {
         'revision': revision,
         'comments': True,
-        'authenticated': request.user.is_authenticated
+        'authenticated': request.user.is_authenticated,
+        'save_url': f'/songs/{song_id}/revisions/{revision_id}'
     })
 
 

@@ -33,11 +33,21 @@
 {% endblock toolbar %}
 
 {% block scripts %}
+<div class="modal" id="saving-modal">
+  <div class="modal-content">
+    <h4>Saving</h4>
+    <div class="progress">
+      <div class="indeterminate"></div>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript">
   const toolkit = new CredoToolkit(
     '/mei/{{ revision.mei.id }}',
     '/revisions/{{ revision.id }}/comments',
-    'renderDiv'
+    'renderDiv',
+    '{{ save_url }}'
   )
   toolkit.render()
 </script>

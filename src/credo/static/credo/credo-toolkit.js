@@ -18,6 +18,8 @@ class CredoToolkit {
   // ID of the thing on which we are commenting
   commentModalId
 
+  savingModalInstance
+
   verovioToolkit
 
   // toolbar stuff
@@ -61,6 +63,14 @@ class CredoToolkit {
       this.commentModalInstance = M.Modal
         .getInstance(document.getElementById('comment-modal'))
     })
+
+    // initialise the saving modal if there is a saveUrl
+    if (saveUrl) {
+      const modals = document.querySelectorAll('.modal#saving-modal')
+      M.Modal.init(modals)
+      this.savingModalInstance = M.Modal
+        .getInstance(document.getElementById('saving-modal'))
+    }
     
     // attach the note grabbing listener to the event div
     document.getElementById(renderDiv)
@@ -410,16 +420,30 @@ class CredoToolkit {
    * that we are saving over.
    */
   saveRevision () {
+    // no saving URL, nothing to do here
+    if (!this.saveUrl) {
+      return
+    }
+
+    const savingModalInstance = this.savingModalInstance
+    savingModalInstance.open()
+
     new Promise((resolve, reject) => {
       const xhttp = new XMLHttpRequest()
       xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
+        if (this.readyState === 4) {
           // successfully saved
+          savingModalInstance.close()
         }
       }
 
       xhttp.open('POST', this.saveUrl, true)
-      xhttp.send()
+      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
+      xhttp.setRequestHeader('Content-Type', 'application/json')
+      xhttp.send({
+        mei: this.mei,
+        comments: this.comments
+      })
     })
   }
 
