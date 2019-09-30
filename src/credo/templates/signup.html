@@ -1,10 +1,4 @@
 {% include 'header.html' %}
-{% load static %}
-
-<script
-  src="{% static 'credo/test.js' %}"
-  type="text/javascript">
-</script>
 
 <body>
   <div class="container">
@@ -41,7 +35,7 @@
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>lock</i>
-              <input name='password' type='password' id='password'/>
+              <input name='password' type='password' id='password' class="validate"/>
               <label for='password'>Password</label>
             </div>
           </div>
