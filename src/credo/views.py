@@ -5,10 +5,12 @@ from django.http import HttpResponse, \
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
+from django.core.files.base import ContentFile
 
 import base64
 import json
 import lxml.etree as et
+import os
 
 from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
@@ -181,8 +183,13 @@ def make_revision(request):
         edition = Edition.objects.get(id=editions[0])
 
         # duplicate the mei
-        new_mei = MEI(data=edition.mei.data)
+        new_mei = MEI()
+        filecontent = ContentFile(edition.mei.data.file.read())
+        new_mei.data.save('mei', filecontent)
         new_mei.save()
+
+        # IMPORTANT - must close the file, otherwise Django breaks
+        edition.mei.data.file.close()
 
         new_revision = Revision(user=request.user,
                                 mei=new_mei)
