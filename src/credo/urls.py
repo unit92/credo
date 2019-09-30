@@ -32,7 +32,7 @@ urlpatterns = [
     path('songs/', views.song_list),
     path('songs/<song_id>', views.song),
     path('songs/<song_id>/editions/<edition_id>', views.edition),
-    path('songs/<song_id>/revisions/<revision_id>', views.revision),
+    path('songs/<song_id>/revisions/<revision_id>', views.RevisionView.as_view()),
     path('revisions/<revision_id>/comments', views.revision_comments),
     path('compare', views.compare),
     path('mei/<mei_id>', views.mei),
