@@ -426,14 +426,30 @@ class CredoToolkit {
     }
 
     const savingModalInstance = this.savingModalInstance
+
+    savingModalInstance.el.innerHTML = `
+      <div class="modal-content">
+        <h4>Saving</h4>
+        <div class="progress">
+          <div class="indeterminate"></div>
+        </div>
+      </div>
+    `
+
     savingModalInstance.open()
 
-    new Promise((resolve, reject) => {
+
+    return new Promise((resolve, reject) => {
       const xhttp = new XMLHttpRequest()
       xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
-          // successfully saved
-          savingModalInstance.close()
+          if (this.status === 200) {
+            // successfully saved
+            resolve()
+          } else {
+            // an error occured
+            reject()
+          }
         }
       }
 
@@ -445,6 +461,28 @@ class CredoToolkit {
         comments: this.comments
       })
     })
+      .then(() => {
+        savingModalInstance.el.innerHTML = `
+          <div class="modal-content">
+            <h4>Saving</h4>
+            <p>Saved successfully!</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        `
+      })
+      .catch(() => {
+        savingModalInstance.el.innerHTML = `
+          <div class="modal-content">
+            <h4>Saving</h4>
+            <p>An error occured.</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        `
+      })
   }
 
   /**
