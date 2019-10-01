@@ -25,6 +25,7 @@ class TestServerBlackBox(TestCase):
         self.assertTemplateUsed('revision.html')
 
     def test_save_revision_POST(self):
+        '''Tests adding of comments through the 'save' button'''
         response = self.client.post(
             '/songs/1/revisions/1',
             json.dumps({
