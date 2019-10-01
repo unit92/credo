@@ -456,10 +456,10 @@ class CredoToolkit {
       xhttp.open('POST', this.saveUrl, true)
       xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
       xhttp.setRequestHeader('Content-Type', 'application/json')
-      xhttp.send({
+      xhttp.send(JSON.stringify({
         mei: this.mei,
         comments: this.comments
-      })
+      }))
     })
       .then(() => {
         savingModalInstance.el.innerHTML = `

@@ -65,7 +65,21 @@ class RevisionView(View):
         })
 
     def post(self, request, song_id, revision_id):
-        ...
+        data = json.loads(request.body)
+        comments = data['comments']
+
+        revision = Revision.objects.get(id=revision_id)
+
+        # Delete existing comments
+        revision.comment_set.all().delete()
+
+        for comment in comments:
+            Comment(revision_id=revision_id,
+                    text=comments[comment],
+                    user=request.user,
+                    mei_element_id=comment).save()
+
+        return JsonResponse({'ok': True})
 
 
 def revision_comments(request, revision_id):
