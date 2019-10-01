@@ -7,7 +7,7 @@
 
   {% for edition in editions %}
   <a
-    href="/songs/{{ edition.song.id }}/editions/{{ edition.id }}"
+    href="/editions/{{ edition.id }}"
     class="collection-item">
     {{ edition }}
   </a>
@@ -20,7 +20,7 @@
 
   {% for revision in revisions %}
   <a
-    href="/songs/{{ revision.song.id }}/revisions/{{ revision.id }}"
+    href="/revisions/{{ revision.id }}"
     class="collection-item">
     {{ revision }}
   </a>

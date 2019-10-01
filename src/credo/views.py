@@ -34,9 +34,8 @@ def song(request, song_id):
     })
 
 
-def edition(request, song_id, edition_id):
-    song = Song.objects.get(id=song_id)
-    edition = Edition.objects.get(id=edition_id, song=song)
+def edition(request, edition_id):
+    edition = Edition.objects.get(id=edition_id)
     return render(request, 'edition.html', {
         'authenticated': request.user.is_authenticated,
         'edition': edition
@@ -54,17 +53,15 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
-    def get(self, request, song_id, revision_id):
-        song = Song.objects.get(id=song_id)
-        revision = Revision.objects.get(id=revision_id, editions__song=song)
+    def get(self, request, revision_id):
+        revision = Revision.objects.get(id=revision_id)
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
-            'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+            'authenticated': request.user.is_authenticated
         })
 
-    def post(self, request, song_id, revision_id):
+    def post(self, request, revision_id):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
         data = json.loads(request.body)
@@ -82,7 +79,6 @@ class RevisionView(View):
                     mei_element_id=comment).save()
 
         return JsonResponse({'ok': True})
-
 
 def revision_comments(request, revision_id):
     revision = Revision.objects.get(id=revision_id)
