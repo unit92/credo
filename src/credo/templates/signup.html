@@ -1,4 +1,10 @@
 {% include 'header.html' %}
+{% load static %}
+
+<script
+  src="{% static 'credo/validate.js' %}"
+  type="text/javascript">
+</script>
 
 <body>
   <div class="container">
@@ -27,7 +33,7 @@
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>email</i>
-              <input name='email' type='email' id='email'/>
+              <input name='email' type='email' id='email' class="validate"/>
               <label for='email'>Email</label>
             </div>
           </div>
@@ -35,7 +41,7 @@
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>lock</i>
-              <input name='password' type='password' id='password' class="validate"/>
+              <input name='password' type='password' id='password' class="validate">
               <label for='password'>Password</label>
             </div>
           </div>
@@ -43,8 +49,9 @@
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>lock</i>
-              <input name='confirm_password' type='password' id='confirm_password'/>
-              <label id="label_confirm_password" for='confirm_password' data-error="Password does not match" data-success="Password Match">Confirm Password</label>
+              <input name='confirm-password' type='password' id='confirm-password'>
+              <label id="label-confirm-password" for='confirm-password'>Confirm Password</label>
+              <span class="helper-text" data-error="Password does not match" data-success="Password Match"></span>
             </div>
           </div>
 
