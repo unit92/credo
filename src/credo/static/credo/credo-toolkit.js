@@ -18,6 +18,8 @@ class CredoToolkit {
   // ID of the thing on which we are commenting
   commentModalId
 
+  savingModalInstance
+
   verovioToolkit
 
   // toolbar stuff
@@ -44,11 +46,13 @@ class CredoToolkit {
    * @param {string} commentsUrl The URL of any associated comments, can be
    * null to indicate no comments.
    * @param {string} renderDiv The ID of the div to which we wish to render.
+   * @param {string} saveUrl Optional. The URL to POST to when saving revisions.
    */
-  constructor (meiUrl, commentsUrl, renderDiv) {
+  constructor (meiUrl, commentsUrl, renderDiv, saveUrl) {
     this.meiUrl = meiUrl
     this.commentsUrl = commentsUrl
     this.renderDiv = renderDiv
+    this.saveUrl = saveUrl
 
     this.verovioToolkit = new verovio.toolkit()
 
@@ -59,6 +63,14 @@ class CredoToolkit {
       this.commentModalInstance = M.Modal
         .getInstance(document.getElementById('comment-modal'))
     })
+
+    // initialise the saving modal if there is a saveUrl
+    if (saveUrl) {
+      const modals = document.querySelectorAll('.modal#saving-modal')
+      M.Modal.init(modals)
+      this.savingModalInstance = M.Modal
+        .getInstance(document.getElementById('saving-modal'))
+    }
     
     // attach the note grabbing listener to the event div
     document.getElementById(renderDiv)
@@ -408,7 +420,69 @@ class CredoToolkit {
    * that we are saving over.
    */
   saveRevision () {
-    // TODO
+    // no saving URL, nothing to do here
+    if (!this.saveUrl) {
+      return
+    }
+
+    const savingModalInstance = this.savingModalInstance
+
+    savingModalInstance.el.innerHTML = `
+      <div class="modal-content">
+        <h4>Saving</h4>
+        <div class="progress">
+          <div class="indeterminate"></div>
+        </div>
+      </div>
+    `
+
+    savingModalInstance.open()
+
+
+    return new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+          if (this.status === 200) {
+            // successfully saved
+            resolve()
+          } else {
+            // an error occured
+            reject()
+          }
+        }
+      }
+
+      xhttp.open('POST', this.saveUrl, true)
+      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
+      xhttp.setRequestHeader('Content-Type', 'application/json')
+      xhttp.send(JSON.stringify({
+        mei: this.mei,
+        comments: this.comments
+      }))
+    })
+      .then(() => {
+        savingModalInstance.el.innerHTML = `
+          <div class="modal-content">
+            <h4>Saving</h4>
+            <p>Saved successfully!</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        `
+      })
+      .catch(() => {
+        savingModalInstance.el.innerHTML = `
+          <div class="modal-content">
+            <h4>Saving</h4>
+            <p>An error occured.</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+          </div>
+        `
+      })
   }
 
   /**
