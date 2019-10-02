@@ -1,0 +1,18 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=ec2-user
+Group=nginx
+WorkingDirectory=/srv/credo/src
+EnvironmentFile=/srv/credo/.env
+ExecStart=/home/ec2-user/.local/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          credo.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

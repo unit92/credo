@@ -16,3 +16,15 @@
   bottom: 0;
   margin: auto;
 }
+
+#saveButton {
+  float: right;
+}
+
+#makeRevisionButton {
+  float: right;
+}
+
+#makeRevisionSpan {
+  float: right;
+}
