@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 
 MEI_SEED_PATH = './credo/migrations/seed_mei/'
 
-#MIGRATE FUNCTIONS
+
+# MIGRATE FUNCTIONS
 def load_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
 
@@ -22,6 +23,7 @@ def load_composers(apps, schema_editor):
 
     c4 = Composer(name='Alex Mirrington')
     c4.save()
+
 
 def load_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
@@ -43,6 +45,7 @@ def load_songs(apps, schema_editor):
     s4 = Song(name='Diffing Song', composer=composer)
     s4.save()
 
+
 def load_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
 
@@ -58,6 +61,7 @@ def load_mei(apps, schema_editor):
     m4 = MEI(data=f'{MEI_SEED_PATH}diffD.mei')
     m4.save()
 
+
 def load_users(apps, schema_editor):
     User = apps.get_model('auth', 'User')
 
@@ -72,6 +76,7 @@ def load_users(apps, schema_editor):
 
     u4 = User(username='Alex', password='1234')
     u4.save()
+
 
 def load_editions(apps, schema_editor):
     Edition = apps.get_model('credo', 'Edition')
@@ -138,38 +143,53 @@ def load_revisions(apps, schema_editor):
     r4.save()
     r4.editions.add(alex_edition)
 
+
 def load_comments(apps, schema_editor):
     Comment = apps.get_model('credo', 'Comment')
-    Edition = apps.get_model('credo', 'Edition')
+    Revision = apps.get_model('credo', 'Revision')
     User = apps.get_model('auth', 'User')
 
-    piece = Edition.objects.get(name='Christmas JS')
     account = User.objects.get(username='Craig')
-    c1 = Comment(edition=piece, text='Comment A', user=account, position=1)
+    revision = Revision.objects.get(user=account)
+    c1 = Comment(revision=revision,
+                 text='Comment A',
+                 user=account,
+                 mei_element_id='m-79')
     c1.save()
 
-    piece = Edition.objects.get(name='Python Play')
     account = User.objects.get(username='Luke')
-    c2 = Comment(edition=piece, text='Comment B', user=account, position=2)
+    revision = Revision.objects.get(user=account)
+    c2 = Comment(revision=revision,
+                 text='Comment B',
+                 user=account,
+                 mei_element_id='m-79')
     c2.save()
 
-    piece = Edition.objects.get(name='Green Edition')
     account = User.objects.get(username='Joel')
-    c3 = Comment(edition=piece, text='Comment C', user=account, position=3)
+    revision = Revision.objects.get(user=account)
+    c3 = Comment(revision=revision,
+                 text='Comment C',
+                 user=account,
+                 mei_element_id='m-79')
     c3.save()
 
-    piece = Edition.objects.get(name='Congruent Edition')
     account = User.objects.get(username='Alex')
-    c4 = Comment(edition=piece, text='Comment D', user=account, position=4)
+    revision = Revision.objects.get(user=account)
+    c4 = Comment(revision=revision,
+                 text='Comment D',
+                 user=account,
+                 mei_element_id='m-79')
     c4.save()
 
-#ROLLBACK FUNCTIONS
+
+# ROLLBACK FUNCTIONS
 def delete_composers(apps, schema_editor):
     Composer = apps.get_model('credo', 'Composer')
     Composer.objects.get(name='Craig Smith').delete()
     Composer.objects.get(name='Luke Tuthill').delete()
     Composer.objects.get(name='Joel Aquilina').delete()
     Composer.objects.get(name='Alex Mirrington').delete()
+
 
 def delete_songs(apps, schema_editor):
     Song = apps.get_model('credo', 'Song')
@@ -178,6 +198,7 @@ def delete_songs(apps, schema_editor):
     Song.objects.get(name='Environment Song').delete()
     Song.objects.get(name='Diffing Song').delete()
 
+
 def delete_mei(apps, schema_editor):
     MEI = apps.get_model('credo', 'MEI')
     MEI.objects.get(data=f'{MEI_SEED_PATH}diffA.mei').delete()
@@ -185,12 +206,14 @@ def delete_mei(apps, schema_editor):
     MEI.objects.get(data=f'{MEI_SEED_PATH}diffC.mei').delete()
     MEI.objects.get(data=f'{MEI_SEED_PATH}diffD.mei').delete()
 
+
 def delete_users(apps, schema_editor):
     User = apps.get_model('auth', 'User')
     User.objects.get(username='Craig').delete()
     User.objects.get(username='Luke').delete()
     User.objects.get(username='Joel').delete()
     User.objects.get(username='Alex').delete()
+
 
 def delete_editions(apps, schema_editor):
     Edition = apps.get_model('credo', 'Edition')
@@ -204,6 +227,7 @@ def delete_editions(apps, schema_editor):
 # Function created to suppress rollback error
 def delete_revisions(apps, schema_editor):
     Revision = apps.get_model('credo', 'Revision')
+
 
 # Function created to suppress rollback error
 def delete_comments(apps, schema_editor):

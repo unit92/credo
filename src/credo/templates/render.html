@@ -1,7 +1,15 @@
 {% include 'header.html' %}
 {% load static %}
 
-<h2>{{ to_render }}</h2>
+<h2>{% block title %}
+  {% if title %}
+  {{ title }}
+  {% else %}
+  Render Output
+  {% endif %}
+{% endblock title %}</h2>
+
+{% block toolbar %}{% endblock toolbar %}
 
 <div id="renderDiv">
   <div class="preloader-wrapper big active centeredSpinner">
@@ -19,6 +27,17 @@
   </div>
 </div>
 
+<div id="comment-modal" class="modal">
+  <div class="modal-content">
+    <h4>Edit Comment</h4>
+    <textarea id="comment-modal-text"></textarea>
+  </div>
+  <div class="modal-footer">
+    <a id="comment-modal-submit" class="waves-effect btn-flat">Submit</a>
+    <a class="modal-close waves-effect btn-flat">Cancel</a>
+  </div>
+</div>
+
 {% include 'footer.html' %}
 
 <script
@@ -26,9 +45,16 @@
   type="text/javascript">
 </script>
 <script
-  src="{% static 'credo/render.js' %}"
+  src="{% static 'credo/credo-toolkit.js' %}"
   type="text/javascript">
 </script>
+{% block scripts %}
 <script type="text/javascript">
-  renderMei('/mei/{{ to_render.mei.id }}', 'renderDiv')
+  const toolkit = new CredoToolkit(
+    '{{ meiUrl }}',
+    null,
+    'renderDiv'
+  )
+  toolkit.render()
 </script>
+{% endblock scripts %}
