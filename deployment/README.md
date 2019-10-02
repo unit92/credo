@@ -1,11 +1,6 @@
-# Config
+# Deployment
 
-In this directory we have the example configurations from the development server.
-Because we cannot easily tell what the system will be like when deploying these steps will need to be manual. The things such as groups, users and paths may need to be modified on different deployments.
+In this we deployment related configuration files and scripts
 
-There are 2 ways we could automate this:
-
-* Dockerize the whole project
-* Use some amazon services to create an image of a server where everything is set up and deploy with code deploy to specific EC2 instances
-
-Both of which are out of scope for the project.
+* *config*: Example configuration files for deployment related services
+* *restart-if-updated.sh*: a script that will merge updates from git, recollect static and restart the gunicorn service if there is an update
