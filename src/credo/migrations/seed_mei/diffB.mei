@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-16'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="3.0.0" xml:id="m-1">
 <meiHead xml:id="m-2">
     <fileDesc xml:id="m-3">
@@ -51,8 +51,8 @@
                         <staff n="1" xml:id="m-34">
                             <layer n="1" xml:id="m-35">
                                 <beam xml:id="m-37">
-                                    <note color="hsl(274, 100%, 56%)" dots="1" dur="8" dur.ges="192p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-36" />
-                                    <note color="hsl(274, 100%, 56%)" dur="16" dur.ges="64p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-40" />
+                                    <note dots="1" dur="8" dur.ges="192p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-36" />
+                                    <note dur="16" dur.ges="64p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-40" />
                                 </beam>
                                 <note dots="1" dur="4" dur.ges="384p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-42" />
                                 <beam xml:id="m-45">
@@ -129,8 +129,8 @@
                         <staff n="1" xml:id="m-87">
                             <layer n="1" xml:id="m-88">
                                 <beam xml:id="m-90">
-                                    <note color="hsl(274, 100%, 56%)" dots="1" dur="8" dur.ges="192p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-89" />
-                                    <note color="hsl(274, 100%, 56%)" dur="16" dur.ges="64p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-95" />
+                                    <note dots="1" dur="8" dur.ges="192p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-89" />
+                                    <note dur="16" dur.ges="64p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-95" />
                                 </beam>
                                 <note dots="1" dur="4" dur.ges="384p" oct="3" pname="e" pnum="52" stem.dir="up" xml:id="m-97" />
                                 <beam xml:id="m-100">
@@ -247,9 +247,9 @@
                         <staff n="1" xml:id="m-169">
                             <layer n="1" xml:id="m-170">
                                 <beam xml:id="m-172">
-                                    <note color="hsl(274, 100%, 56%)" dur="8" dur.ges="128p" oct="3" pname="g" pnum="55" stem.dir="up" xml:id="m-171" />
-                                    <note color="hsl(274, 100%, 56%)" dur="16" dur.ges="64p" oct="3" pname="a" pnum="57" stem.dir="up" xml:id="m-176" />
-                                    <note color="hsl(274, 100%, 56%)" dur="16" dur.ges="64p" oct="3" pname="b" pnum="58" stem.dir="up" xml:id="m-177">
+                                    <note dur="8" dur.ges="128p" oct="3" pname="g" pnum="55" stem.dir="up" xml:id="m-171" />
+                                    <note dur="16" dur.ges="64p" oct="3" pname="a" pnum="57" stem.dir="up" xml:id="m-176" />
+                                    <note dur="16" dur.ges="64p" oct="3" pname="b" pnum="58" stem.dir="up" xml:id="m-177">
                                         <accid accid.ges="f" xml:id="m-178" />
                                     </note>
                                 </beam>
@@ -262,11 +262,11 @@
                                 </beam>
                             </layer>
                             <layer n="2" xml:id="m-173">
-                                <note color="hsl(274, 100%, 56%)" dur="4" dur.ges="256p" oct="2" pname="b" pnum="46" stem.dir="down" xml:id="m-174">
+                                <note dur="4" dur.ges="256p" oct="2" pname="b" pnum="46" stem.dir="down" xml:id="m-174">
                                     <accid accid.ges="f" xml:id="m-175" />
                                 </note>
                                 <chord dur="2" dur.ges="512p" stem.dir="down" xml:id="m-181">
-                                    <note color="hsl(274, 100%, 56%)" dur="2" dur.ges="512p" oct="2" pname="g" pnum="43" xml:id="m-182" />
+                                    <note dur="2" dur.ges="512p" oct="2" pname="g" pnum="43" xml:id="m-182" />
                                     <note dur="2" dur.ges="512p" oct="3" pname="f" pnum="53" xml:id="m-183" />
                                 </chord>
                             </layer>
@@ -320,7 +320,7 @@
                                 <space dur="8" dur.ges="128p" xml:id="m-219" />
                             </layer>
                         </staff>
-                        <trill color="hsl(274, 100%, 56%)" layer="1" staff="1" startid="#m-207" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-213" />
+                        <trill layer="1" staff="1" startid="#m-207" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-213" />
                     </measure>
                     <measure n="14" xml:id="m-220">
                         <staff n="1" xml:id="m-221">
@@ -351,7 +351,7 @@
                                 <space dur="4" dur.ges="256p" xml:id="m-239" />
                             </layer>
                         </staff>
-                        <trill color="hsl(274, 100%, 56%)" layer="1" staff="1" startid="#m-229" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-230" />
+                        <trill layer="1" staff="1" startid="#m-229" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-230" />
                     </measure>
                     <measure n="15" xml:id="m-241">
                         <staff n="1" xml:id="m-242">
@@ -691,7 +691,7 @@
                         <staff n="1" xml:id="m-467">
                             <layer n="1" xml:id="m-468">
                                 <note dur="4" dur.ges="256p" oct="4" pname="d" pnum="62" stem.dir="down" xml:id="m-469" />
-                                <note color="hsl(274, 100%, 56%)" dur="2" dur.ges="512p" oct="2" pname="d" pnum="38" stem.dir="up" xml:id="m-470" />
+                                <note dur="2" dur.ges="512p" oct="2" pname="d" pnum="38" stem.dir="up" xml:id="m-470" />
                             </layer>
                         </staff>
                     </measure>
