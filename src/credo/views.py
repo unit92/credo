@@ -10,7 +10,6 @@ from django.core.files.base import ContentFile
 import base64
 import json
 import lxml.etree as et
-import os
 
 from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
@@ -199,3 +198,5 @@ def make_revision(request):
 
         return redirect(
                 f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+    else:
+        return HttpResponseBadRequest(content_type='application/json')
