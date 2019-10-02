@@ -14,7 +14,7 @@ class TestMEI(TestCase):
     def test_normalize_on_save(self):
         mei = MEI()
 
-        with open('mei_files/default.mei') as f:
+        with open('credo/migrations/seed_mei/diffA.mei') as f:
             content = f.read()
 
         mei.data.save('test_file.mei', ContentFile(content))
