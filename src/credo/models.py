@@ -43,6 +43,14 @@ def my_callback(sender, instance, *args, **kwargs):
     transformer.save_xml_file(instance.data.name)
 
 
+@receiver(post_save, sender=MEI)
+def my_callback(sender, instance, *args, **kwargs):
+    mei_file = instance.data.file.open()
+    transformer = MeiTransformer.from_xml_file(mei_file)
+    transformer.normalise()
+    transformer.save_xml_file(instance.data.name)
+
+
 class Edition(models.Model):
     name = models.TextField()
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
