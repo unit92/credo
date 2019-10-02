@@ -8,7 +8,9 @@
 
 {% if authenticated %}
 
-<a class="waves-effect waves-light btn" id="makeRevisionButton">
+<a class="waves-effect waves-light btn"
+   id="makeRevisionButton"
+   href="/revise?e={{ edition.id }}">
   <i class="material-icons left">create</i>
   Make Revision
 </a>
