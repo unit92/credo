@@ -177,26 +177,27 @@ def diff(request):
 def make_revision(request):
     editions = request.GET.getlist('e')
 
-    if len(editions) == 1:
-        # only one edition to base revision from, no need to invoke diffing
-        edition = Edition.objects.get(id=editions[0])
-
-        # duplicate the mei
-        new_mei = MEI()
-        filecontent = ContentFile(edition.mei.data.file.read())
-        new_mei.data.save('mei', filecontent)
-        new_mei.save()
-
-        # IMPORTANT - must close the file, otherwise Django breaks
-        edition.mei.data.file.close()
-
-        new_revision = Revision(user=request.user,
-                                mei=new_mei)
-        new_revision.save()
-        new_revision.editions.set([edition])
-        new_revision.save()
-
-        return redirect(
-                f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
-    else:
+    # if not revising a single edition, return a Bad Request response
+    if len(editions) != 1:
         return HttpResponseBadRequest(content_type='application/json')
+
+    # only one edition to base revision from, no need to invoke diffing
+    edition = Edition.objects.get(id=editions[0])
+
+    # duplicate the mei
+    new_mei = MEI()
+    filecontent = ContentFile(edition.mei.data.file.read())
+    new_mei.data.save('mei', filecontent)
+    new_mei.save()
+
+    # IMPORTANT - must close the file, otherwise Django breaks
+    edition.mei.data.file.close()
+
+    new_revision = Revision(user=request.user,
+                            mei=new_mei)
+    new_revision.save()
+    new_revision.editions.set([edition])
+    new_revision.save()
+
+    return redirect(
+            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
