@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.http import require_http_methods
@@ -65,6 +65,8 @@ class RevisionView(View):
         })
 
     def post(self, request, song_id, revision_id):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
         data = json.loads(request.body)
         comments = data['comments']
 
