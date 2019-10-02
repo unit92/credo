@@ -15,18 +15,18 @@ class TestServerBlackBox(TestCase):
         user.set_password('12345')
         user.save()
 
+        self.authed_client = Client()
+        self.authed_client.login(username='testuser', password='12345')
         self.client = Client()
-        self.client.login(username='testuser', password='12345')
-
 
     def test_revision_GET(self):
-        response = self.client.get('/songs/1/revisions/1')
+        response = self.authed_client.get('/songs/1/revisions/1')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('revision.html')
 
     def test_save_revision_POST(self):
         '''Tests adding of comments through the 'save' button'''
-        response = self.client.post(
+        response = self.authed_client.post(
             '/songs/1/revisions/1',
             json.dumps({
                 'comments': {
@@ -56,3 +56,15 @@ class TestServerBlackBox(TestCase):
                                    mei_element_id='m-2').exists()
         )
 
+    def test_save_revision_auth(self):
+        response = self.client.post(
+            '/songs/1/revisions/1',
+            json.dumps({
+                'comments': {
+                    'm-1': 'hello',
+                    'm-2': 'world',
+                }
+            }),
+            content_type='application/json'
+        )
+        self.assertEquals(response.status_code, 403)
