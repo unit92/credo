@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from unittest import TestCase, main
+from django.test import TestCase
 from credo.models import MEI
 from utils.mei.mei_transformer import MeiTransformer
 from django.core.files.base import ContentFile

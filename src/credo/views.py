@@ -1,5 +1,6 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseForbidden
 from django.shortcuts import render
+from django.views import View
 from django.views.decorators.http import require_http_methods
 
 import base64
@@ -52,14 +53,35 @@ def add_revision_comment(request, revision_id):
     return JsonResponse({'ok': True})
 
 
-def revision(request, song_id, revision_id):
-    song = Song.objects.get(id=song_id)
-    revision = Revision.objects.get(id=revision_id, editions__song=song)
-    return render(request, 'revision.html', {
-        'revision': revision,
-        'comments': True,
-        'authenticated': request.user.is_authenticated
-    })
+class RevisionView(View):
+    def get(self, request, song_id, revision_id):
+        song = Song.objects.get(id=song_id)
+        revision = Revision.objects.get(id=revision_id, editions__song=song)
+        return render(request, 'revision.html', {
+            'revision': revision,
+            'comments': True,
+            'authenticated': request.user.is_authenticated,
+            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+        })
+
+    def post(self, request, song_id, revision_id):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        data = json.loads(request.body)
+        comments = data['comments']
+
+        revision = Revision.objects.get(id=revision_id)
+
+        # Delete existing comments
+        revision.comment_set.all().delete()
+
+        for comment in comments:
+            Comment(revision_id=revision_id,
+                    text=comments[comment],
+                    user=request.user,
+                    mei_element_id=comment).save()
+
+        return JsonResponse({'ok': True})
 
 
 def revision_comments(request, revision_id):
