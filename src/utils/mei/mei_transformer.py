@@ -7,6 +7,8 @@ from __future__ import annotations
 from copy import deepcopy
 from sys import argv, exit, stderr
 
+import typing as t
+
 from lxml import etree
 from lxml.etree import ElementTree
 
@@ -70,6 +72,7 @@ class MeiTransformer:
         """
         self._remove_meiHead()
         self._remove_MIDI_data()
+        self._strip_attribs(['color'])
         self.generate_ids()
 
     def to_intermediate(self) -> None:
@@ -137,6 +140,22 @@ class MeiTransformer:
                 if elem.attrib.get(id_attrib.text) is not None:
                     elem.attrib.pop(id_attrib.text)
 
+    def _strip_attribs(self, attribs: t.List[str]) -> None:
+        """
+        Strip given attributes for all elements in the tree to
+        ensure they don't affect the diff algorithm.
+        """
+        class_lookup = etree.ElementDefaultClassLookup()
+
+        for elem in self._tree.iter():
+            class_lookup.entity_class
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                for attrib in attribs:
+                    if elem.attrib.get(attrib) is not None:
+                        elem.attrib.pop(attrib)
+
     def generate_ids(self, keep_existing=False) -> None:
         """
         Create/recreate xml:id attributes for all elements in the tree to
@@ -144,6 +163,14 @@ class MeiTransformer:
         """
         class_lookup = etree.ElementDefaultClassLookup()
 
+        # Find all trills in the MEI, as they reference other IDs
+        trill_id_map = dict()
+        for elem in self._tree.findall('//mei:trill', ns):
+            referenced_id = elem.get('startid')
+            if referenced_id is not None:
+                trill_id_map[referenced_id] = elem
+
+        # Regenerate IDs, replacing IDs referenced by trills with new IDs
         index = 0
         for elem in self._tree.iter():
             class_lookup.entity_class
@@ -151,9 +178,19 @@ class MeiTransformer:
             if (not isinstance(elem, class_lookup.comment_class) and
                     not isinstance(elem, class_lookup.entity_class)):
                 id_attrib = etree.QName(ns['xml'], 'id')
-                if keep_existing and elem.get(id_attrib.text) is not None:
+                id_val = elem.get(id_attrib.text)
+
+                if keep_existing and id_val is not None:
                     continue
-                elem.set(id_attrib.text, 'm-' + str(index))
+
+                new_id = 'm-' + str(index)
+                # Update trill reference
+                if id_val is not None:
+                    if '#' + id_val in trill_id_map.keys():
+                        trill_id_map['#' + id_val].set('startid', new_id)
+
+                # Set new ID
+                elem.set(id_attrib.text, new_id)
             index += 1
 
 
