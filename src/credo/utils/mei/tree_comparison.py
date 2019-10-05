@@ -159,8 +159,8 @@ class TreeComparison(ComparisonStrategy):
 
         base = deepcopy(a)
         insert = b
-        base_id_prefix = 'a'
-        insert_id_prefix = 'b'
+        base_id_prefix = 'm-a'
+        insert_id_prefix = 'm-b'
 
         bar_qry = et.XPath('//mei:measure', namespaces=self.ns)
         base_bars = bar_qry(base)
