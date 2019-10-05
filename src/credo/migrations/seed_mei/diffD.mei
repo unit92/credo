@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-16'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="3.0.0" xml:id="m-1">
 <meiHead xml:id="m-2">
     <fileDesc xml:id="m-3">
@@ -146,7 +146,7 @@
                                 <note dur="2" dur.ges="512p" oct="2" pname="a" pnum="45" stem.dir="down" xml:id="m-98" />
                             </layer>
                         </staff>
-                        <trill color="hsl(50, 97%, 61%)" layer="1" staff="1" startid="#m-95" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-96" />
+                        <trill layer="1" staff="1" startid="#m-95" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-96" />
                         <anchoredText xml:id="m-102">
                             <title xml:id="m-103">D Minor Suite, BWV 1008, Sarabande</title>
                         </anchoredText>
@@ -200,14 +200,14 @@
                     <measure n="8" xml:id="m-136">
                         <staff n="1" xml:id="m-137">
                             <layer n="1" xml:id="m-138">
-                                <chord color="hsl(50, 97%, 61%)" dots="1" dur="4" dur.ges="384p" stem.dir="down" xml:id="m-140">
-                                    <note color="hsl(50, 97%, 61%)" dots="1" dur="4" dur.ges="384p" oct="2" pname="c" pnum="36" xml:id="m-141" />
-                                    <note color="hsl(50, 97%, 61%)" dots="1" dur="4" dur.ges="384p" oct="2" pname="g" pnum="43" xml:id="m-142" />
-                                    <note color="hsl(50, 97%, 61%)" dots="1" dur="4" dur.ges="384p" oct="3" pname="e" pnum="52" xml:id="m-143" />
+                                <chord dots="1" dur="4" dur.ges="384p" stem.dir="down" xml:id="m-140">
+                                    <note dots="1" dur="4" dur.ges="384p" oct="2" pname="c" pnum="36" xml:id="m-141" />
+                                    <note dots="1" dur="4" dur.ges="384p" oct="2" pname="g" pnum="43" xml:id="m-142" />
+                                    <note dots="1" dur="4" dur.ges="384p" oct="3" pname="e" pnum="52" xml:id="m-143" />
                                 </chord>
                                 <beam xml:id="m-145">
-                                    <note color="hsl(50, 97%, 61%)" dur="8" dur.ges="128p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-144" />
-                                    <note color="hsl(50, 97%, 61%)" dur="8" dur.ges="128p" oct="3" pname="c" pnum="48" stem.dir="up" xml:id="m-146" />
+                                    <note dur="8" dur.ges="128p" oct="3" pname="d" pnum="50" stem.dir="up" xml:id="m-144" />
+                                    <note dur="8" dur.ges="128p" oct="3" pname="c" pnum="48" stem.dir="up" xml:id="m-146" />
                                     <note dur="8" dur.ges="128p" oct="2" pname="b" pnum="46" stem.dir="up" xml:id="m-147">
                                         <accid accid.ges="f" xml:id="m-148" />
                                     </note>
@@ -320,7 +320,7 @@
                                 <space dur="8" dur.ges="128p" xml:id="m-219" />
                             </layer>
                         </staff>
-                        <trill color="hsl(50, 97%, 61%)" layer="1" staff="1" startid="#m-207" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-213" />
+                        <trill layer="1" staff="1" startid="#m-207" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-213" />
                     </measure>
                     <measure n="14" xml:id="m-220">
                         <staff n="1" xml:id="m-221">
@@ -351,7 +351,7 @@
                                 <space dur="4" dur.ges="256p" xml:id="m-239" />
                             </layer>
                         </staff>
-                        <trill color="hsl(50, 97%, 61%)" layer="1" staff="1" startid="#m-229" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-230" />
+                        <trill layer="1" staff="1" startid="#m-229" tstamp="2" tstamp2="0m+2.5195" vo="7mm" xml:id="m-230" />
                     </measure>
                     <measure n="15" xml:id="m-241">
                         <staff n="1" xml:id="m-242">
@@ -570,7 +570,7 @@
                                 <note dur="4" dur.ges="256p" oct="2" pname="a" pnum="45" stem.dir="down" xml:id="m-386" />
                             </layer>
                         </staff>
-                        <trill color="hsl(50, 97%, 61%)" layer="1" staff="1" startid="#m-382" tstamp="3" tstamp2="0m+3.2109" vo="7mm" xml:id="m-383" />
+                        <trill layer="1" staff="1" startid="#m-382" tstamp="3" tstamp2="0m+3.2109" vo="7mm" xml:id="m-383" />
                     </measure>
                     <sb xml:id="m-390" />
                     <measure n="24" xml:id="m-389">

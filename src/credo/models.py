@@ -1,7 +1,9 @@
-from django.db import models
-from django.contrib.auth.models import User
-
 import os
+from django.db import models
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+from utils.mei.mei_transformer import MeiTransformer
 
 class Composer(models.Model):
     name = models.TextField()
@@ -31,6 +33,22 @@ class MEI(models.Model):
     def __str__(self):
         file_id = os.path.split(self.data.name)[-1].split("_")[-1]
         return f'MEI object {file_id} created at {self.created_at}'
+
+
+@receiver(post_save, sender=MEI)
+def my_callback(sender, instance, *args, **kwargs):
+    mei_file = instance.data.file.open()
+    transformer = MeiTransformer.from_xml_file(mei_file)
+    transformer.normalise()
+    transformer.save_xml_file(instance.data.name)
+
+
+@receiver(post_save, sender=MEI)
+def my_callback(sender, instance, *args, **kwargs):
+    mei_file = instance.data.file.open()
+    transformer = MeiTransformer.from_xml_file(mei_file)
+    transformer.normalise()
+    transformer.save_xml_file(instance.data.name)
 
 
 class Edition(models.Model):

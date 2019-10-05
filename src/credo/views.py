@@ -1,6 +1,11 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse, \
+                        HttpResponseBadRequest, \
+                        HttpResponseForbidden, \
+                        JsonResponse
+from django.shortcuts import redirect, render
+from django.views import View
 from django.views.decorators.http import require_http_methods
+from django.core.files.base import ContentFile
 
 import base64
 import json
@@ -52,14 +57,35 @@ def add_revision_comment(request, revision_id):
     return JsonResponse({'ok': True})
 
 
-def revision(request, song_id, revision_id):
-    song = Song.objects.get(id=song_id)
-    revision = Revision.objects.get(id=revision_id, editions__song=song)
-    return render(request, 'revision.html', {
-        'revision': revision,
-        'comments': True,
-        'authenticated': request.user.is_authenticated
-    })
+class RevisionView(View):
+    def get(self, request, song_id, revision_id):
+        song = Song.objects.get(id=song_id)
+        revision = Revision.objects.get(id=revision_id, editions__song=song)
+        return render(request, 'revision.html', {
+            'revision': revision,
+            'comments': True,
+            'authenticated': request.user.is_authenticated,
+            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+        })
+
+    def post(self, request, song_id, revision_id):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        data = json.loads(request.body)
+        comments = data['comments']
+
+        revision = Revision.objects.get(id=revision_id)
+
+        # Delete existing comments
+        revision.comment_set.all().delete()
+
+        for comment in comments:
+            Comment(revision_id=revision_id,
+                    text=comments[comment],
+                    user=request.user,
+                    mei_element_id=comment).save()
+
+        return JsonResponse({'ok': True})
 
 
 def revision_comments(request, revision_id):
@@ -145,3 +171,33 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['GET'])
+def make_revision(request):
+    editions = request.GET.getlist('e')
+
+    # if not revising a single edition, return a Bad Request response
+    if len(editions) != 1:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    # only one edition to base revision from, no need to invoke diffing
+    edition = Edition.objects.get(id=editions[0])
+
+    # duplicate the mei
+    new_mei = MEI()
+    filecontent = ContentFile(edition.mei.data.file.read())
+    new_mei.data.save('mei', filecontent)
+    new_mei.save()
+
+    # IMPORTANT - must close the file, otherwise Django breaks
+    edition.mei.data.file.close()
+
+    new_revision = Revision(user=request.user,
+                            mei=new_mei)
+    new_revision.save()
+    new_revision.editions.set([edition])
+    new_revision.save()
+
+    return redirect(
+            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
