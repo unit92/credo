@@ -9,13 +9,6 @@ from .tracked_patcher import TrackedPatcher
 from utils.mei.mei_transformer import MeiTransformer
 
 
-# Preconditions for MEI files
-# - The file is actually an MEI, not just XML that uses MEI tags
-# - MEI must have been normalised first
-# - The ElementTrees don't contain any text nodes.
-#   this can be achieved when parsing.
-# - <note> tags must be contained within a <layer> tag (Enforced by MEI)
-
 class TreeComparison(ComparisonStrategy):
 
     # Shorthand XML namespaces
