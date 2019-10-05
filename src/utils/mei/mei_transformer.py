@@ -72,7 +72,7 @@ class MeiTransformer:
         """
         self._remove_meiHead()
         self._remove_MIDI_data()
-        self._strip_attribs(['color'])
+        self.strip_attribs(['color'])
         self.generate_ids()
 
     def to_intermediate(self) -> None:
@@ -140,7 +140,7 @@ class MeiTransformer:
                 if elem.attrib.get(id_attrib.text) is not None:
                     elem.attrib.pop(id_attrib.text)
 
-    def _strip_attribs(self, attribs: t.List[str]) -> None:
+    def strip_attribs(self, attribs: t.List[str]) -> None:
         """
         Strip given attributes for all elements in the tree to
         ensure they don't affect the diff algorithm.

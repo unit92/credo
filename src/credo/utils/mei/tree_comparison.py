@@ -27,8 +27,6 @@ class TreeComparison(ComparisonStrategy):
 
     A_COLOR = 'hsl(195, 100%, 47%)'
     B_COLOR = 'hsl(274, 100%, 56%)'
-    DELETE_COLOR = 'hsl(12, 100%, 53%)'
-    INSERT_COLOR = 'hsl(95, 100%, 42%)'
 
     def __init__(self):
         return
@@ -112,11 +110,11 @@ class TreeComparison(ComparisonStrategy):
                 mod = node.modifications[0]
                 if type(mod) in action_classes['insert']:
                     # Set colours in b_modded
-                    node.modified.set('color', TreeComparison.INSERT_COLOR)
+                    node.modified.set('color', TreeComparison.B_COLOR)
                     node.modified.set('visible', 'true')
                 elif type(mod) in action_classes['delete']:
                     # Set colours in a_modded
-                    node.original.set('color', TreeComparison.DELETE_COLOR)
+                    node.original.set('color', TreeComparison.A_COLOR)
                 elif type(mod) in action_classes['update']:
                     # Set colours in b_modded
                     node.modified.set('color', TreeComparison.B_COLOR)
@@ -148,6 +146,11 @@ class TreeComparison(ComparisonStrategy):
             et.tostring(diff, pretty_print=True).decode(),
             '\n'
         )
+
+        # TEMPORARY: Strip all trill tags from the diff
+        # TODO: Resolve trill IDs in __naive_layer_merge
+        for elem in diff.findall('//mei:trill', self.ns):
+            elem.getparent().remove(elem)
 
         return diff
 
@@ -229,7 +232,7 @@ class TreeComparison(ComparisonStrategy):
 
             # TODO Merge trills. This is a large job, since they require
             # specific element ids to render properly. This is more data
-            # to keep track of.
+            # to keep track of. For now, all trills are removed.
 
             bar_idx += 1
 
