@@ -30,7 +30,7 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions)
+    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
     return render(request, 'song.html', {
         'song': song,
         'editions': editions,
@@ -76,7 +76,9 @@ def add_revision_comment(request, revision_id):
 
 class RevisionView(View):
     def get(self, request, song_id, revision_id):
-        revision = Revision.objects.get(id=revision_id)
+        song = Song.objects.get(id=song_id)
+        revision = Revision.objects.filter(
+                id=revision_id, editions__song=song).distinct('id')[0]
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
