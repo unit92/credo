@@ -176,7 +176,8 @@ class CredoToolkit {
    */
   loadMei () {
     return jsonRequest(this.meiUrl)
-      .then(json => atob(json.content.mei.detail))
+      .then(json => atob((json.content.mei && json.content.mei.detail) ||
+        json.content.diff.detail))
   }
 
   /**

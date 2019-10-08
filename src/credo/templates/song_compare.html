@@ -1,0 +1,49 @@
+{% extends 'render.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock title %}
+
+{% block toolbar %}
+
+{% if authenticated %}
+
+<a class="waves-effect waves-light btn"
+   id="makeRevisionButton"
+   href="/revise?{{ querystring }}">
+  <i class="material-icons left">create</i>
+  Make Revision
+</a>
+
+{% else %}
+
+<div
+  id="makeRevisionSpan"
+  data-position="bottom"
+  data-tooltip="Log in to revise editions">
+  <a
+    class="waves-effect waves-light btn disabled makeRevisionButton">
+    <i class="material-icons left">create</i>
+    Make Revision
+  </a>
+</div>
+
+{% endif %}
+
+{% endblock toolbar %}
+
+{% block scripts %}
+<script type="text/javascript">
+  const toolkit = new CredoToolkit(
+    '{{ mei_url }}',
+    null,
+    'renderDiv'
+  )
+  toolkit.render()
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const elements = document.querySelectorAll('#makeRevisionSpan')
+    M.Tooltip.init(elements)
+  })
+</script>
+{% endblock scripts %}
