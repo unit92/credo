@@ -48,8 +48,7 @@
       .join('&')
 
     console.log(queryString)
-
-    // TODO: go to a route, use this querystring
+    window.location.href = `/compare?${queryString}`
   }
 
   /**

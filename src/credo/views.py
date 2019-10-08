@@ -138,14 +138,53 @@ def mei(request, mei_id):
 def compare(request):
     source_ids = request.GET.getlist('s')
 
-    # TODO Nicer rendering for bad source ids
+    if source_ids:
+        # TODO Nicer rendering for bad source ids
+        try:
+            source_ids = [int(s) for s in source_ids]
+        except ValueError:
+            return HttpResponseBadRequest()
+
+        return render(request, 'compare.html', {
+            'sources': [{'id': s} for s in source_ids]
+        })
+
+    edition_ids = request.GET.getlist('e')
+    revision_ids = request.GET.getlist('r')
     try:
-        source_ids = [int(s) for s in source_ids]
+        edition_ids = [int(e) for e in edition_ids]
+        revision_ids = [int(r) for r in revision_ids]
     except ValueError:
         return HttpResponseBadRequest()
 
-    return render(request, 'compare.html', {
-        'sources': [{'id': s} for s in source_ids]
+    edition_queries = [f'e={e}' for e in edition_ids]
+    revision_queries = [f'r={r}' for r in revision_ids]
+
+    editions = [Edition.objects.get(id=edition_id) for edition_id in
+                edition_ids]
+    revisions = [Revision.objects.get(id=revision_id) for revision_id in
+                 revision_ids]
+
+    title = 'Comparison'
+    if len(editions):
+        edition = Edition.objects.get(id=edition_ids[0])
+        title = edition.song.name
+    elif len(revisions):
+        revision = Revision.objects.get(id=revision_ids[0])
+        title = revision.song().name
+
+    querystring = '&'.join(edition_queries + revision_queries)
+    mei_ids = [edition.mei.id for edition in editions] + \
+              [revision.mei.id for revision in revisions]
+    mei_queries = [f's={id}' for id in mei_ids]
+    mei_query_string = '&'.join(mei_queries)
+    mei_url = f'/diff?{mei_query_string}'
+
+    return render(request, 'song_compare.html', {
+        'authenticated': request.user.is_authenticated,
+        'mei_url': mei_url,
+        'querystring': querystring,
+        'title': title
     })
 
 
