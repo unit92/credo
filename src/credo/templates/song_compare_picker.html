@@ -137,16 +137,14 @@
    *   - name: the name to show for this object
    */
   // TODO: get this from the template
-  let comparables = [{
-    id: 'e3',
-    name: 'Edition 3'
-  }, {
-    id: 'e4',
-    name: 'Edition 4'
-  }, {
-    id: 'r18',
-    name: 'Revision 18'
-  }]
+  let comparables = [
+    {% for comparable in comparables %}
+    {
+      id: '{{ comparable.id }}',
+      name: '{{ comparable.name }}'
+    },
+    {% endfor %}
+  ]
 
   compareButton.addEventListener('click', compare)
   initialiseCollections()

@@ -42,10 +42,16 @@ def song_compare_picker(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
     revisions = Revision.objects.filter(editions__in=editions)
+    comparables = [{
+        'id': f'e{edition.id}',
+        'name': edition.name
+    } for edition in editions] + [{
+        'id': f'r{revision.id}',
+        'name': revision
+    } for revision in revisions]
     return render(request, 'song_compare_picker.html', {
         'song': song,
-        'editions': editions,
-        'revisions': revisions
+        'comparables': comparables
     })
 
 
