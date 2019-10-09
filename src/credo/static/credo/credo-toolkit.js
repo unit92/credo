@@ -263,7 +263,10 @@ class CredoToolkit {
     this.verovioToolkit.loadData(this.mei)
     renderElement.innerHTML = this.verovioToolkit.renderData(
           this.mei,
-          {svgViewBox: true}
+          {
+              svgViewBox: true,
+              adjustPageHeight: true,
+          }
     )
   }
 
