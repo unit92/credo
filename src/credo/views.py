@@ -1,7 +1,11 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseForbidden
-from django.shortcuts import render
+from django.http import HttpResponse, \
+                        HttpResponseBadRequest, \
+                        HttpResponseForbidden, \
+                        JsonResponse
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
+from django.core.files.base import ContentFile
 
 import base64
 import json
@@ -167,6 +171,36 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['GET'])
+def make_revision(request):
+    editions = request.GET.getlist('e')
+
+    # if not revising a single edition, return a Bad Request response
+    if len(editions) != 1:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    # only one edition to base revision from, no need to invoke diffing
+    edition = Edition.objects.get(id=editions[0])
+
+    # duplicate the mei
+    new_mei = MEI()
+    filecontent = ContentFile(edition.mei.data.file.read())
+    new_mei.data.save('mei', filecontent)
+    new_mei.save()
+
+    # IMPORTANT - must close the file, otherwise Django breaks
+    edition.mei.data.file.close()
+
+    new_revision = Revision(user=request.user,
+                            mei=new_mei)
+    new_revision.save()
+    new_revision.editions.set([edition])
+    new_revision.save()
+
+    return redirect(
+            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
 
 
 def login(request):
