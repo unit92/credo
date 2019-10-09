@@ -291,7 +291,7 @@ class CredoToolkit {
 
     // get the SVG for the comment
     const commentElement = element.children[(element.children.length - 1)]
-    commentElement.setAttribute('x', position.x)
+    commentElement.setAttribute('x', position.x - 350)
     commentElement.setAttribute('y', position.y)
 
     // set the comment text
