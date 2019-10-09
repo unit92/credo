@@ -26,6 +26,10 @@ svg.tooltipped:hover {
     opacity: 1;
 }
 
+.btn {
+    letter-spacing: normal;
+}
+
 #saveButton {
   float: right;
 }
