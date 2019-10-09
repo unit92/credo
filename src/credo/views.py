@@ -201,3 +201,7 @@ def make_revision(request):
 
     return redirect(
             f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+
+
+def login(request):
+    return render(request, 'login.html')
