@@ -4,7 +4,8 @@ import logging
 import json
 
 from django.test import TestCase, Client
-from credo.models import User, Comment
+from credo.models import Comment, Revision, User
+
 
 class TestServerBlackBox(TestCase):
     def setUp(self):
@@ -68,3 +69,18 @@ class TestServerBlackBox(TestCase):
             content_type='application/json'
         )
         self.assertEquals(response.status_code, 403)
+
+    def test_make_revision_from_single_edition(self):
+        """Verify that making a revision from a single edition works
+
+        This makes a request to the make_revision view and asserts that a
+        revision is made, and that the client is redirected to the new
+        revision.
+        """
+
+        num_revisions = Revision.objects.count()
+
+        response = self.authed_client.get('/revise?e=1')
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Revision.objects.count(), num_revisions + 1)
