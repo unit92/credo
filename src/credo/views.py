@@ -205,3 +205,9 @@ def make_revision(request):
 
 def login(request):
     return render(request, 'login.html')
+
+
+def not_found(request):
+    return render(request, 'not_found.html', {
+        'message': 'Looks like we couldn\'t find what you were looking for.',
+    })
