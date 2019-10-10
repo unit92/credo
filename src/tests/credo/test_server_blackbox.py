@@ -21,12 +21,17 @@ class TestServerBlackBox(TestCase):
         self.client = Client()
 
     def test_revision_GET(self):
+        """Ensure revisions can be retrived at their appropriate endpoint."""
         response = self.authed_client.get('/songs/1/revisions/1')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('revision.html')
 
     def test_save_revision_POST(self):
-        '''Tests adding of comments through the 'save' button'''
+        """Ensure comments can be added through a POST request.
+
+        This endpoint is used by the 'save' button on the front end.
+        """
+
         response = self.authed_client.post(
             '/songs/1/revisions/1',
             json.dumps({
@@ -58,6 +63,8 @@ class TestServerBlackBox(TestCase):
         )
 
     def test_save_revision_auth(self):
+        """Ensure comments cannot be added if a user is not logged in."""
+
         response = self.client.post(
             '/songs/1/revisions/1',
             json.dumps({
