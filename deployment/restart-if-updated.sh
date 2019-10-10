@@ -20,7 +20,7 @@ if [[ "${reslog}" != "" ]]; then
     # Merge the branch
     git merge origin/$BRANCH
     # Install any new dependencies
-    pip install --user -r requirements.txt
+    pip3 install --user -r requirements.txt
     # Collect any static stuff, in case new static files were added
     cd src
     python3 manage.py collectstatic --no-input
