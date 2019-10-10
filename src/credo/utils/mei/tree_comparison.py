@@ -1,8 +1,9 @@
 from xmldiff import main, actions
 import lxml.etree as et
 import typing as t
-from pprint import pprint
+from pprint import pformat
 from copy import deepcopy
+import logging
 
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
@@ -16,7 +17,7 @@ class TreeComparison(ComparisonStrategy):
     B_COLOR = 'hsl(274, 100%, 56%)'
 
     def __init__(self):
-        return
+        self.logger = logging.getLogger(__name__)
 
     def compare_trees(self, a: et.ElementTree, b: et.ElementTree) \
             -> t.Tuple[et.ElementTree, et.ElementTree, et.ElementTree]:
@@ -90,10 +91,11 @@ class TreeComparison(ComparisonStrategy):
         # Apply colours to modified nodes in a_modded and b_modded trees
         for node in patcher.nodes:
             if len(node.modifications) > 0:
-                print()
-                print('Original:', node.original)
-                print('Modified:', node.modified)
-                pprint(node.modifications)
+                self.logger.debug('\nOriginal: {}\nModified: {}\n{}\n'.format(
+                    node.original,
+                    node.modified,
+                    pformat(node.modifications)
+                ))
                 mod = node.modifications[0]
                 if type(mod) in action_classes['insert']:
                     # Set colours in b_modded
@@ -112,27 +114,30 @@ class TreeComparison(ComparisonStrategy):
         # Merge a_modded and b_modded into a single diff tree
         diff = self.__naive_layer_merge(a_modded, b_modded)
 
-        print()
-        print()
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'A Original',
+            et.tostring(a, pretty_print=True).decode()
+        ))
 
-        print('A:\n', et.tostring(a, pretty_print=True).decode(), '\n')
-        print('B:\n', et.tostring(b, pretty_print=True).decode(), '\n')
-        print(
-            'A Modded:\n',
-            et.tostring(a_modded, pretty_print=True).decode(),
-            '\n'
-        )
-        print(
-            'B Modded:\n',
-            et.tostring(b_modded, pretty_print=True).decode(),
-            '\n'
-        )
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'B Original',
+            et.tostring(b, pretty_print=True).decode()
+        ))
 
-        print(
-            'Diff:\n',
-            et.tostring(diff, pretty_print=True).decode(),
-            '\n'
-        )
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'A Modded',
+            et.tostring(a_modded, pretty_print=True).decode()
+        ))
+
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'B Modded',
+            et.tostring(b_modded, pretty_print=True).decode()
+        ))
+
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'Difference',
+            et.tostring(diff, pretty_print=True).decode()
+        ))
 
         # TEMPORARY: Strip all trill tags from the diff
         # TODO: Resolve trill IDs in __naive_layer_merge

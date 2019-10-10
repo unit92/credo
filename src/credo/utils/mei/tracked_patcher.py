@@ -36,7 +36,6 @@ class TrackedPatcher(Patcher):
                 break
 
         for action in actions:
-            print(action)
             self.handle_action(action, result)
 
         return result
