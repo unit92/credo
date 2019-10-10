@@ -7,16 +7,10 @@ from copy import deepcopy
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
 from utils.mei.mei_transformer import MeiTransformer
+from utils.mei.xml_namespaces import MEI_NS
 
 
 class TreeComparison(ComparisonStrategy):
-
-    # Shorthand XML namespaces
-    ns = {
-        'xml': 'http://www.w3.org/XML/1998/namespace',
-        'mei': 'http://www.music-encoding.org/ns/mei',
-        'xlink': 'http://www.w3.org/1999/xlink'
-    }
 
     A_COLOR = 'hsl(195, 100%, 47%)'
     B_COLOR = 'hsl(274, 100%, 56%)'
@@ -142,7 +136,7 @@ class TreeComparison(ComparisonStrategy):
 
         # TEMPORARY: Strip all trill tags from the diff
         # TODO: Resolve trill IDs in __naive_layer_merge
-        for elem in diff.findall('//mei:trill', self.ns):
+        for elem in diff.findall('//mei:trill', MEI_NS):
             elem.getparent().remove(elem)
 
         return diff
@@ -155,7 +149,7 @@ class TreeComparison(ComparisonStrategy):
         base_id_prefix = 'm-a'
         insert_id_prefix = 'm-b'
 
-        bar_qry = et.XPath('//mei:measure', namespaces=self.ns)
+        bar_qry = et.XPath('//mei:measure', namespaces=MEI_NS)
         base_bars = bar_qry(base)
         insert_bars = bar_qry(insert)
 
@@ -167,7 +161,7 @@ class TreeComparison(ComparisonStrategy):
             insert_bar = insert_bars[bar_idx]
 
             # Loop through each staff in the bar
-            staff_qry = et.XPath('child::mei:staff', namespaces=self.ns)
+            staff_qry = et.XPath('child::mei:staff', namespaces=MEI_NS)
             base_staffs = staff_qry(base_bar)
             insert_staffs = staff_qry(insert_bar)
 
@@ -183,7 +177,7 @@ class TreeComparison(ComparisonStrategy):
 
                 # Loop through each layer in the staff
 
-                layer_qry = et.XPath('child::mei:layer', namespaces=self.ns)
+                layer_qry = et.XPath('child::mei:layer', namespaces=MEI_NS)
                 base_layers = layer_qry(base_staff)
                 insert_layers = layer_qry(insert_staff)
 
@@ -195,7 +189,7 @@ class TreeComparison(ComparisonStrategy):
                         )
                     )
 
-                id_attrib = et.QName(self.ns['xml'], 'id')
+                id_attrib = et.QName(MEI_NS['xml'], 'id')
 
                 layer_idx = 0
                 while layer_idx < len(base_layers):
