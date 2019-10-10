@@ -9,6 +9,7 @@ from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
 from utils.mei.mei_transformer import MeiTransformer
 from utils.mei.xml_namespaces import MEI_NS
+from utils.mei.id_formatters import get_formatted_xml_id
 
 
 class TreeComparison(ComparisonStrategy):
@@ -151,8 +152,8 @@ class TreeComparison(ComparisonStrategy):
 
         base = deepcopy(a)
         insert = b
-        base_id_prefix = 'm-a'
-        insert_id_prefix = 'm-b'
+        base_id_prefix = 'a'
+        insert_id_prefix = 'b'
 
         bar_qry = et.XPath('//mei:measure', namespaces=MEI_NS)
         base_bars = bar_qry(base)
@@ -203,12 +204,12 @@ class TreeComparison(ComparisonStrategy):
 
                     base_layer.set(
                         id_attrib.text,
-                        base_id_prefix + str(id_idx)
+                        get_formatted_xml_id(id_idx, base_id_prefix)
                     )
 
                     insert_layer.set(
                         id_attrib.text,
-                        insert_id_prefix + str(id_idx)
+                        get_formatted_xml_id(id_idx, insert_id_prefix)
                     )
                     # Update n tag on layer to allow trills to connect properly
                     insert_layer.set(

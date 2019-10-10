@@ -13,6 +13,7 @@ from lxml import etree
 from lxml.etree import ElementTree
 
 from .xml_namespaces import MEI_NS
+from .id_formatters import get_formatted_xml_id
 
 
 class MeiTransformer:
@@ -178,7 +179,7 @@ class MeiTransformer:
                 if keep_existing and id_val is not None:
                     continue
 
-                new_id = 'm-' + str(index)
+                new_id = get_formatted_xml_id(index)
                 # Update trill reference
                 if id_val is not None:
                     if '#' + id_val in trill_id_map.keys():
