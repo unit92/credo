@@ -4,6 +4,7 @@ import typing as t
 from pprint import pformat
 from copy import deepcopy
 import logging
+from colorsys import rgb_to_hls
 
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
@@ -14,11 +15,38 @@ from utils.mei.id_formatters import get_formatted_xml_id
 
 class TreeComparison(ComparisonStrategy):
 
-    A_COLOR = 'hsl(195, 100%, 47%)'
-    B_COLOR = 'hsl(274, 100%, 56%)'
+    DEFAULT_A_RGB = (0.400, 0.702, 1.000)
+    DEFAULT_B_RGB = (1.000, 0.400, 0.529)
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        self.set_colours(
+            TreeComparison.DEFAULT_A_RGB,
+            TreeComparison.DEFAULT_B_RGB
+        )
+
+    def set_colours(
+            self,
+            a_rgb: t.Tuple[float, float, float],
+            b_rgb: t.Tuple[float, float, float]):
+
+        try:
+            self.a_colour_hls = rgb_to_hls(a_rgb[0], a_rgb[1], a_rgb[2])
+            self.b_colour_hls = rgb_to_hls(b_rgb[0], b_rgb[1], b_rgb[2])
+        except ValueError:
+            self.a_colour_hls = rgb_to_hls(TreeComparison.DEFAULT_A_RGB)
+            self.b_colour_hls = rgb_to_hls(TreeComparison.DEFAULT_B_RGB)
+
+        self.a_colour_str = 'hsl({}, {}%, {}%)'.format(
+            int(self.a_colour_hls[0]*360),
+            int(self.a_colour_hls[2]*100),
+            int(self.a_colour_hls[1]*100)
+        )
+        self.b_colour_str = 'hsl({}, {}%, {}%)'.format(
+            int(self.b_colour_hls[0]*360),
+            int(self.b_colour_hls[2]*100),
+            int(self.b_colour_hls[1]*100)
+        )
 
     def compare_trees(self, a: et.ElementTree, b: et.ElementTree) \
             -> t.Tuple[et.ElementTree, et.ElementTree, et.ElementTree]:
@@ -100,17 +128,17 @@ class TreeComparison(ComparisonStrategy):
                 mod = node.modifications[0]
                 if type(mod) in action_classes['insert']:
                     # Set colours in b_modded
-                    node.modified.set('color', TreeComparison.B_COLOR)
+                    node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
                 elif type(mod) in action_classes['delete']:
                     # Set colours in a_modded
-                    node.original.set('color', TreeComparison.A_COLOR)
+                    node.original.set('color', self.a_colour_str)
                 elif type(mod) in action_classes['update']:
                     # Set colours in b_modded
-                    node.modified.set('color', TreeComparison.B_COLOR)
+                    node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
                     # Set colours in a_modded
-                    node.original.set('color', TreeComparison.A_COLOR)
+                    node.original.set('color', self.a_colour_str)
 
         # Merge a_modded and b_modded into a single diff tree
         diff = self.__naive_layer_merge(a_modded, b_modded)
