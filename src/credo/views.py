@@ -43,7 +43,7 @@ def song(request, song_id):
             'url': '/songs'
         },
         {
-            'text': song,
+            'text': song.name,
         }
     ]
     return render(request, 'song.html', {
@@ -63,11 +63,11 @@ def edition(request, song_id, edition_id):
             'url': '/songs'
         },
         {
-            'text': song,
+            'text': song.name,
             'url': f'/songs/{song_id}'
         },
         {
-            'text': edition,
+            'text': edition.name,
         }
     ]
     return render(request, 'edition.html', {
@@ -98,11 +98,11 @@ class RevisionView(View):
                 'url': '/songs'
             },
             {
-                'text': song,
+                'text': song.name,
                 'url': f'/songs/{song_id}'
             },
             {
-                'text': revision,
+                'text': 'Revision',
             }
         ]
         return render(request, 'revision.html', {
