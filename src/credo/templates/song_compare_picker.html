@@ -47,7 +47,6 @@
       .concat(revisions.map(revision => `r=${revision}`))
       .join('&')
 
-    console.log(queryString)
     window.location.href = `/compare?${queryString}`
   }
 
