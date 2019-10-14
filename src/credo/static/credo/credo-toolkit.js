@@ -6,7 +6,7 @@
  */
 
 toolColors = {
-  inspect: "deep-orange darken-3",
+  inspect: "cyan darken-1",
   comment: "indigo",
   resolve: "green darken-3"
 }
