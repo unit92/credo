@@ -34,8 +34,12 @@ svg.tooltipped:hover {
   float: right;
 }
 
+#toolbar {
+    overflow: auto;
+}
+
 #makeRevisionButton {
-  float: right;
+    float: right;
 }
 
 #makeRevisionSpan {

@@ -8,13 +8,16 @@
 
 {% if authenticated %}
 
+<div id="toolbar">
 <a class="waves-effect waves-light btn" id="makeRevisionButton">
   <i class="material-icons left">create</i>
   Make Revision
 </a>
+</div>
 
 {% else %}
 
+<div id="toolbar">
 <div
   id="makeRevisionSpan"
   data-position="bottom"
@@ -24,6 +27,7 @@
     <i class="material-icons left">create</i>
     Make Revision
   </a>
+</div>
 </div>
 
 {% endif %}
