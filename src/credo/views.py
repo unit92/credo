@@ -137,19 +137,6 @@ def mei(request, mei_id):
 
 
 def compare(request):
-    source_ids = request.GET.getlist('s')
-
-    if source_ids:
-        # TODO Nicer rendering for bad source ids
-        try:
-            source_ids = [int(s) for s in source_ids]
-        except ValueError:
-            return HttpResponseBadRequest()
-
-        return render(request, 'compare.html', {
-            'sources': [{'id': s} for s in source_ids]
-        })
-
     edition_ids = request.GET.getlist('e')
     revision_ids = request.GET.getlist('r')
     try:
