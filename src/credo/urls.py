@@ -39,7 +39,7 @@ urlpatterns = [
     path('compare', views.compare),
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
-    path('signup', views.signup),
+    path('signup', views.signup, name='signup'),
     path('revise', views.make_revision),
     path('login', views.login),
 ]

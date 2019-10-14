@@ -22,10 +22,11 @@
         <h4 class="center-align">Sign Up</h4>
 
         <form class='col s12' method='post'>
+          {% csrf_token %}
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>account_box</i>
-              <input name='username' type='text' id='username'/>
+              <input name= username type='text' id='username'/>
               <label for='username'>Username</label>
             </div>
           </div>
@@ -61,6 +62,7 @@
             </button>
           </div>
         </form>
+
       </div>
     </div>
   </div>

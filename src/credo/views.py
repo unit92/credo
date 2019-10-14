@@ -2,6 +2,7 @@ from django.http import HttpResponse, \
                         HttpResponseBadRequest, \
                         HttpResponseForbidden, \
                         JsonResponse
+from django.contrib.auth import authenticate
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
@@ -13,6 +14,8 @@ import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
+
+from .forms import SignUpForm
 
 
 def index(request):
@@ -208,4 +211,15 @@ def login(request):
 
 
 def signup(request):
-    return render(request, 'signup.html')
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('index')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
