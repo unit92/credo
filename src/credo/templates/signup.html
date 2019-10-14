@@ -26,32 +26,32 @@
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>account_box</i>
-              <input name='username' type='text' id='username' required/>
-              <label for='username'>Username</label>
+              {{ form.username }}
+              {{ form.username.label_tag }}
             </div>
           </div>
 
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>email</i>
-              <input name='email' type='email' id='email' class="validate"/>
-              <label for='email'>Email</label>
+              {{ form.email }}
+              {{ form.email.label_tag }}
             </div>
           </div>
 
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>lock</i>
-              <input name='password' type='password' id='password' class="validate">
-              <label for='password'>Password</label>
+              {{ form.password }}
+              {{ form.password.label_tag }}
             </div>
           </div>
 
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>lock</i>
-              <input name='confirm-password' type='password' id='confirm-password'>
-              <label id="label-confirm-password" for='confirm-password'>Confirm Password</label>
+              {{ form.password_confirm }}
+              {{ form.password_confirm.label_tag }}
               <span class="helper-text" data-error="Password does not match" data-success="Password Match"></span>
             </div>
           </div>

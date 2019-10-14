@@ -4,10 +4,24 @@ from django.contrib.auth.models import User
 
 class SignUpForm(forms.ModelForm):
     username = forms.CharField(label='Username', max_length=100)
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    email = forms.EmailField(label='Email', max_length=254,
+                             widget=forms.TextInput(
+                                attrs={'class': 'validate',
+                                       'type': 'email'}))
+
+    password = forms.CharField(label='Password',
+                               widget=forms.TextInput(
+                                                attrs={'class': 'validate',
+                                                       'type': 'password'}))
+
     password_confirm = forms.CharField(label='Confirm Password',
-                                       widget=forms.PasswordInput)
-    email = forms.EmailField(label='Email', max_length=254)
+                                       widget=forms.TextInput(
+                                            attrs={'type': 'password'}))
+
+    # Override label suffix  (Changes label text from 'text:' -> 'text')
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        super(SignUpForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = User

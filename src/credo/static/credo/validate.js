@@ -16,8 +16,8 @@ document.addEventListener(
       }
     };
 
-    const password = document.getElementById("password");
-    const confirm_password = document.getElementById("confirm-password");
+    const password = document.getElementById("id_password");
+    const confirm_password = document.getElementById("id_password_confirm");
 
     password.onkeyup = validatePassword;
     confirm_password.onkeyup = validatePassword;
