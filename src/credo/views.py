@@ -102,7 +102,7 @@ class RevisionView(View):
                 'url': f'/songs/{song_id}'
             },
             {
-                'text': revision.name,
+                'text': revision.name or "Untitled Revision",
             }
         ]
         return render(request, 'revision.html', {
