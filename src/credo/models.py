@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from utils.mei.mei_transformer import MeiTransformer
 
+
 class Composer(models.Model):
     name = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,14 +44,6 @@ def my_callback(sender, instance, *args, **kwargs):
     transformer.save_xml_file(instance.data.name)
 
 
-@receiver(post_save, sender=MEI)
-def my_callback(sender, instance, *args, **kwargs):
-    mei_file = instance.data.file.open()
-    transformer = MeiTransformer.from_xml_file(mei_file)
-    transformer.normalise()
-    transformer.save_xml_file(instance.data.name)
-
-
 class Edition(models.Model):
     name = models.TextField()
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
@@ -64,6 +57,7 @@ class Edition(models.Model):
 
 
 class Revision(models.Model):
+    name = models.TextField(default=None, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mei = models.ForeignKey(MEI, on_delete=models.CASCADE)
     editions = models.ManyToManyField(Edition)
