@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-
 from django.test import TestCase
 from credo.models import MEI
-from utils.mei.mei_transformer import MeiTransformer
 from django.core.files.base import ContentFile
 import re
-import os
+
 
 class TestMEI(TestCase):
     def setUp(self):
-        ...
+        pass
 
     def test_normalize_on_save(self):
+        """Ensure MEI files are normalised when saved to the database.
+        """
         mei = MEI()
 
         with open('credo/migrations/seed_mei/diffA.mei') as f:
