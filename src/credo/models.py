@@ -57,6 +57,7 @@ class Edition(models.Model):
 
 
 class Revision(models.Model):
+    name = models.TextField(default=None, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mei = models.ForeignKey(MEI, on_delete=models.CASCADE)
     editions = models.ManyToManyField(Edition)
