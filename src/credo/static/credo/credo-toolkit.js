@@ -12,6 +12,7 @@ class CredoToolkit {
   renderDiv
 
   mei
+  meiDocument // the mei string parsed into an XML document
   comments
 
   commentModalInstance
@@ -114,6 +115,29 @@ class CredoToolkit {
   scoreInteractionListener (event) {
     if (this.currentToolMode === 'comment') {
       this.commmentEventListener(event)
+    } else if (this.currentToolMode === 'resolve') {
+      this.resolveEventListener(event)
+    }
+  }
+
+  /**
+   * Reacts to the click event by reacting as if in resolve mode.
+   *
+   * @param {Event} event A HTML DOM event.
+   */
+  resolveEventListener (event) {
+    // get the event target
+    let target = event.target
+
+    // keep going upwards until we find an element with className 'measure'
+    // or the target is no longer truthy
+    while (target && !Array.from(target.classList).includes('measure')) {
+      target = target.parentElement
+    }
+
+    // if the target is null, we didn't match a measure, return
+    if (!target) {
+      return
     }
   }
 
@@ -188,6 +212,7 @@ class CredoToolkit {
     return this.loadMei()
       .then(mei => {
         this.mei = mei
+        this.meiDocument = new DOMParser().parseFromString(mei, 'text/xml')
         this.verovioToolkit.loadData(mei)
       })
   }
@@ -263,7 +288,7 @@ class CredoToolkit {
     this.verovioToolkit.loadData(this.mei)
     renderElement.innerHTML = this.verovioToolkit.renderData(
           this.mei,
-          {svgViewBox: true}
+          { svgViewBox: true }
     )
   }
 
