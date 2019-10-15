@@ -215,6 +215,31 @@ class CredoToolkit {
       }
     )
 
+    const outerSvgElement = resolveDiv.children[0]
+    const innerSvgElement = outerSvgElement.querySelector('.definition-scale')
+    const marginElement = innerSvgElement.querySelector('.page-margin')
+    const measureElement = innerSvgElement.querySelector('.measure')
+
+    // I am painfully aware of how much of a hack the following is, but Verovio was
+    //  too inflexible to allow me to center and scale the measure onto the resolve modal.
+    setTimeout(() => {
+        const marginBBox = marginElement.getBBox()
+        console.log(marginBBox)
+        innerSvgElement.setAttribute(
+          'viewBox',
+          `0 0 ${marginBBox.width} ${marginBBox.height + 200}`
+        )
+        resolveDiv.appendChild(innerSvgElement)
+        outerSvgElement.remove()
+        marginElement.setAttribute('transform', `translate(${measureElement.getBBox().x*-1},50)`)
+        // marginElement.setAttribute('transform', '')
+        // outerSvgElement.setAttribute(
+          // 'viewBox',
+          // `0 0 ${marginBBox.width / 9} ${marginBBox.height / 9}`
+        // )
+    }, 20)
+
+
     this.resolveMeasureId = targetId
     this.resolveModalInstance.open()
   }
