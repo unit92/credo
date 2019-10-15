@@ -308,7 +308,7 @@ class CredoToolkit {
 
     // actually remove it now
     toRemove.forEach(element => {
-      element.remove()
+      element.setAttribute('visible', 'false')
     })
 
     // remove colour from any remaining notes
