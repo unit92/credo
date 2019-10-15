@@ -11,9 +11,21 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Set logging level
+LOGGING_LEVEL = os.environ['LOGGING_LEVEL']
+try:
+    logging.basicConfig(level=LOGGING_LEVEL)
+except ValueError:
+    logging.warn('Unset logging level. Make sure the .env file defines a\
+    valid logging level. See \
+    https://docs.python.org/3/howto/logging.html#logging-basic-tutorial\
+    for more details.')
+    logging.basicConfig(level=logging.NOTSET)
 
 
 # Quick-start development settings - unsuitable for production

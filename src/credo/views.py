@@ -17,13 +17,19 @@ from .models import Comment, Edition, MEI, Revision, Song
 
 def index(request):
     return render(request, 'message.html', {
-        'message': 'Welcome to Credo.',
+        'message': 'Welcome to Credo.'
     })
 
 
 def song_list(request):
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+        }
+    ]
     return render(request, 'song_list.html', {
         'songs': Song.objects.all(),
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -31,10 +37,20 @@ def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
     revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+        }
+    ]
     return render(request, 'song.html', {
         'song': song,
         'editions': editions,
         'revisions': revisions,
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -51,16 +67,39 @@ def song_compare_picker(request, song_id):
     } for revision in revisions]
     return render(request, 'song_compare_picker.html', {
         'song': song,
-        'comparables': comparables
+        'comparables': comparables,
+        'breadcrumbs': [{
+            'text': 'Songs',
+            'url': '/songs'
+        }, {
+            'text': song.name,
+            'url': f'/songs/{song.id}'
+        }, {
+            'text': 'Compare'
+        }]
     })
 
 
 def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+            'url': f'/songs/{song_id}'
+        },
+        {
+            'text': edition.name,
+        }
+    ]
     return render(request, 'edition.html', {
         'authenticated': request.user.is_authenticated,
-        'edition': edition
+        'edition': edition,
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -75,15 +114,30 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
+
     def get(self, request, song_id, revision_id):
         song = Song.objects.get(id=song_id)
         revision = Revision.objects.filter(
                 id=revision_id, editions__song=song).distinct('id')[0]
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': song.name,
+                'url': f'/songs/{song_id}'
+            },
+            {
+                'text': revision.name or "Untitled Revision",
+            }
+        ]
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+            'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'breadcrumbs': breadcrumbs
         })
 
     def post(self, request, song_id, revision_id):
@@ -154,12 +208,16 @@ def compare(request):
                  revision_ids]
 
     title = 'Comparison'
+    song = None
     if len(editions):
         edition = Edition.objects.get(id=edition_ids[0])
-        title = edition.song.name
+        song = edition.song
     elif len(revisions):
         revision = Revision.objects.get(id=revision_ids[0])
-        title = revision.song().name
+        song = revision.song()
+
+    if song:
+        title = song.name
 
     querystring = '&'.join(edition_queries + revision_queries)
     mei_ids = [edition.mei.id for edition in editions] + \
@@ -172,7 +230,16 @@ def compare(request):
         'authenticated': request.user.is_authenticated,
         'mei_url': mei_url,
         'querystring': querystring,
-        'title': title
+        'title': title,
+        'breadcrumbs': [{
+            'text': 'Songs',
+            'url': '/songs'
+        }, {
+            'text': song.name,
+            'url': f'/songs/{song.id}'
+        }, {
+            'text': 'Compare'
+        }]
     })
 
 
@@ -274,3 +341,7 @@ def make_revision(request):
 
     return redirect(
             f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+
+
+def login(request):
+    return render(request, 'login.html')

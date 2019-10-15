@@ -12,12 +12,8 @@ import typing as t
 from lxml import etree
 from lxml.etree import ElementTree
 
-# Shorthand XML namespaces
-ns = {
-    'xml': 'http://www.w3.org/XML/1998/namespace',
-    'mei': 'http://www.music-encoding.org/ns/mei',
-    'xlink': 'http://www.w3.org/1999/xlink'
-}
+from .xml_namespaces import MEI_NS
+from .id_formatters import get_formatted_xml_id
 
 
 class MeiTransformer:
@@ -58,7 +54,7 @@ class MeiTransformer:
         we're a plain MEI file by checking if any note tags have the octname
         attribute, which is specific to the intermediate MEI format
         """
-        return self._tree.find('.//mei:note[@octname]', ns) is not None
+        return self._tree.find('.//mei:note[@octname]', MEI_NS) is not None
 
     def normalise(self) -> None:
         """
@@ -78,7 +74,7 @@ class MeiTransformer:
     def to_intermediate(self) -> None:
         if self.is_intermediate:
             raise ValueError('MEI is already in intermediate representation')
-        for elem in self._tree.findall('.//mei:note[@oct][@pname]', ns):
+        for elem in self._tree.findall('.//mei:note[@oct][@pname]', MEI_NS):
             pname = elem.attrib.pop('pname')
             octave = elem.attrib.pop('oct')
             octname = f'{octave}:{pname}'
@@ -88,7 +84,7 @@ class MeiTransformer:
     def to_plain_mei(self) -> None:
         if not self.is_intermediate:
             raise ValueError('MEI is not in intermediate representation')
-        for elem in self._tree.findall('.//mei:note[@octname]', ns):
+        for elem in self._tree.findall('.//mei:note[@octname]', MEI_NS):
             octname = elem.attrib.pop('octname')
             octave, pname = octname.split(':')
             elem.set('pname', pname)
@@ -106,7 +102,7 @@ class MeiTransformer:
         and other useless information
         """
         # There should only be one meiHead tag, but just to be sure
-        for elem in self._tree.findall('mei:meiHead', ns):
+        for elem in self._tree.findall('mei:meiHead', MEI_NS):
             elem.getparent().remove(elem)
 
     def _remove_MIDI_data(self) -> None:
@@ -119,9 +115,9 @@ class MeiTransformer:
         """
         # This is an xpath to find any note tags in the MEI namespace with the
         # pnum attribute
-        for elem in self._tree.findall('.//mei:note[@pnum]', ns):
+        for elem in self._tree.findall('.//mei:note[@pnum]', MEI_NS):
             elem.attrib.pop('pnum')
-        for elem in self._tree.findall('.//mei:instrDef', ns):
+        for elem in self._tree.findall('.//mei:instrDef', MEI_NS):
             elem.getparent().remove(elem)
 
     def _strip_ids(self) -> None:
@@ -136,7 +132,7 @@ class MeiTransformer:
             # Ensure element can have attributes
             if (not isinstance(elem, class_lookup.comment_class) and
                     not isinstance(elem, class_lookup.entity_class)):
-                id_attrib = etree.QName(ns['xml'], 'id')
+                id_attrib = etree.QName(MEI_NS['xml'], 'id')
                 if elem.attrib.get(id_attrib.text) is not None:
                     elem.attrib.pop(id_attrib.text)
 
@@ -165,7 +161,7 @@ class MeiTransformer:
 
         # Find all trills in the MEI, as they reference other IDs
         trill_id_map = dict()
-        for elem in self._tree.findall('//mei:trill', ns):
+        for elem in self._tree.findall('//mei:trill', MEI_NS):
             referenced_id = elem.get('startid')
             if referenced_id is not None:
                 trill_id_map[referenced_id] = elem
@@ -177,13 +173,13 @@ class MeiTransformer:
             # Ensure element can have attributes
             if (not isinstance(elem, class_lookup.comment_class) and
                     not isinstance(elem, class_lookup.entity_class)):
-                id_attrib = etree.QName(ns['xml'], 'id')
+                id_attrib = etree.QName(MEI_NS['xml'], 'id')
                 id_val = elem.get(id_attrib.text)
 
                 if keep_existing and id_val is not None:
                     continue
 
-                new_id = 'm-' + str(index)
+                new_id = get_formatted_xml_id(index)
                 # Update trill reference
                 if id_val is not None:
                     if '#' + id_val in trill_id_map.keys():

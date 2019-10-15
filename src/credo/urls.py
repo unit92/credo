@@ -41,4 +41,5 @@ urlpatterns = [
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
     path('revise', views.make_revision),
+    path('login', views.login),
 ]

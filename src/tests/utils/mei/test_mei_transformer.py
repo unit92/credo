@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from unittest import TestCase, main
-from utils.mei.mei_transformer import MeiTransformer, ns
+from utils.mei.mei_transformer import MeiTransformer
+from utils.mei.xml_namespaces import MEI_NS
 
 
 class TestMeiTransformer(TestCase):
@@ -19,9 +20,9 @@ class TestMeiTransformer(TestCase):
         for the head before normalisation and after and asserting that it
         exists beforehand and doesn't afterwards
         """
-        before = self.meiTransformer.tree.find('.//mei:meiHead', ns)
+        before = self.meiTransformer.tree.find('.//mei:meiHead', MEI_NS)
         self.meiTransformer.normalise()
-        headers = self.meiTransformer.tree.find('.//mei:meiHead', ns)
+        headers = self.meiTransformer.tree.find('.//mei:meiHead', MEI_NS)
         self.assertIsNotNone(before)
         self.assertIsNone(headers)
         self.assertFalse(self.meiTransformer.is_intermediate)
@@ -34,12 +35,18 @@ class TestMeiTransformer(TestCase):
         asserting that it exists beforehand and doesn't afterwards
         """
         before_midi_notes = self.meiTransformer.tree.find(
-            './/mei:note[@pnum]', ns)
+            './/mei:note[@pnum]', MEI_NS)
         before_midi_instrument = self.meiTransformer.tree.find(
-            './/mei:instrDef', ns)
+            './/mei:instrDef', MEI_NS)
         self.meiTransformer.normalise()
-        midi_notes = self.meiTransformer.tree.find('.//mei:note[@pnum]', ns)
-        midi_instrument = self.meiTransformer.tree.find('.//mei:instrDef', ns)
+        midi_notes = self.meiTransformer.tree.find(
+            './/mei:note[@pnum]',
+            MEI_NS
+        )
+        midi_instrument = self.meiTransformer.tree.find(
+            './/mei:instrDef',
+            MEI_NS
+        )
         self.assertIsNotNone(before_midi_notes)
         self.assertIsNotNone(before_midi_instrument)
         self.assertIsNone(midi_notes)
@@ -53,9 +60,9 @@ class TestMeiTransformer(TestCase):
         the tree for the colour attributes before normalisation and after
         and asserting that they exist beforehand and don't afterwards.
         """
-        before = self.meiTransformer.tree.find('//*[@color]', ns)
+        before = self.meiTransformer.tree.find('//*[@color]', MEI_NS)
         self.meiTransformer.normalise()
-        after = self.meiTransformer.tree.find('//*[@color]', ns)
+        after = self.meiTransformer.tree.find('//*[@color]', MEI_NS)
         self.assertIsNotNone(before)
         self.assertIsNone(after)
         self.assertFalse(self.meiTransformer.is_intermediate)
@@ -98,13 +105,13 @@ class TestMeiTransformer(TestCase):
         """
         attribs = ['color', 'pnum', 'dur.ges']
         for attrib in attribs:
-            before = self.meiTransformer.tree.find(f'//*[@{attrib}]', ns)
+            before = self.meiTransformer.tree.find(f'//*[@{attrib}]', MEI_NS)
             self.assertIsNotNone(before)
 
         self.meiTransformer.strip_attribs(attribs)
 
         for attrib in attribs:
-            after = self.meiTransformer.tree.find(f'//*[@{attrib}]', ns)
+            after = self.meiTransformer.tree.find(f'//*[@{attrib}]', MEI_NS)
             self.assertIsNone(after)
 
         self.assertFalse(self.meiTransformer.is_intermediate)

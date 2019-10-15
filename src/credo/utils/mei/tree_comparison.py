@@ -1,28 +1,52 @@
 from xmldiff import main, actions
 import lxml.etree as et
 import typing as t
-from pprint import pprint
+from pprint import pformat
 from copy import deepcopy
+import logging
+from colorsys import rgb_to_hls
 
 from .comparison_strategy import ComparisonStrategy
 from .tracked_patcher import TrackedPatcher
 from utils.mei.mei_transformer import MeiTransformer
+from utils.mei.xml_namespaces import MEI_NS
+from utils.mei.id_formatters import get_formatted_xml_id
 
 
 class TreeComparison(ComparisonStrategy):
 
-    # Shorthand XML namespaces
-    ns = {
-        'xml': 'http://www.w3.org/XML/1998/namespace',
-        'mei': 'http://www.music-encoding.org/ns/mei',
-        'xlink': 'http://www.w3.org/1999/xlink'
-    }
-
-    A_COLOR = 'hsl(195, 100%, 47%)'
-    B_COLOR = 'hsl(274, 100%, 56%)'
+    DEFAULT_A_RGB = (0.400, 0.702, 1.000)
+    DEFAULT_B_RGB = (1.000, 0.400, 0.529)
 
     def __init__(self):
-        return
+        self.logger = logging.getLogger(__name__)
+        self.set_colours(
+            TreeComparison.DEFAULT_A_RGB,
+            TreeComparison.DEFAULT_B_RGB
+        )
+
+    def set_colours(
+            self,
+            a_rgb: t.Tuple[float, float, float],
+            b_rgb: t.Tuple[float, float, float]):
+
+        try:
+            self.a_colour_hls = rgb_to_hls(a_rgb[0], a_rgb[1], a_rgb[2])
+            self.b_colour_hls = rgb_to_hls(b_rgb[0], b_rgb[1], b_rgb[2])
+        except ValueError:
+            self.a_colour_hls = rgb_to_hls(TreeComparison.DEFAULT_A_RGB)
+            self.b_colour_hls = rgb_to_hls(TreeComparison.DEFAULT_B_RGB)
+
+        self.a_colour_str = 'hsl({}, {}%, {}%)'.format(
+            int(self.a_colour_hls[0]*360),
+            int(self.a_colour_hls[2]*100),
+            int(self.a_colour_hls[1]*100)
+        )
+        self.b_colour_str = 'hsl({}, {}%, {}%)'.format(
+            int(self.b_colour_hls[0]*360),
+            int(self.b_colour_hls[2]*100),
+            int(self.b_colour_hls[1]*100)
+        )
 
     def compare_trees(self, a: et.ElementTree, b: et.ElementTree) \
             -> t.Tuple[et.ElementTree, et.ElementTree, et.ElementTree]:
@@ -96,53 +120,57 @@ class TreeComparison(ComparisonStrategy):
         # Apply colours to modified nodes in a_modded and b_modded trees
         for node in patcher.nodes:
             if len(node.modifications) > 0:
-                print()
-                print('Original:', node.original)
-                print('Modified:', node.modified)
-                pprint(node.modifications)
+                self.logger.debug('\nOriginal: {}\nModified: {}\n{}\n'.format(
+                    node.original,
+                    node.modified,
+                    pformat(node.modifications)
+                ))
                 mod = node.modifications[0]
                 if type(mod) in action_classes['insert']:
                     # Set colours in b_modded
-                    node.modified.set('color', TreeComparison.B_COLOR)
+                    node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
                 elif type(mod) in action_classes['delete']:
                     # Set colours in a_modded
-                    node.original.set('color', TreeComparison.A_COLOR)
+                    node.original.set('color', self.a_colour_str)
                 elif type(mod) in action_classes['update']:
                     # Set colours in b_modded
-                    node.modified.set('color', TreeComparison.B_COLOR)
+                    node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
                     # Set colours in a_modded
-                    node.original.set('color', TreeComparison.A_COLOR)
+                    node.original.set('color', self.a_colour_str)
 
         # Merge a_modded and b_modded into a single diff tree
         diff = self.__naive_layer_merge(a_modded, b_modded)
 
-        print()
-        print()
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'A Original',
+            et.tostring(a, pretty_print=True).decode()
+        ))
 
-        print('A:\n', et.tostring(a, pretty_print=True).decode(), '\n')
-        print('B:\n', et.tostring(b, pretty_print=True).decode(), '\n')
-        print(
-            'A Modded:\n',
-            et.tostring(a_modded, pretty_print=True).decode(),
-            '\n'
-        )
-        print(
-            'B Modded:\n',
-            et.tostring(b_modded, pretty_print=True).decode(),
-            '\n'
-        )
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'B Original',
+            et.tostring(b, pretty_print=True).decode()
+        ))
 
-        print(
-            'Diff:\n',
-            et.tostring(diff, pretty_print=True).decode(),
-            '\n'
-        )
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'A Modded',
+            et.tostring(a_modded, pretty_print=True).decode()
+        ))
+
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'B Modded',
+            et.tostring(b_modded, pretty_print=True).decode()
+        ))
+
+        self.logger.debug('\n{}:\n{}\n'.format(
+            'Difference',
+            et.tostring(diff, pretty_print=True).decode()
+        ))
 
         # TEMPORARY: Strip all trill tags from the diff
         # TODO: Resolve trill IDs in __naive_layer_merge
-        for elem in diff.findall('//mei:trill', self.ns):
+        for elem in diff.findall('//mei:trill', MEI_NS):
             elem.getparent().remove(elem)
 
         return diff
@@ -152,10 +180,10 @@ class TreeComparison(ComparisonStrategy):
 
         base = deepcopy(a)
         insert = b
-        base_id_prefix = 'm-a'
-        insert_id_prefix = 'm-b'
+        base_id_prefix = 'a'
+        insert_id_prefix = 'b'
 
-        bar_qry = et.XPath('//mei:measure', namespaces=self.ns)
+        bar_qry = et.XPath('//mei:measure', namespaces=MEI_NS)
         base_bars = bar_qry(base)
         insert_bars = bar_qry(insert)
 
@@ -167,7 +195,7 @@ class TreeComparison(ComparisonStrategy):
             insert_bar = insert_bars[bar_idx]
 
             # Loop through each staff in the bar
-            staff_qry = et.XPath('child::mei:staff', namespaces=self.ns)
+            staff_qry = et.XPath('child::mei:staff', namespaces=MEI_NS)
             base_staffs = staff_qry(base_bar)
             insert_staffs = staff_qry(insert_bar)
 
@@ -183,7 +211,7 @@ class TreeComparison(ComparisonStrategy):
 
                 # Loop through each layer in the staff
 
-                layer_qry = et.XPath('child::mei:layer', namespaces=self.ns)
+                layer_qry = et.XPath('child::mei:layer', namespaces=MEI_NS)
                 base_layers = layer_qry(base_staff)
                 insert_layers = layer_qry(insert_staff)
 
@@ -195,7 +223,7 @@ class TreeComparison(ComparisonStrategy):
                         )
                     )
 
-                id_attrib = et.QName(self.ns['xml'], 'id')
+                id_attrib = et.QName(MEI_NS['xml'], 'id')
 
                 layer_idx = 0
                 while layer_idx < len(base_layers):
@@ -204,12 +232,12 @@ class TreeComparison(ComparisonStrategy):
 
                     base_layer.set(
                         id_attrib.text,
-                        base_id_prefix + str(id_idx)
+                        get_formatted_xml_id(id_idx, base_id_prefix)
                     )
 
                     insert_layer.set(
                         id_attrib.text,
-                        insert_id_prefix + str(id_idx)
+                        get_formatted_xml_id(id_idx, insert_id_prefix)
                     )
                     # Update n tag on layer to allow trills to connect properly
                     insert_layer.set(
