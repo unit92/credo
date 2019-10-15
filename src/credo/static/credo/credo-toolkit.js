@@ -27,6 +27,7 @@ class CredoToolkit {
 
   resolveModalInstance
   resolveMeasureId // ID of the measure we're resolving
+  eliminatedIds // IDs to eliminate
 
   savingModalInstance
 
@@ -96,12 +97,16 @@ class CredoToolkit {
       M.Modal.init(resolveModals)
       this.resolveModalInstance = M.Modal
         .getInstance(document.getElementById('resolve-modal'))
+      document.getElementById('resolveDiv')
+        .addEventListener('click', this.resolveNote.bind(this))
     })
 
     // initialise the saving modal if there is a saveUrl
     if (saveUrl) {
       const modals = document.querySelectorAll('.modal#saving-modal')
-      M.Modal.init(modals)
+      M.Modal.init(modals, {
+        onCloseEnd: this.clearResolveModal
+      })
       this.savingModalInstance = M.Modal
         .getInstance(document.getElementById('saving-modal'))
     }
@@ -182,9 +187,7 @@ class CredoToolkit {
    * @param {string} targetId The ID of the measure to resolve.
    */
   openResolveModal (targetId) {
-    console.log(targetId)
-
-    console.log(this.meiDocument)
+    this.eliminatedIds = []
 
     const meiMeasure = this.meiDocument.evaluate(
       `//mei:measure[@xml:id="${targetId}"]`,
@@ -194,8 +197,6 @@ class CredoToolkit {
       null
     )
       .iterateNext()
-
-    console.log(meiMeasure)
 
     const resolveMeiString = this.generateResolveMei(meiMeasure)
     console.log(resolveMeiString)
@@ -209,7 +210,58 @@ class CredoToolkit {
       }
     )
 
+    this.resolveMeasureId = targetId
     this.resolveModalInstance.open()
+  }
+
+  /**
+   * Attempts to resolve the notation clicked upon.
+   *
+   * @param {Event} The HTML DOM event.
+   */
+  resolveNote (event) {
+    let target = event.target
+    const lowAlpha = 0.3
+
+    while (target && !target.id.match(/m-[0-9]*/)) {
+      target = target.parentElement
+    }
+
+    console.log(target)
+
+    // don't affect the note if it's not coloured
+    if (!target) {
+      return
+    }
+
+    let fillAttribute = target.getAttribute('fill') || target.parentElement.getAttribute('fill')
+    if (!fillAttribute) {
+      return
+    }
+
+    if (fillAttribute.startsWith('hsl(')) {
+      // add transparency and add to list of IDs to eliminate
+      fillAttribute = fillAttribute.replace('hsl', 'hsla')
+      fillAttribute = fillAttribute.replace(')', `, ${lowAlpha})`)
+      if (!this.eliminatedIds.includes(target.id)) {
+        this.eliminatedIds.push(target.id)
+      }
+    } else if (fillAttribute.startsWith('hsla')) {
+      // remove transparency and remove from list of IDs to eliminate
+      fillAttribute = fillAttribute.replace('hsla', 'hsl')
+      fillAttribute = fillAttribute.replace(/, [0-9\.]*\)/, ')')
+      this.eliminatedIds = this.eliminatedIds.filter(
+        id => id !== target.id
+      )
+    }
+    target.setAttribute('fill', fillAttribute)
+  }
+
+  /**
+   * Clears the resolve modal.
+   */
+  clearResolveModal () {
+    document.getElementById('resolveDiv').innerHTML = ''
   }
 
   /**
