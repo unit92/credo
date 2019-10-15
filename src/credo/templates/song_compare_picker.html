@@ -1,0 +1,151 @@
+{% include 'header.html' %}
+
+<h2>Compare {{ song.name }}</h2>
+
+<div class="row">
+  <div class="col s12">
+    <a class="waves-effect waves-light btn right disabled" id="compareButton">Compare</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12 l6">
+    <ul class="collection with-header" id="comparablesList">
+      <li class="collection-header">
+        <h4>Editions</h4>
+      </li>
+    </ul>
+  </div>
+  <div class="col s12 l6">
+    <ul class="collection with-header" id="selectedList">
+      <li class="collection-header">
+        <h4>Selected</h4>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+  const compareButton = document.getElementById('compareButton')
+  const comparablesList = document.getElementById('comparablesList')
+  const selectedList = document.getElementById('selectedList')
+
+  const compare = event => {
+    // get the selected IDs
+    const selectedElements = Array.from(
+      selectedList.querySelectorAll('li.collection-item'))
+    const selectedIds = selectedElements.map(element => element.id)
+
+    // separate into editions and revisions
+    const editions = selectedIds.filter(id => id.startsWith('e'))
+      .map(id => id.substring(1))
+    const revisions = selectedIds.filter(id => id.startsWith('r'))
+      .map(id => id.substring(1))
+
+    // form the queryString
+    const queryString = editions.map(edition => `e=${edition}`)
+      .concat(revisions.map(revision => `r=${revision}`))
+      .join('&')
+
+    window.location.href = `/compare?${queryString}`
+  }
+
+  /**
+   * Sets the compare button to enabled or greyed out, depending on input
+   * validity.
+   */
+  validateCompareButton = () => {
+    let className = 'waves-effect waves-light btn right'
+
+    // get the amount of things being compared
+    const numCompared = selectedList.childElementCount - 1
+    if (numCompared <= 1 || numCompared > 2) {
+      className += ' disabled'
+    }
+
+    compareButton.className = className
+  }
+
+  const sortComparables = (a, b) => {
+    if (a.id < b.id) {
+      return -1
+    }
+    return 1
+  }
+
+  const generateAddListener = node => event => {
+    // move the node to the selected group
+    selectedList.appendChild(node)
+
+    // change the plus to a minus
+    const button = node.querySelector('a')
+    // clone the node to remove event listeners
+    const newButton = button.cloneNode(true)
+    newButton.querySelector('i').innerText = 'remove'
+    newButton.addEventListener('click', generateRemoveListener(node))
+    button.parentElement.replaceChild(newButton, button)
+
+    validateCompareButton()
+  }
+
+  const generateRemoveListener = node => event => {
+    // move the node to the unselected group
+    comparablesList.appendChild(node)
+
+    // change the minus to a plus
+    const button = node.querySelector('a')
+    // clone the node to remove event listeners
+    const newButton = button.cloneNode(true)
+    newButton.querySelector('i').innerText = 'add'
+    newButton.addEventListener('click', generateAddListener(node))
+    button.parentElement.replaceChild(newButton, button)
+
+    validateCompareButton()
+  }
+
+  const initialiseCollections = () => {
+    // sort the comparables
+    comparables = comparables.sort(sortComparables)
+    comparables.forEach(comparable => {
+      // generate a DOM element for each
+      const element = document.createElement('li')
+      element.className = 'collection-item'
+      element.id = comparable.id
+      element.innerHTML = `
+        <div>
+          ${comparable.name}
+          <a href='#' class="secondary-content">
+            <i class="material-icons">add<i>
+          </a>
+        </div>
+      `
+
+      // somehow there's an extra <a> tag appearing?
+      element.children[1].remove()
+
+      comparablesList.appendChild(element)
+      const button = element.querySelector('a')
+      button.addEventListener('click', generateAddListener(element))
+    })
+  }
+
+  /*
+   * These are arrays of objects with two properties:
+   *   - id: A unique ID
+   *   - name: the name to show for this object
+   */
+  // TODO: get this from the template
+  let comparables = [
+    {% for comparable in comparables %}
+    {
+      id: '{{ comparable.id }}',
+      name: '{{ comparable.name }}'
+    },
+    {% endfor %}
+  ]
+
+  compareButton.addEventListener('click', compare)
+  initialiseCollections()
+</script>
+
+{% include 'footer.html' %}

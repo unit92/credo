@@ -1,0 +1,5 @@
+<div class="valign-wrapper col s12 breadcrumb-container blue-grey darken-2">
+  {% for crumb in breadcrumbs %}
+    <a {% if crumb.url %} href="{{ crumb.url }}" {% endif %} class="breadcrumb truncate breadcrumb-vspace valign-wrapper">{{ crumb.text }}</a>
+  {% endfor %}
+</div>  

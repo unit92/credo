@@ -20,10 +20,13 @@ if [[ "${reslog}" != "" ]]; then
     # Merge the branch
     git merge origin/$BRANCH
     # Install any new dependencies
-    pip install --user -r requirements.txt
-    # Collect any static stuff, in case new static files were added
+    pip3 install --user -r requirements.txt
+
     cd src
+    # Collect any static stuff, in case new static files were added
     python3 manage.py collectstatic --no-input
+    # Run migrations, in case new migrations were added
+    python3 manage.py migrate
     # Restart the server
     sudo systemctl restart gunicorn
     echo update successful at `date`

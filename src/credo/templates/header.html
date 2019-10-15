@@ -21,16 +21,18 @@
   type="text/javascript">
 </script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Credo</title>
 
 <div class="main">
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo">
-        <i class="material-icons logo-icon">audiotrack</i>
-        Credo
-      </a>
+  <nav class="nav-extended">
+    <div class="nav-wrapper blue-grey darken-3">
+      <div class="left">
+        <a href="/" class="brand-logo">
+          <i class="material-icons logo-icon">audiotrack</i>
+          Credo
+        </a>
+      </div>
       <a href="#" data-target="mobile" class="sidenav-trigger">
         <i class="material-icons">menu</i>
       </a>
@@ -38,6 +40,9 @@
         <li><a href="/songs">Songs</a></li>
         <li><a href="/login">Log In</a></li>
       </ul>
+    </div>
+    <div class="nav-content">
+      {% include 'breadcrumb.html' %}
     </div>
   </nav>
 
