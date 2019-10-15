@@ -36,7 +36,7 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions)
+    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -51,6 +51,32 @@ def song(request, song_id):
         'editions': editions,
         'revisions': revisions,
         'breadcrumbs': breadcrumbs
+    })
+
+
+def song_compare_picker(request, song_id):
+    song = Song.objects.get(id=song_id)
+    editions = Edition.objects.filter(song=song)
+    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+    comparables = [{
+        'id': f'e{edition.id}',
+        'name': edition.name
+    } for edition in editions] + [{
+        'id': f'r{revision.id}',
+        'name': revision
+    } for revision in revisions]
+    return render(request, 'song_compare_picker.html', {
+        'song': song,
+        'comparables': comparables,
+        'breadcrumbs': [{
+            'text': 'Songs',
+            'url': '/songs'
+        }, {
+            'text': song.name,
+            'url': f'/songs/{song.id}'
+        }, {
+            'text': 'Compare'
+        }]
     })
 
 
@@ -91,7 +117,8 @@ class RevisionView(View):
 
     def get(self, request, song_id, revision_id):
         song = Song.objects.get(id=song_id)
-        revision = Revision.objects.get(id=revision_id, editions__song=song)
+        revision = Revision.objects.filter(
+                id=revision_id, editions__song=song).distinct('id')[0]
         breadcrumbs = [
             {
                 'text': 'Songs',
@@ -164,22 +191,55 @@ def mei(request, mei_id):
 
 
 def compare(request):
-    source_ids = request.GET.getlist('s')
-
-    # TODO Nicer rendering for bad source ids
+    edition_ids = request.GET.getlist('e')
+    revision_ids = request.GET.getlist('r')
     try:
-        source_ids = [int(s) for s in source_ids]
+        edition_ids = [int(e) for e in edition_ids]
+        revision_ids = [int(r) for r in revision_ids]
     except ValueError:
         return HttpResponseBadRequest()
 
-    breadcrumbs = [
-        {
+    edition_queries = [f'e={e}' for e in edition_ids]
+    revision_queries = [f'r={r}' for r in revision_ids]
+
+    editions = [Edition.objects.get(id=edition_id) for edition_id in
+                edition_ids]
+    revisions = [Revision.objects.get(id=revision_id) for revision_id in
+                 revision_ids]
+
+    title = 'Comparison'
+    song = None
+    if len(editions):
+        edition = Edition.objects.get(id=edition_ids[0])
+        song = edition.song
+    elif len(revisions):
+        revision = Revision.objects.get(id=revision_ids[0])
+        song = revision.song()
+
+    if song:
+        title = song.name
+
+    querystring = '&'.join(edition_queries + revision_queries)
+    mei_ids = [edition.mei.id for edition in editions] + \
+              [revision.mei.id for revision in revisions]
+    mei_queries = [f's={id}' for id in mei_ids]
+    mei_query_string = '&'.join(mei_queries)
+    mei_url = f'/diff?{mei_query_string}'
+
+    return render(request, 'song_compare.html', {
+        'authenticated': request.user.is_authenticated,
+        'mei_url': mei_url,
+        'querystring': querystring,
+        'title': title,
+        'breadcrumbs': [{
+            'text': 'Songs',
+            'url': '/songs'
+        }, {
+            'text': song.name,
+            'url': f'/songs/{song.id}'
+        }, {
             'text': 'Compare'
-        }
-    ]
-    return render(request, 'compare.html', {
-        'sources': [{'id': s} for s in source_ids],
-        'breadcrumbs': breadcrumbs
+        }]
     })
 
 
@@ -226,28 +286,57 @@ def diff(request):
 
 @require_http_methods(['GET'])
 def make_revision(request):
-    editions = request.GET.getlist('e')
+    edition_ids = request.GET.getlist('e')
+    revision_ids = request.GET.getlist('r')
 
-    # if not revising a single edition, return a Bad Request response
-    if len(editions) != 1:
+    try:
+        edition_ids = [int(id) for id in edition_ids]
+        revision_ids = [int(id) for id in revision_ids]
+    except ValueError:
         return HttpResponseBadRequest(content_type='application/json')
 
-    # only one edition to base revision from, no need to invoke diffing
-    edition = Edition.objects.get(id=editions[0])
+    editions = [Edition.objects.get(id=edition_id) for edition_id in
+                edition_ids]
+    revisions = [Revision.objects.get(id=revision_id) for revision_id in
+                 revision_ids]
+
+    # editions used to build this revision
+    base_editions = set(editions)
+    for revision in revisions:
+        base_editions = base_editions.union(set(revision.editions.all()))
+
+    meis = [edition.mei for edition in editions] + \
+           [revision.mei for revision in revisions]
+
+    file_content = None
+
+    new_mei = MEI()
+
+    if len(meis) == 1:
+        # copy if just revising a single MEI
+        file_content = ContentFile(meis[0].data.file.read())
+        print(type(meis[0].data.file.read()))
+        new_mei.data.save('mei', file_content)
+
+        # IMPORTANT - must close the file, otherwise Django breaks
+        meis[0].data.file.close()
+    elif len(meis) == 2:
+        # compare if there are two MEIs
+        engine = TreeComparison()
+        out_meis = engine.compare_meis(meis[0], meis[1])
+        diff, *sources = [et.tostring(mei, encoding='utf-8')
+                          for mei in out_meis]
+        new_mei.data.save('mei', ContentFile(diff))
+    else:
+        return HttpResponseBadRequest(content_type='application/json')
 
     # duplicate the mei
-    new_mei = MEI()
-    filecontent = ContentFile(edition.mei.data.file.read())
-    new_mei.data.save('mei', filecontent)
     new_mei.save()
-
-    # IMPORTANT - must close the file, otherwise Django breaks
-    edition.mei.data.file.close()
 
     new_revision = Revision(user=request.user,
                             mei=new_mei)
     new_revision.save()
-    new_revision.editions.set([edition])
+    new_revision.editions.set(base_editions)
     new_revision.save()
 
     return redirect(
