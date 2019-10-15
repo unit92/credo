@@ -160,7 +160,37 @@ class CredoToolkit {
   openResolveModal (targetId) {
     console.log(targetId)
 
+    console.log(this.meiDocument)
+
+    const meiMeasure = this.meiDocument.evaluate(
+      `//mei:measure[@xml:id="${targetId}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
+
+    console.log(meiMeasure)
+
+    this.meiDocument
+
     this.resolveModalInstance.open()
+  }
+
+  /**
+   * Namespace resolver for parsing MEI Document.
+   *
+   * @param {string} prefix The namespace prefix.
+   * @return {string} The resolved namespace.
+   */
+  namespaceResolver (prefix) {
+    const namespaces = {
+      'xml': 'http://www.w3.org/XML/1998/namespace',
+      'mei': 'http://www.music-encoding.org/ns/mei',
+      'xlink': 'http://www.w3.org/1999/xlink'
+    }
+
+    return namespaces[prefix] || null
   }
 
   /**
