@@ -143,8 +143,13 @@ class RevisionView(View):
             return HttpResponseForbidden()
         data = json.loads(request.body)
         comments = data['comments']
+        mei = data['mei']
+        print(data['mei'])
 
         revision = Revision.objects.get(id=revision_id)
+
+        with revision.mei.data.open('w') as f:
+            f.write(mei)
 
         # Delete existing comments
         revision.comment_set.all().delete()
