@@ -57,12 +57,14 @@ svg.tooltipped:hover {
 }
 
 .breadcrumb-container {
-  margin-left: 10px;
+  padding-left: 10px;
 }
 
 .breadcrumb-vspace {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+  display: flex;
+  min-height: 48px;
 }
 
 #renderDiv {
