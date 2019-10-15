@@ -16,28 +16,26 @@
         <h4 class="center-align"> Login </h4>
 
         <form class='col s12' method='post'>
+          {% csrf_token %}
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>account_box</i>
-              <input name='username' type='text' id='username'/>
-              <label for='username'>Username</label>
+              {{ form.username }}
+              {{ form.username.label_tag }}
             </div>
           </div>
 
           <div class='row'>
             <div class='input-field col s12'>
               <i class='material-icons prefix'>vpn_key</i>
-              <input name='password' type='password' id='password'/>
-              <label for='password'>Password</label>
+              {{ form.password }}
+              {{ form.password.label_tag }}
             </div>
           </div>
 
           <div class='row'>
-            <button class='col s5 btn waves-effect waves-light btn' type='submit' name='btn_login'>
+            <button class='col s12 btn waves-effect waves-light btn' type='submit' name='btn_login'>
                 Sign In
-            </button>
-            <button class='col s5 push-s2 btn waves-effect waves-light btn' name='btn_signup'>
-                Register
             </button>
           </div>
         </form>

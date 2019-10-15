@@ -2,7 +2,11 @@
 {% load static %}
 
 <div class="center-align">
-    <h1>Welcome to Credo!</h1>
+{% if user.is_authenticated %}
+  <h1>Welcome to Credo, {{ user.username }}!</h1>
+{% else %}
+  <h1>Welcome to Credo!</h1>
+{% endif %}
     <img src="{% static 'logo.png' %}" class="splash-image responsive-img center-align">
 </div>
 

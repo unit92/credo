@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.core.files.base import ContentFile
-
+from django.contrib.auth import login, authenticate
 import base64
 import json
 import lxml.etree as et
@@ -343,8 +343,8 @@ def make_revision(request):
             f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
 
 
-def login(request):
-    return render(request, 'login.html')
+# def login(request):
+    # return render(request, 'login.html')
 
 
 @require_http_methods(['POST', 'GET'])
@@ -352,12 +352,18 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            # This code will later contain a section to authenticate and
-            # make user login upon signup
             sign_up = form.save()
             # This line hashes the password
             sign_up.set_password(sign_up.password)
             sign_up.save()
+
+            # Make user login upon signup
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password')
+            # Authenticate form detail & login if it returns User model
+            user = authenticate(username=username, password=raw_password)
+            if user is not None:
+                login(request, user)
             return redirect('index')
     else:
         form = SignUpForm()
