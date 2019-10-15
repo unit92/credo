@@ -68,7 +68,7 @@ class MeiTransformer:
         """
         self._remove_meiHead()
         self._remove_MIDI_data()
-        self.strip_attribs(['color'])
+        #  self.strip_attribs(['color'])
         self.generate_ids()
 
     def to_intermediate(self) -> None:
