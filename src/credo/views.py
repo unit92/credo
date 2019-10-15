@@ -209,7 +209,7 @@ def login(request):
     return render(request, 'login.html')
 
 
-@require_http_methods(['GET'])
+@require_http_methods(['POST', 'GET'])
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
