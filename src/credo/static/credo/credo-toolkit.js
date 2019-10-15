@@ -94,7 +94,9 @@ class CredoToolkit {
 
       // initialise the resolve modal
       const resolveModals = document.querySelectorAll('.modal#resolve-modal')
-      M.Modal.init(resolveModals)
+      M.Modal.init(resolveModals, {
+        onCloseEnd: this.clearResolveModal
+      })
       this.resolveModalInstance = M.Modal
         .getInstance(document.getElementById('resolve-modal'))
       document.getElementById('resolveDiv')
@@ -104,9 +106,7 @@ class CredoToolkit {
     // initialise the saving modal if there is a saveUrl
     if (saveUrl) {
       const modals = document.querySelectorAll('.modal#saving-modal')
-      M.Modal.init(modals, {
-        onCloseEnd: this.clearResolveModal
-      })
+      M.Modal.init(modals)
       this.savingModalInstance = M.Modal
         .getInstance(document.getElementById('saving-modal'))
     }
@@ -119,6 +119,11 @@ class CredoToolkit {
     const commentModalSubmit = document.getElementById('comment-modal-submit')
     if (commentModalSubmit) {
       commentModalSubmit.addEventListener('click', this.updateCommentFromModal.bind(this))
+    }
+
+    const resolveModalSubmit = document.getElementById('resolve-modal-submit')
+    if (resolveModalSubmit) {
+      resolveModalSubmit.addEventListener('click', this.submitMeasureResolution.bind(this))
     }
 
     // set up the toolbar listening, if applicable
@@ -255,6 +260,64 @@ class CredoToolkit {
       )
     }
     target.setAttribute('fill', fillAttribute)
+  }
+
+  /**
+   * Propagates the changes to the measure to the full piece.
+   */
+  submitMeasureResolution () {
+    const resolveDiv = document.getElementById('resolveDiv')
+
+    const meiMeasure = this.meiDocument.evaluate(
+      `//mei:measure[@xml:id="${this.resolveMeasureId}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
+      .iterateNext()
+
+    // remove any eliminated notes from the measure
+    const notationXPath = this.meiDocument.evaluate(
+      `//mei:measure[@xml:id="${this.resolveMeasureId}"]//*[@xml:id]`,
+      meiMeasure,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
+
+    console.log(this.eliminatedIds)
+    let notation = notationXPath.iterateNext()
+    // maintain an array to remove; can't remove while iterating
+    const toRemove = []
+    while (notation) {
+      console.log(notation.getAttribute('xml:id'))
+      if (this.eliminatedIds.includes(notation.getAttribute('xml:id'))) {
+        toRemove.push(notation)
+      }
+      notation = notationXPath.iterateNext()
+    }
+
+    // actually remove it now
+    toRemove.forEach(element => {
+      element.remove()
+    })
+
+    // remove colour from any remaining notes
+    const colouredNotation = Array.from(meiMeasure.querySelectorAll('[color]'))
+    console.log(colouredNotation)
+    colouredNotation.forEach(notation => {
+      notation.removeAttribute('color')
+    })
+
+    // update the mei string
+    this.mei = new XMLSerializer().serializeToString(this.meiDocument)
+
+    // rerender
+    this.renderMei()
+
+    // close the modal
+    this.resolveModalInstance.close()
   }
 
   /**
@@ -629,7 +692,6 @@ class CredoToolkit {
     `
 
     savingModalInstance.open()
-
 
     return new Promise((resolve, reject) => {
       const xhttp = new XMLHttpRequest()
