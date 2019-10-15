@@ -19,13 +19,19 @@ from .forms import SignUpForm
 
 def index(request):
     return render(request, 'message.html', {
-        'message': 'Welcome to Credo.',
+        'message': 'Welcome to Credo.'
     })
 
 
 def song_list(request):
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+        }
+    ]
     return render(request, 'song_list.html', {
         'songs': Song.objects.all(),
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -33,19 +39,43 @@ def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
     revisions = Revision.objects.filter(editions__in=editions)
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+        }
+    ]
     return render(request, 'song.html', {
         'song': song,
         'editions': editions,
         'revisions': revisions,
+        'breadcrumbs': breadcrumbs
     })
 
 
 def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+            'url': f'/songs/{song_id}'
+        },
+        {
+            'text': edition.name,
+        }
+    ]
     return render(request, 'edition.html', {
         'authenticated': request.user.is_authenticated,
-        'edition': edition
+        'edition': edition,
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -60,14 +90,29 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
+
     def get(self, request, song_id, revision_id):
         song = Song.objects.get(id=song_id)
         revision = Revision.objects.get(id=revision_id, editions__song=song)
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': song.name,
+                'url': f'/songs/{song_id}'
+            },
+            {
+                'text': revision.name or "Untitled Revision",
+            }
+        ]
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+            'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'breadcrumbs': breadcrumbs
         })
 
     def post(self, request, song_id, revision_id):
@@ -129,8 +174,14 @@ def compare(request):
     except ValueError:
         return HttpResponseBadRequest()
 
+    breadcrumbs = [
+        {
+            'text': 'Compare'
+        }
+    ]
     return render(request, 'compare.html', {
-        'sources': [{'id': s} for s in source_ids]
+        'sources': [{'id': s} for s in source_ids],
+        'breadcrumbs': breadcrumbs
     })
 
 
