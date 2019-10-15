@@ -18,9 +18,7 @@ from .forms import SignUpForm
 
 
 def index(request):
-    return render(request, 'message.html', {
-        'message': 'Welcome to Credo.'
-    })
+    return render(request, 'index.html')
 
 
 def song_list(request):
