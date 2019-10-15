@@ -14,15 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.views.generic.base import RedirectView
 
 from . import views
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
-urlpatterns = [
+handler404 = views.page_not_found
+handler500 = views.server_error
 
+urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/docs/', include('django.contrib.admindocs.urls')),
@@ -41,6 +43,5 @@ urlpatterns = [
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
     path('revise', views.make_revision),
-    path('login', views.login),
-    re_path(r'.*', views.not_found)
+    path('login', views.login)
 ]
