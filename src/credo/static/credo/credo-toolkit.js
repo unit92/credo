@@ -40,6 +40,24 @@ class CredoToolkit {
     </svg>
  `
 
+  meiTemplate = `
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <mei meiversion="3.0.0" xmlns="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <music>
+      <body>
+        <mdiv>
+          <score>
+            {scoreDef}
+            <section>
+              {measures}
+            </section>
+          </score>
+        </mdiv>
+      </body>
+    </music>
+    </mei>
+  `
+
   // used for saving revisions
   csrftoken
 
@@ -169,12 +187,39 @@ class CredoToolkit {
       XPathResult.ANY_TYPE,
       null
     )
+      .iterateNext()
 
     console.log(meiMeasure)
 
-    this.meiDocument
+    const resolveMeiString = this.generateResolveMei(meiMeasure)
+    console.log(resolveMeiString)
+
+    const resolveDiv = document.getElementById('resolveDiv')
+    resolveDiv.innerHTML = this.verovioToolkit.renderData(
+      resolveMeiString,
+      {
+        svgViewBox: true,
+        adjustPageHeight: true
+      }
+    )
 
     this.resolveModalInstance.open()
+  }
+
+  /**
+   * Generates the MEI to display in the resolve modal.
+   *
+   * @param {Node} measure The measure to render.
+   * @return {string} The generated MEI as a string.
+   */
+  generateResolveMei (measure) {
+    let mei = this.meiTemplate
+    mei = mei.replace(
+      '{scoreDef}',
+      this.meiDocument.querySelector('scoreDef').outerHTML)
+    mei = mei.replace('{measures}', measure.outerHTML)
+
+    return mei
   }
 
   /**
