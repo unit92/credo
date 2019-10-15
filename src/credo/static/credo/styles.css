@@ -17,12 +17,29 @@
   margin: auto;
 }
 
+svg.tooltipped {
+    opacity: 0.5;
+    transition: opacity 0.1s ease-in-out;
+}
+
+svg.tooltipped:hover {
+    opacity: 1;
+}
+
+.btn {
+    letter-spacing: normal;
+}
+
 #saveButton {
   float: right;
 }
 
+#toolbar {
+    overflow: auto;
+}
+
 #makeRevisionButton {
-  float: right;
+    float: right;
 }
 
 #makeRevisionSpan {
@@ -40,10 +57,23 @@
 }
 
 .breadcrumb-container {
-  margin-left: 10px;
+  padding-left: 10px;
 }
 
 .breadcrumb-vspace {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+  display: flex;
+  min-height: 48px;
+}
+
+#renderDiv {
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 3px 3px 5px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 50px;
+}
+
+.loading {
+    box-shadow: none !important;
 }
