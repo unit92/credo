@@ -21,8 +21,10 @@ from . import views
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
-urlpatterns = [
+handler404 = views.page_not_found
+handler500 = views.server_error
 
+urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('admin/docs/', include('django.contrib.admindocs.urls')),
@@ -41,5 +43,5 @@ urlpatterns = [
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
     path('revise', views.make_revision),
-    path('login', views.login),
+    path('login', views.login)
 ]

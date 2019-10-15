@@ -343,3 +343,25 @@ def make_revision(request):
 
 def login(request):
     return render(request, 'login.html')
+
+
+def page_not_found(request, exception):
+    return render(
+        request,
+        'error.html',
+        {
+            'message': 'Sorry, we couldn\'t find what you were looking for.'
+        },
+        status=404
+    )
+
+
+def server_error(request):
+    return render(
+        request,
+        'error.html',
+        {
+            'message': 'Uh oh. Something went wrong on our end.'
+        },
+        status=500
+    )
