@@ -31,6 +31,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('songs/', views.song_list),
     path('songs/<song_id>', views.song),
+    path('songs/<song_id>/compare', views.song_compare_picker),
     path('songs/<song_id>/editions/<edition_id>', views.edition),
     path('songs/<song_id>/revisions/<revision_id>',
          views.RevisionView.as_view()),

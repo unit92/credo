@@ -176,7 +176,13 @@ class CredoToolkit {
    */
   loadMei () {
     return jsonRequest(this.meiUrl)
-      .then(json => atob(json.content.mei.detail))
+      .then(json => {
+        if (json.content.mei) {
+          return atob(json.content.mei.detail);
+        } else if (json.content.diff) {
+          return atob(json.content.diff.detail);
+        }
+      })
   }
 
   /**
