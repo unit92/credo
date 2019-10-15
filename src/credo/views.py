@@ -1,7 +1,11 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseForbidden
-from django.shortcuts import render
+from django.http import HttpResponse, \
+                        HttpResponseBadRequest, \
+                        HttpResponseForbidden, \
+                        JsonResponse
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
+from django.core.files.base import ContentFile
 
 import base64
 import json
@@ -12,14 +16,18 @@ from .models import Comment, Edition, MEI, Revision, Song
 
 
 def index(request):
-    return render(request, 'index.html', {
-        'message': 'Welcome to Credo.',
-    })
+    return render(request, 'index.html')
 
 
 def song_list(request):
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+        }
+    ]
     return render(request, 'song_list.html', {
         'songs': Song.objects.all(),
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -27,19 +35,43 @@ def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
     revisions = Revision.objects.filter(editions__in=editions)
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+        }
+    ]
     return render(request, 'song.html', {
         'song': song,
         'editions': editions,
         'revisions': revisions,
+        'breadcrumbs': breadcrumbs
     })
 
 
 def edition(request, song_id, edition_id):
     song = Song.objects.get(id=song_id)
     edition = Edition.objects.get(id=edition_id, song=song)
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': song.name,
+            'url': f'/songs/{song_id}'
+        },
+        {
+            'text': edition.name,
+        }
+    ]
     return render(request, 'edition.html', {
         'authenticated': request.user.is_authenticated,
-        'edition': edition
+        'edition': edition,
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -54,14 +86,29 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
+
     def get(self, request, song_id, revision_id):
         song = Song.objects.get(id=song_id)
         revision = Revision.objects.get(id=revision_id, editions__song=song)
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': song.name,
+                'url': f'/songs/{song_id}'
+            },
+            {
+                'text': revision.name or "Untitled Revision",
+            }
+        ]
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}'
+            'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'breadcrumbs': breadcrumbs
         })
 
     def post(self, request, song_id, revision_id):
@@ -123,8 +170,14 @@ def compare(request):
     except ValueError:
         return HttpResponseBadRequest()
 
+    breadcrumbs = [
+        {
+            'text': 'Compare'
+        }
+    ]
     return render(request, 'compare.html', {
-        'sources': [{'id': s} for s in source_ids]
+        'sources': [{'id': s} for s in source_ids],
+        'breadcrumbs': breadcrumbs
     })
 
 
@@ -167,3 +220,37 @@ def diff(request):
         }
     }
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['GET'])
+def make_revision(request):
+    editions = request.GET.getlist('e')
+
+    # if not revising a single edition, return a Bad Request response
+    if len(editions) != 1:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    # only one edition to base revision from, no need to invoke diffing
+    edition = Edition.objects.get(id=editions[0])
+
+    # duplicate the mei
+    new_mei = MEI()
+    filecontent = ContentFile(edition.mei.data.file.read())
+    new_mei.data.save('mei', filecontent)
+    new_mei.save()
+
+    # IMPORTANT - must close the file, otherwise Django breaks
+    edition.mei.data.file.close()
+
+    new_revision = Revision(user=request.user,
+                            mei=new_mei)
+    new_revision.save()
+    new_revision.editions.set([edition])
+    new_revision.save()
+
+    return redirect(
+            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+
+
+def login(request):
+    return render(request, 'login.html')

@@ -4,7 +4,8 @@ import logging
 import json
 
 from django.test import TestCase, Client
-from credo.models import User, Comment
+from credo.models import Comment, Revision, User
+
 
 class TestServerBlackBox(TestCase):
     def setUp(self):
@@ -20,12 +21,17 @@ class TestServerBlackBox(TestCase):
         self.client = Client()
 
     def test_revision_GET(self):
+        """Ensure revisions can be retrived at their appropriate endpoint."""
         response = self.authed_client.get('/songs/1/revisions/1')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('revision.html')
 
     def test_save_revision_POST(self):
-        '''Tests adding of comments through the 'save' button'''
+        """Ensure comments can be added through a POST request.
+
+        This endpoint is used by the 'save' button on the front end.
+        """
+
         response = self.authed_client.post(
             '/songs/1/revisions/1',
             json.dumps({
@@ -57,6 +63,8 @@ class TestServerBlackBox(TestCase):
         )
 
     def test_save_revision_auth(self):
+        """Ensure comments cannot be added if a user is not logged in."""
+
         response = self.client.post(
             '/songs/1/revisions/1',
             json.dumps({
@@ -68,3 +76,18 @@ class TestServerBlackBox(TestCase):
             content_type='application/json'
         )
         self.assertEquals(response.status_code, 403)
+
+    def test_make_revision_from_single_edition(self):
+        """Verify that making a revision from a single edition works
+
+        This makes a request to the make_revision view and asserts that a
+        revision is made, and that the client is redirected to the new
+        revision.
+        """
+
+        num_revisions = Revision.objects.count()
+
+        response = self.authed_client.get('/revise?e=1')
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Revision.objects.count(), num_revisions + 1)

@@ -25,25 +25,30 @@
 <title>Credo</title>
 
 <div class="main">
-  <nav>
+  <nav class="nav-extended">
     <div class="nav-wrapper">
-      <a href="/" class="brand-logo">
-        <i class="material-icons logo-icon">audiotrack</i>
-        Credo
-      </a>
+      <div class="left">
+        <a href="/" class="brand-logo">
+          <i class="material-icons logo-icon">audiotrack</i>
+          Credo
+        </a>
+      </div>
       <a href="#" data-target="mobile" class="sidenav-trigger">
         <i class="material-icons">menu</i>
       </a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="/songs">Songs</a></li>
-        <li><a href="#">Log In</a></li>
+        <li><a href="/login">Log In</a></li>
       </ul>
+    </div>
+    <div class="nav-content">
+      {% include 'breadcrumb.html' %}
     </div>
   </nav>
 
   <ul class="sidenav" id="mobile">
     <li><a href="/songs">Songs</a></li>
-    <li><a href="#">Log In</a></li>
+    <li><a href="/login">Log In</a></li>
   </ul>
 
   <div class="body">
