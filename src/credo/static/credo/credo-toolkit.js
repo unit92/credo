@@ -274,6 +274,9 @@ class CredoToolkit {
               adjustPageHeight: true,
           }
     )
+
+    // re-add box-shadow
+    renderElement.classList.remove("loading")
   }
 
   renderComments () {
