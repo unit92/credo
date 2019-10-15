@@ -14,6 +14,8 @@ import lxml.etree as et
 from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
 
+from .forms import SignUpForm
+
 
 def index(request):
     return render(request, 'index.html')
@@ -343,3 +345,42 @@ def make_revision(request):
 
 def login(request):
     return render(request, 'login.html')
+
+
+@require_http_methods(['POST', 'GET'])
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            # This code will later contain a section to authenticate and
+            # make user login upon signup
+            sign_up = form.save()
+            # This line hashes the password
+            sign_up.set_password(sign_up.password)
+            sign_up.save()
+            return redirect('index')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+def page_not_found(request, exception):
+    return render(
+        request,
+        'error.html',
+        {
+            'message': 'Sorry, we couldn\'t find what you were looking for.'
+        },
+        status=404
+    )
+
+
+def server_error(request):
+    return render(
+        request,
+        'error.html',
+        {
+            'message': 'Uh oh. Something went wrong on our end.'
+        },
+        status=500
+    )
