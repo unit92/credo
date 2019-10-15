@@ -265,7 +265,10 @@ def signup(request):
         if form.is_valid():
             # This code will later contain a section to authenticate and
             # make user login upon signup
-            form.save()
+            sign_up = form.save()
+            # This line hashes the password
+            sign_up.set_password(sign_up.password)
+            sign_up.save()
             return redirect('index')
     else:
         form = SignUpForm()

@@ -10,13 +10,10 @@ class SignUpForm(forms.ModelForm):
                                        'type': 'email'}))
 
     password = forms.CharField(label='Password',
-                               widget=forms.TextInput(
-                                                attrs={'class': 'validate',
-                                                       'type': 'password'}))
+                               widget=forms.PasswordInput)
 
     password_confirm = forms.CharField(label='Confirm Password',
-                                       widget=forms.TextInput(
-                                            attrs={'type': 'password'}))
+                                       widget=forms.PasswordInput)
 
     # Override label suffix  (Changes label text from 'text:' -> 'text')
     def __init__(self, *args, **kwargs):
@@ -32,5 +29,6 @@ class SignUpForm(forms.ModelForm):
         password = cleaned_data.get("password")
         password_confirmation = cleaned_data.get("password_confirm")
 
-        if(password != password_confirmation):
+        if(password and password_confirmation and
+           password != password_confirmation):
             raise forms.ValidationError("Passwords do not match")
