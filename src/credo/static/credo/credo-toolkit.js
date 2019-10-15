@@ -19,6 +19,9 @@ class CredoToolkit {
   // ID of the thing on which we are commenting
   commentModalId
 
+  resolveModalInstance
+  resolveMeasureId // ID of the measure we're resolving
+
   savingModalInstance
 
   verovioToolkit
@@ -57,12 +60,18 @@ class CredoToolkit {
 
     this.verovioToolkit = new verovio.toolkit()
 
-    // initialise the comment modal
     document.addEventListener('DOMContentLoaded', () => {
-      const modals = document.querySelectorAll('.modal#comment-modal')
-      M.Modal.init(modals)
+      // initialise the comment modal
+      const commentModals = document.querySelectorAll('.modal#comment-modal')
+      M.Modal.init(commentModals)
       this.commentModalInstance = M.Modal
         .getInstance(document.getElementById('comment-modal'))
+
+      // initialise the resolve modal
+      const resolveModals = document.querySelectorAll('.modal#resolve-modal')
+      M.Modal.init(resolveModals)
+      this.resolveModalInstance = M.Modal
+        .getInstance(document.getElementById('resolve-modal'))
     })
 
     // initialise the saving modal if there is a saveUrl
@@ -139,6 +148,19 @@ class CredoToolkit {
     if (!target) {
       return
     }
+
+    this.openResolveModal(target.id)
+  }
+
+  /**
+   * Opens up the resolve modal for a given measure.
+   *
+   * @param {string} targetId The ID of the measure to resolve.
+   */
+  openResolveModal (targetId) {
+    console.log(targetId)
+
+    this.resolveModalInstance.open()
   }
 
   /**
