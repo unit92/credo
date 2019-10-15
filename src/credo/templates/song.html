@@ -2,13 +2,21 @@
 
 <h2>{{ song }}</h2>
 
+<div class="row">
+  <div class="col s12">
+    <a href="/songs/{{ song.id }}/compare" class="waves-effect waves-light btn right">
+      Compare
+    </a>
+  </div>
+</div>
+
 <div class="collection with-header">
   <div class="collection-header"><h4>Editions</h4></div>
 
   {% for edition in editions %}
   <a
     href="/songs/{{ edition.song.id }}/editions/{{ edition.id }}"
-    class="collection-item">
+    class="collection-item teal-text text-darken-1">
     {{ edition }}
   </a>
   {% endfor %}
@@ -21,7 +29,7 @@
   {% for revision in revisions %}
   <a
     href="/songs/{{ revision.song.id }}/revisions/{{ revision.id }}"
-    class="collection-item">
+    class="collection-item teal-text text-darken-1">
     {{ revision }}
   </a>
   {% endfor %}

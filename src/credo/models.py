@@ -63,6 +63,7 @@ class Revision(models.Model):
     editions = models.ManyToManyField(Edition)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    resolved = models.BooleanField(default=False)
 
     def song(self):
         return list({x.song for x in self.editions.all()})[0]
