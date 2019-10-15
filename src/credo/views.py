@@ -343,10 +343,6 @@ def make_revision(request):
             f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
 
 
-# def login(request):
-    # return render(request, 'login.html')
-
-
 @require_http_methods(['POST', 'GET'])
 def signup(request):
     if request.method == 'POST':
