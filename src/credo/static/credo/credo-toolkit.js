@@ -7,8 +7,8 @@
 
 toolColors = {
   inspect: "cyan darken-1",
-  comment: "indigo",
-  resolve: "green darken-3"
+  comment: "cyan darken-1",
+  resolve: "cyan darken-1"
 }
 
 class CredoToolkit {
