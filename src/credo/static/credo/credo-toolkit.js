@@ -126,6 +126,14 @@ class CredoToolkit {
       resolveModalSubmit.addEventListener('click', this.submitMeasureResolution.bind(this))
     }
 
+    const resolveSwapLayersButton = document.getElementById('resolve-swap-layers')
+    if (resolveSwapLayersButton) {
+      resolveSwapLayersButton.addEventListener(
+        'click',
+        this.swapResolutionLayers.bind(this)
+      )
+    }
+
     // set up the toolbar listening, if applicable
     this.tools = document.getElementById('tools')
     const saveButton = document.getElementById('saveButton')
@@ -251,7 +259,7 @@ class CredoToolkit {
    */
   resolveNote (event) {
     let target = event.target
-    const lowAlpha = 0.3
+    const lowAlpha = 0.5
 
     while (target && !target.id.match(/m-[0-9]*/)) {
       target = target.parentElement
@@ -325,7 +333,7 @@ class CredoToolkit {
 
     // actually remove it now
     toRemove.forEach(element => {
-      element.remove()
+      element.setAttribute('visible', 'false')
     })
 
     // remove colour from any remaining notes
@@ -343,6 +351,49 @@ class CredoToolkit {
 
     // close the modal
     this.resolveModalInstance.close()
+  }
+
+  /**
+   * Swaps the order in which the diff layers are rendered for the resolution.
+   */
+  swapResolutionLayers () {
+    // a dictionary keyed by colours used in the layer
+    const colourLayers = {}
+
+    const colouredNotation = Array.from(
+      document.querySelectorAll('#resolveDiv [fill]'))
+
+    colouredNotation.forEach(notation => {
+      // get the colour, and the layer of this notation
+      const colour = notation.getAttribute('fill')
+
+      // keep going upward until we're at a layer
+      let currentElement = notation
+      while (!Array.from(currentElement.classList).includes('layer')) {
+        if (!currentElement) {
+          return
+        }
+        currentElement = currentElement.parentElement
+      }
+
+      // add the colour and layer to the object tracking colours and layers
+      if (!colourLayers[colour]) {
+        colourLayers[colour] = [currentElement]
+      } else {
+        if (!colourLayers[colour].includes(currentElement)) {
+          colourLayers[colour].push(currentElement)
+        }
+      }
+    })
+
+    console.log(colourLayers)
+
+    // reappend the children in the correct order
+    Object.values(colourLayers).reverse().forEach(colourLayerSet => {
+      colourLayerSet.forEach(layer => {
+        layer.parentElement.appendChild(layer)
+      })
+    })
   }
 
   /**
