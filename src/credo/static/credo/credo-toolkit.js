@@ -212,7 +212,6 @@ class CredoToolkit {
       .iterateNext()
 
     const resolveMeiString = this.generateResolveMei(meiMeasure)
-    console.log(resolveMeiString)
 
     const resolveDiv = document.getElementById('resolveDiv')
     resolveDiv.innerHTML = this.verovioToolkit.renderData(
@@ -232,7 +231,6 @@ class CredoToolkit {
     //  too inflexible to allow me to center and scale the measure onto the resolve modal.
     setTimeout(() => {
         const marginBBox = marginElement.getBBox()
-        console.log(marginBBox)
         innerSvgElement.setAttribute(
           'viewBox',
           `0 0 ${marginBBox.width} ${marginBBox.height + 200}`
@@ -264,8 +262,6 @@ class CredoToolkit {
     while (target && !target.id.match(/m-[0-9]*/)) {
       target = target.parentElement
     }
-
-    console.log(target)
 
     // don't affect the note if it's not coloured
     if (!target) {
@@ -319,12 +315,10 @@ class CredoToolkit {
       null
     )
 
-    console.log(this.eliminatedIds)
     let notation = notationXPath.iterateNext()
     // maintain an array to remove; can't remove while iterating
     const toRemove = []
     while (notation) {
-      console.log(notation.getAttribute('xml:id'))
       if (this.eliminatedIds.includes(notation.getAttribute('xml:id'))) {
         toRemove.push(notation)
       }
@@ -338,7 +332,6 @@ class CredoToolkit {
 
     // remove colour from any remaining notes
     const colouredNotation = Array.from(meiMeasure.querySelectorAll('[color]'))
-    console.log(colouredNotation)
     colouredNotation.forEach(notation => {
       notation.removeAttribute('color')
     })
@@ -385,8 +378,6 @@ class CredoToolkit {
         }
       }
     })
-
-    console.log(colourLayers)
 
     // reappend the children in the correct order
     Object.values(colourLayers).reverse().forEach(colourLayerSet => {
