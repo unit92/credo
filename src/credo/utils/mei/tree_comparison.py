@@ -88,15 +88,6 @@ class TreeComparison(ComparisonStrategy):
         a_modded = deepcopy(a)
         b_modded = patcher.patch(diff_actions, a_modded)
 
-        # Make all nodes in b_modded invisible by default
-        # to avoid visual layer clashes
-        class_lookup = et.ElementDefaultClassLookup()
-        for elem in b_modded.iter():
-            # Ensure element can have attributes
-            if (not isinstance(elem, class_lookup.comment_class) and
-                    not isinstance(elem, class_lookup.entity_class)):
-                elem.set('visible', 'false')
-
         action_classes = {
             'insert': [
                 actions.InsertNode,
@@ -116,6 +107,19 @@ class TreeComparison(ComparisonStrategy):
                 actions.RenameAttrib
             ]
         }
+
+        # Make all nodes in b_modded invisible by default, except for layers.
+        # to avoid visual layer clashes
+        class_lookup = et.ElementDefaultClassLookup()
+        for elem in b_modded.iter():
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                elem.set('visible', 'false')
+
+        # Set all layers to be visible
+        for elem in b_modded.findall('//mei:layer', MEI_NS):
+            elem.set('visible', 'true')
 
         # Apply colours to modified nodes in a_modded and b_modded trees
         for node in patcher.nodes:
