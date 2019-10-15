@@ -29,6 +29,16 @@
   float: right;
 }
 
+.splash-image {
+    text-align: center;
+    width: 700px;
+    margin: 50px auto;
+}
+
+.logo-icon {
+    margin-left: 15px;
+}
+
 .breadcrumb-container {
   margin-left: 10px;
 }

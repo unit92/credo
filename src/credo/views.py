@@ -16,9 +16,7 @@ from .models import Comment, Edition, MEI, Revision, Song
 
 
 def index(request):
-    return render(request, 'message.html', {
-        'message': 'Welcome to Credo.'
-    })
+    return render(request, 'index.html')
 
 
 def song_list(request):
