@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.core.files.base import ContentFile
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login as auth_login, authenticate
 import base64
 import json
 import lxml.etree as et
@@ -356,10 +356,11 @@ def signup(request):
             # Make user login upon signup
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password')
+
             # Authenticate form detail & login if it returns User model
             user = authenticate(username=username, password=raw_password)
             if user is not None:
-                login(request, user)
+                auth_login(request, user)
             return redirect('index')
     else:
         form = SignUpForm()

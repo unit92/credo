@@ -19,6 +19,7 @@ from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
 
 from . import views
+from .forms import LoginForm
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
@@ -45,7 +46,8 @@ urlpatterns = [
     path('diff', views.diff),
     path('signup', views.signup, name='signup'),
     path('revise', views.make_revision),
-    path('login', auth_views.LoginView.as_view(template_name='login.html'),
+    path('login', auth_views.LoginView.as_view(template_name='login.html',
+                                               form_class=LoginForm),
          name='login'),
     path('logout', auth_views.LogoutView.as_view(), name='logout'),
 ]
