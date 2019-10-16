@@ -5,11 +5,15 @@
  * commenting.
  */
 
-toolColors = {
+const toolColors = {
   inspect: "cyan darken-1",
   comment: "cyan darken-1",
   resolve: "cyan darken-1"
 }
+
+const parentElementsToHide = [
+    'chord', 'beam'
+]
 
 class CredoToolkit {
   // class variables
@@ -328,6 +332,14 @@ class CredoToolkit {
     // actually remove it now
     toRemove.forEach(element => {
       element.setAttribute('visible', 'false')
+      console.log(element.parentElement)
+      if (parentElementsToHide.includes(element.parentElement.nodeName)) {
+        const notes = Array.from(element.parentElement.querySelectorAll('note'))
+        console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
+        if (notes.reduce((a, b) => a && b.getAttribute('visible') == 'false')) {
+          element.parentElement.setAttribute('visible', 'false')
+        }
+      }
     })
 
     // remove colour from any remaining notes
