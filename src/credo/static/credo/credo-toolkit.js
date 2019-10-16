@@ -12,7 +12,7 @@ const toolColors = {
 }
 
 const parentElementsToHide = [
-    'chord'
+    'chord', 'beam'
 ]
 
 class CredoToolkit {
