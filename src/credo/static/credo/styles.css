@@ -30,8 +30,8 @@ svg.tooltipped:hover {
     letter-spacing: normal;
 }
 
-#saveButton {
-  float: right;
+#tools-right {
+    float: right;
 }
 
 #toolbar {

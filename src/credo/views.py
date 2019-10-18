@@ -114,7 +114,6 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
-
     def get(self, request, song_id, revision_id):
         song = Song.objects.get(id=song_id)
         revision = Revision.objects.filter(
@@ -137,6 +136,7 @@ class RevisionView(View):
             'comments': True,
             'authenticated': request.user.is_authenticated,
             'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'revision_id': revision_id,
             'breadcrumbs': breadcrumbs
         })
 
@@ -339,7 +339,7 @@ def make_revision(request):
     new_revision.save()
 
     return redirect(
-            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+        f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
 
 
 def login(request):
@@ -361,6 +361,22 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def download_revision(request, revision_id):
+    revision = Revision.objects.get(id=revision_id)
+    filename = f'{edition.name}.mei'
+    response = HttpResponse(revision.mei.data, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+def download_edition(request, edition_id):
+    edition = Edition.objects.get(id=edition_id)
+    filename = f'{edition.name}.mei'
+    response = HttpResponse(edition.mei.data, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 
 def page_not_found(request, exception):

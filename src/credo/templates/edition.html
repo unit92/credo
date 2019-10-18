@@ -9,45 +9,52 @@
 {% if authenticated %}
 
 <div id="toolbar">
-<a class="waves-effect waves-light btn teal"
-   id="makeRevisionButton"
-   href="/revise?e={{ edition.id }}">
-  <i class="material-icons left">create</i>
-  Make Revision
-</a>
+  <a class="waves-effect waves-light btn teal"
+     id="makeRevisionButton"
+     href="/revise?e={{ edition.id }}">
+    <i class="material-icons left">create</i>
+    Make Revision
+  </a>
+    <a class="waves-effect waves-light btn teal" id="downloadButton" href="/editions/{{ edition.id }}/download">
+    <i class="material-icons left">cloud_download</i>
+    Download
+  </a>
 </div>
 
 {% else %}
 
 <div id="toolbar">
-<div
-  id="makeRevisionSpan"
-  data-position="bottom"
-  data-tooltip="Log in to revise editions">
-  <a
-    class="waves-effect waves-light btn disabled makeRevisionButton">
-    <i class="material-icons left">create</i>
-    Make Revision
-  </a>
-</div>
-</div>
+  <div
+    id="makeRevisionSpan"
+    data-position="bottom"
+    data-tooltip="Log in to revise editions">
+    <a
+      class="waves-effect waves-light btn disabled makeRevisionButton">
+      <i class="material-icons left">create</i>
+      Make Revision
+    </a>
+    <a class="waves-effect waves-light btn teal" id="downloadButton" href="/editions/{{ edition.id }}/download">
+      <i class="material-icons left">cloud_download</i>
+      Download
+    </a>
+  </div>
 
-{% endif %}
+  {% endif %}
 
-{% endblock toolbar %}
+  {% endblock toolbar %}
 
-{% block scripts %}
-<script type="text/javascript">
-  const toolkit = new CredoToolkit(
-    '/mei/{{ edition.mei.id }}',
-    null,
-    'renderDiv'
-  )
-  toolkit.render()
+  {% block scripts %}
+  <script type="text/javascript">
+    const toolkit = new CredoToolkit(
+      '/mei/{{ edition.mei.id }}',
+      null,
+      'renderDiv'
+    )
+    toolkit.render()
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const elements = document.querySelectorAll('#makeRevisionSpan')
-    M.Tooltip.init(elements)
-  })
-</script>
-{% endblock scripts %}
+    document.addEventListener('DOMContentLoaded', () => {
+      const elements = document.querySelectorAll('#makeRevisionSpan')
+      M.Tooltip.init(elements)
+    })
+  </script>
+  {% endblock scripts %}
