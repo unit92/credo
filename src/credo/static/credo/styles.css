@@ -83,3 +83,12 @@ svg.tooltipped:hover {
 .loading {
     box-shadow: none !important;
 }
+
+li.username-display {
+  padding-left: 0.25em;
+  padding-right: 1em;
+}
+
+span > .username-display {
+  padding-left: 0.25em;
+}
