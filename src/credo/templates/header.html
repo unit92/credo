@@ -40,6 +40,8 @@
         <li><a href="/songs">Songs</a></li>
         {% if user.is_authenticated %}
           <li><a href="/logout">Log Out</a></li>
+          <li><i class='material-icons'>account_box</i></li>
+          <li class="username-display"><b>{{ user.username }}</b></li> 
         {% else %}
           <li><a href="/login">Log In</a></li>
           <li><a href="/signup">Sign Up</a></li>
@@ -52,9 +54,20 @@
   </nav>
 
   <ul class="sidenav" id="mobile">
+    {% if user.is_authenticated %}
+    <li>
+      <span class="valign-wrapper">
+        <i class="material-icons username-display">account_box</i>
+        <b class="username-display">{{ user.username }}</b>
+      </span>
+    </li>
+    <li></li>
+    {% endif %}
     <li><a href="/songs">Songs</a></li>
     {% if user.is_authenticated %}
       <li><a href="/logout">Log Out</a></li>
+      
+       
     {% else %}
       <li><a href="/login">Log In</a></li>
       <li><a href="/signup">Sign Up</a></li>
