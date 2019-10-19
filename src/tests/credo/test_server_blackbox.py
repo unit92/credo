@@ -91,3 +91,6 @@ class TestServerBlackBox(TestCase):
 
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Revision.objects.count(), num_revisions + 1)
+
+    def test_download_revision(self):
+        self.authed_client.get('/revisions/1/download')
