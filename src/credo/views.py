@@ -365,7 +365,7 @@ def signup(request):
 
 def download_revision(request, revision_id):
     revision = Revision.objects.get(id=revision_id)
-    if not request.user.is_authenticated or not revision.user == request.user:
+    if not (request.user.is_authenticated and revision.user == request.user):
         return HttpResponseForbidden()
     song = revision.editions.all()[0].song
     if revision.name:
@@ -378,6 +378,8 @@ def download_revision(request, revision_id):
 
 
 def download_edition(request, edition_id):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
     edition = Edition.objects.get(id=edition_id)
     song = edition.song
     if edition.name:
