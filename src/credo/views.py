@@ -134,7 +134,7 @@ class RevisionView(View):
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song.id}/revisions/{revision_id}',
+            'save_url': f'/revisions/{revision_id}',
             'breadcrumbs': breadcrumbs
         })
 
@@ -337,7 +337,7 @@ def make_revision(request):
     new_revision.save()
 
     return redirect(
-            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+            f'/revisions/{new_revision.id}')
 
 
 def login(request):
