@@ -372,7 +372,7 @@ def download_revision(request, revision_id):
         filename = f'{revision.name} - {song.name}.mei'
     else:
         filename = f'Untitled Revision - {song.name}.mei'
-    response = HttpResponse(revision.mei.data, content_type='text/plain')
+    response = HttpResponse(revision.mei.data, content_type='text/xml')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
@@ -384,7 +384,7 @@ def download_edition(request, edition_id):
         filename = f'{edition.name} - {song.name}.mei'
     else:
         filename = f'Untitled Revision - {song.name}.mei'
-    response = HttpResponse(edition.mei.data, content_type='text/plain')
+    response = HttpResponse(edition.mei.data, content_type='text/xml')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
