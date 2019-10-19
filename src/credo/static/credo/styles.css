@@ -94,5 +94,8 @@ span > .username-display {
 }
 
 .errorlist {
+  text-align: center;
+  text-shadow: 0 0 0.1em Silver;
+  margin: auto;
   color: red;
 }
