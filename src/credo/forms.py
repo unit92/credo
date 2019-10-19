@@ -5,10 +5,6 @@ from django.contrib.auth.forms import AuthenticationForm
 
 class LoginForm(AuthenticationForm):
 
-    username = forms.CharField(label='Username', max_length=100)
-    password = forms.CharField(label='Password',
-                               widget=forms.PasswordInput)
-
     # Override label suffix for djangos authentication model
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('label_suffix', '')

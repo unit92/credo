@@ -92,3 +92,7 @@ li.username-display {
 span > .username-display {
   padding-left: 0.25em;
 }
+
+.errorlist {
+  color: red;
+}
