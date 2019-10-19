@@ -365,7 +365,11 @@ def signup(request):
 
 def download_revision(request, revision_id):
     revision = Revision.objects.get(id=revision_id)
-    filename = f'{edition.name}.mei'
+    song = revision.editions.all()[0].song
+    if revision.name:
+        filename = f'{revision.name} - {song.name}.mei'
+    else:
+        filename = f'Untitled Revision - {song.name}.mei'
     response = HttpResponse(revision.mei.data, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
@@ -373,7 +377,11 @@ def download_revision(request, revision_id):
 
 def download_edition(request, edition_id):
     edition = Edition.objects.get(id=edition_id)
-    filename = f'{edition.name}.mei'
+    song = edition.song
+    if edition.name:
+        filename = f'{edition.name} - {song.name}.mei'
+    else:
+        filename = f'Untitled Revision - {song.name}.mei'
     response = HttpResponse(edition.mei.data, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
