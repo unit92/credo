@@ -2,13 +2,23 @@
 
 <h2>{{ song }}</h2>
 
+{% if request.user.is_authenticated %}
+
 <div class="row">
-  <div id="toolbar">
-    <a href="/songs/{{ song.id }}/compare" class="waves-effect waves-light btn right">
+  <div id="toolbar" class="right">
+    {% if request.user.is_staff %}
+    <a href="/edition/new?song={{ song.id }}" class="waves-effect waves-light btn">
+      <i class="material-icons left">add_box</i>
+      Add New
+    </a>
+    {% endif %}
+    <a href="/songs/{{ song.id }}/compare" class="waves-effect waves-light btn">
       Compare
     </a>
   </div>
 </div>
+
+{% endif %}
 
 <div class="collection with-header">
   <div class="collection-header"><h4>Editions</h4></div>

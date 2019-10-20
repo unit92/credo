@@ -29,7 +29,8 @@ def song_list(request):
     ]
     return render(request, 'song_list.html', {
         'songs': Song.objects.all(),
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'request': request
     })
 
 
