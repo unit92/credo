@@ -97,5 +97,6 @@ span > .username-display {
   text-align: center;
   text-shadow: 0 0 0.1em Silver;
   margin: auto;
+  padding-top: 1em;
   color: red;
 }

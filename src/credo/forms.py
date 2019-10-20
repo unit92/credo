@@ -37,7 +37,18 @@ class SignUpForm(forms.ModelForm):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         password_confirmation = cleaned_data.get("password_confirm")
+        username = cleaned_data.get("username")
+        email = cleaned_data.get("email")
 
+        # Password validation
         if(password and password_confirmation and
            password != password_confirmation):
             raise forms.ValidationError("Passwords do not match")
+
+        # Username validation
+        if username and User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Username already exists")
+
+        # Email validation
+        if email and User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email is in use")
