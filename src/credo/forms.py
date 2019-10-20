@@ -10,6 +10,15 @@ class LoginForm(AuthenticationForm):
         kwargs.setdefault('label_suffix', '')
         super(LoginForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        cleaned_data = super(AuthenticationForm, self).clean()
+        password = cleaned_data.get("password")
+        username = cleaned_data.get("username")
+        if password and username \
+           and (not User.objects.filter(username=username).exists() or
+                not User.objects.filter(password=password).exists()):
+            raise forms.ValidationError("Invalid username or password")
+
 
 class SignUpForm(forms.ModelForm):
     username = forms.CharField(label='Username', max_length=100)
