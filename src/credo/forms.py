@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
 
 
 class LoginForm(AuthenticationForm):
@@ -10,14 +11,22 @@ class LoginForm(AuthenticationForm):
         kwargs.setdefault('label_suffix', '')
         super(LoginForm, self).__init__(*args, **kwargs)
 
+    # Override clean method, retaining source code & adjust error message only
     def clean(self):
-        cleaned_data = super(AuthenticationForm, self).clean()
-        password = cleaned_data.get("password")
-        username = cleaned_data.get("username")
-        if password and username \
-           and (not User.objects.filter(username=username).exists() or
-                not User.objects.filter(password=password).exists()):
-            raise forms.ValidationError("Invalid username or password")
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            self.user_cache = authenticate(self.request,
+                                           username=username,
+                                           password=password)
+
+            if self.user_cache is None:
+                raise forms.ValidationError("Invalid login")
+            else:
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
 
 
 class SignUpForm(forms.ModelForm):
