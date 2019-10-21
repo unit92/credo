@@ -7,6 +7,11 @@ from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.core.files.base import ContentFile
 from django.contrib.auth import login as auth_login, authenticate
+
+from django.contrib.auth.signals import user_logged_out
+from django.dispatch import receiver
+from django.contrib import messages
+
 import base64
 import json
 import lxml.etree as et
@@ -15,6 +20,12 @@ from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
 
 from .forms import SignUpForm
+
+# Signal used to send message data upon the logout of user
+@receiver(user_logged_out)
+def on_user_logout(sender, request, **kwargs):
+    messages.add_message(request, messages.SUCCESS, 'Logout Successful',
+                         extra_tags='logout')
 
 
 def index(request):
