@@ -11,7 +11,7 @@
 {% if messages %}
   {% for message in messages %}
     {% if message.extra_tags == 'logout' %}
-     <script type=text/javascript> M.toast({html: 'Logout Successful'}) </script>
+     <script type=text/javascript> M.toast({html: '{{ message }}'}) </script>
     {% endif %}
   {% endfor %}
 {% endif %}
