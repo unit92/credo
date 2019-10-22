@@ -6,6 +6,11 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.core.files.base import ContentFile
+from django.contrib.auth import login as auth_login, authenticate
+
+from django.contrib.auth.signals import user_logged_out
+from django.dispatch import receiver
+from django.contrib import messages
 
 import base64
 import json
@@ -15,6 +20,12 @@ from credo.utils.mei.tree_comparison import TreeComparison
 from .models import Comment, Edition, MEI, Revision, Song
 
 from .forms import SignUpForm
+
+# Signal used to send message data upon the logout of user
+@receiver(user_logged_out)
+def on_user_logout(sender, request, **kwargs):
+    messages.add_message(request, messages.SUCCESS, 'Logout Successful',
+                         extra_tags='logout')
 
 
 def index(request):
@@ -342,21 +353,24 @@ def make_revision(request):
             f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
 
 
-def login(request):
-    return render(request, 'login.html')
-
-
 @require_http_methods(['POST', 'GET'])
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            # This code will later contain a section to authenticate and
-            # make user login upon signup
             sign_up = form.save()
             # This line hashes the password
             sign_up.set_password(sign_up.password)
             sign_up.save()
+
+            # Make user login upon signup
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password')
+
+            # Authenticate form detail & login if it returns User model
+            user = authenticate(username=username, password=raw_password)
+            if user is not None:
+                auth_login(request, user)
             return redirect('index')
     else:
         form = SignUpForm()
