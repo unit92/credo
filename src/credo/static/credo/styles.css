@@ -83,3 +83,7 @@ svg.tooltipped:hover {
 .loading {
     box-shadow: none !important;
 }
+
+.center-img {
+    margin: auto;
+}

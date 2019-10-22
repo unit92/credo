@@ -36,7 +36,9 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+    revisions = Revision.objects.filter(
+        editions__in=editions, user=request.user
+    )
     breadcrumbs = [
         {
             'text': 'Songs',
