@@ -364,6 +364,26 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
+def song_new(request):
+    breadcrumbs = [
+        {
+            'text': 'Songs',
+            'url': '/songs'
+        },
+        {
+            'text': 'New Song'
+        }
+    ]
+    return render(request, 'song_new.html', {
+        'breadcrumbs': breadcrumbs
+    })
+
+
+def edition_new(request):
+    # song = Song.objects.get(request.GET['song'])
+    return JsonResponse({'ok': True})
+
+
 def page_not_found(request, exception):
     return render(
         request,
