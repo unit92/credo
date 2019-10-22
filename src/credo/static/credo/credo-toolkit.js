@@ -313,7 +313,7 @@ class CredoToolkit {
     commentElement.setAttribute('y', position.y)
 
     // set the comment text
-    commentElement.setAttribute('data-tooltip', text)
+    commentElement.setAttribute('data-tooltip', escapeHtmlCharacters(text))
   }
 
   /**
@@ -346,7 +346,7 @@ class CredoToolkit {
     // get the comment on the element
     const commentElement = element.children[(element.children.length - 1)]
 
-    commentElement.setAttribute('data-tooltip', text)
+    commentElement.setAttribute('data-tooltip', escapeHtmlCharacters(text))
 
     this.handleTooltips()
   }
@@ -566,3 +566,16 @@ const getCookie = name => {
       return cookie ? decodeURIComponent(cookie.trim().substring(name.length + 1)) : null
     }
 }
+
+/**
+ * Takes in a string and escapes HTML characters.
+ *
+ * @param {string} test The text to escape.
+ * @return {string} The escaped text.
+ */
+escapeHtmlCharacters = text => text
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;')
