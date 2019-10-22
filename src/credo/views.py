@@ -326,7 +326,6 @@ def make_revision(request):
     if len(meis) == 1:
         # copy if just revising a single MEI
         file_content = ContentFile(meis[0].data.file.read())
-        print(type(meis[0].data.file.read()))
         new_mei.data.save('mei', file_content)
 
         # IMPORTANT - must close the file, otherwise Django breaks
