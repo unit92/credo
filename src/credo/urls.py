@@ -32,6 +32,7 @@ urlpatterns = [
     path('favicon.ico', favicon_view),
     path('', views.index, name='index'),
     path('songs/', views.song_list),
+    path('songs/new', views.song_new),
     path('songs/<song_id>', views.song),
     path('songs/<song_id>/compare', views.song_compare_picker),
     path('songs/<song_id>/editions/<edition_id>', views.edition),
