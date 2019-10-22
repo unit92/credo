@@ -560,8 +560,9 @@ const jsonRequest = url =>
 const getCookie = name => {
     if (document.cookie && document.cookie !== '') {
       const cookies = document.cookie.split(';')
-      const cookie = cookies.find(cookie =>
-        cookie.trim().substring(0, name.length + 1) === (name + '='))
-      return decodeURIComponent(cookie.trim().substring(name.length + 1))
+      const cookie = cookies.find(cookie => 
+        cookie ? cookie.trim().substring(0, name.length + 1) === (name + '=') : null
+      )
+      return cookie ? decodeURIComponent(cookie.trim().substring(name.length + 1)) : null
     }
 }
