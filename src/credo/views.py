@@ -72,7 +72,8 @@ def song_compare_picker(request, song_id):
     editions = Edition.objects.filter(song=song, mei__normalised=True)
     revisions = Revision.objects.filter(
         editions__in=editions,
-        mei__normalised=True
+        mei__normalised=True,
+        user=request.user
     ).distinct('id')
 
     comparables = [{

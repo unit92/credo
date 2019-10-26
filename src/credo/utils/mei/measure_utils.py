@@ -45,4 +45,6 @@ def merge_measure_layers(measure: et.ElementTree):
 
 
 def _merge_layers(layers):
+    # TODO Implement layer merge algorithm by determining positions of elements
+    # in the measure across all layers.
     return deepcopy(layers[0])
