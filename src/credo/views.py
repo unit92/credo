@@ -265,6 +265,9 @@ def diff(request):
     if len(meis) != 2:
         return HttpResponseBadRequest(content_type='application/json')
 
+    if not meis[0].normalised or not meis[1].normalised:
+        return HttpResponseBadRequest(content_type='application/json')
+
     engine = TreeComparison()
     out_meis = engine.compare_meis(meis[0], meis[1])
     diff, *sources = [et.tostring(mei, encoding='utf-8') for mei in out_meis]
@@ -318,15 +321,30 @@ def make_revision(request):
     new_mei = MEI()
 
     if len(meis) == 1:
+        # Ensure the MEI we are copying is normalised.
+        if not meis[0].normalised:
+            return HttpResponseBadRequest(content_type='application/json')
+
+        # Ensure we normalise before saving
+        new_mei.normalised = True
+
         # copy if just revising a single MEI
         file_content = ContentFile(meis[0].data.file.read())
-        print(type(meis[0].data.file.read()))
         new_mei.data.save('mei', file_content)
 
         # IMPORTANT - must close the file, otherwise Django breaks
         meis[0].data.file.close()
+
     elif len(meis) == 2:
-        # compare if there are two MEIs
+        # Ensure the MEIs we are generating the diff from are normalised
+        if not meis[0].normalised or not meis[1].normalised:
+            return HttpResponseBadRequest(content_type='application/json')
+
+        # Do not normalise, since we are making a revision from a comparison.
+        # Normalisation occurs after resolving the revision.
+        new_mei.normalised = False
+
+        # Compare
         engine = TreeComparison()
         out_meis = engine.compare_meis(meis[0], meis[1])
         diff, *sources = [et.tostring(mei, encoding='utf-8')
@@ -335,7 +353,6 @@ def make_revision(request):
     else:
         return HttpResponseBadRequest(content_type='application/json')
 
-    # duplicate the mei
     new_mei.save()
 
     new_revision = Revision(user=request.user,

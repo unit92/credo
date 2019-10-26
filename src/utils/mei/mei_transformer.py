@@ -56,9 +56,9 @@ class MeiTransformer:
         """
         return self._tree.find('.//mei:note[@octname]', MEI_NS) is not None
 
-    def normalise(self) -> None:
+    def remove_metadata(self) -> None:
         """
-        Normalise the MEI file. All MEI files must be normalised before saving
+        Remove metadata from the MEI file.
 
         At the moment MEI normalisation consists of the following steps:
             1. Removing the MEI header
@@ -68,7 +68,21 @@ class MeiTransformer:
         """
         self._remove_meiHead()
         self._remove_MIDI_data()
-        #  self.strip_attribs(['color'])
+
+    def normalise(self) -> None:
+        """
+        Normalise the MEI file. All MEI files must be normalised before saving
+        if we wish to be able to compare them
+
+        At the moment MEI normalisation consists of the following steps:
+            1. Removing appropriate metadata (MEI header, MIDI etc.)
+            2. Strip existing colour attributes
+            3. Regenerating IDs
+
+        In the future more tasks may be added to the normalisation process
+        """
+        self.remove_metadata()
+        self.strip_attribs(['color'])
         self.generate_ids()
 
     def to_intermediate(self) -> None:

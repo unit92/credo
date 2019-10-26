@@ -30,6 +30,7 @@ class MEI(models.Model):
     data = models.FileField(upload_to='mei_files')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    normalised = models.BooleanField(default=True)
 
     def __str__(self):
         file_id = os.path.split(self.data.name)[-1].split("_")[-1]
@@ -37,10 +38,15 @@ class MEI(models.Model):
 
 
 @receiver(post_save, sender=MEI)
-def my_callback(sender, instance, *args, **kwargs):
+def normalise_callback(sender, instance, *args, **kwargs):
     mei_file = instance.data.file.open()
     transformer = MeiTransformer.from_xml_file(mei_file)
-    transformer.normalise()
+
+    if instance.normalised:
+        transformer.normalise()
+    else:
+        transformer.remove_metadata()
+
     transformer.save_xml_file(instance.data.name)
 
 
@@ -63,7 +69,6 @@ class Revision(models.Model):
     editions = models.ManyToManyField(Edition)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    resolved = models.BooleanField(default=False)
 
     def song(self):
         return list({x.song for x in self.editions.all()})[0]
