@@ -81,9 +81,10 @@ class CredoToolkit {
    * @param {string} renderDiv The ID of the div to which we wish to render.
    * @param {string} saveUrl Optional. The URL to POST to when saving revisions.
    */
-  constructor (meiUrl, commentsUrl, renderDiv, saveUrl) {
+  constructor (meiUrl, commentsUrl, resolutionUrl, renderDiv, saveUrl) {
     this.meiUrl = meiUrl
     this.commentsUrl = commentsUrl
+    this.resolutionUrl = resolutionUrl
     this.renderDiv = renderDiv
     this.saveUrl = saveUrl
 
@@ -212,8 +213,7 @@ class CredoToolkit {
       this.namespaceResolver,
       XPathResult.ANY_TYPE,
       null
-    )
-      .iterateNext()
+    ).iterateNext()
 
     const resolveMeiString = this.generateResolveMei(meiMeasure)
 
@@ -299,6 +299,7 @@ class CredoToolkit {
    * Propagates the changes to the measure to the full piece.
    */
   submitMeasureResolution () {
+
     const resolveDiv = document.getElementById('resolveDiv')
 
     const meiMeasure = this.meiDocument.evaluate(
@@ -307,20 +308,22 @@ class CredoToolkit {
       this.namespaceResolver,
       XPathResult.ANY_TYPE,
       null
-    )
-      .iterateNext()
+    ).iterateNext()
 
-    // remove any eliminated notes from the measure
-    const notationXPath = this.meiDocument.evaluate(
-      `//mei:measure[@xml:id="${this.resolveMeasureId}"]//*[@xml:id]`,
-      meiMeasure,
+    const measureString = meiMeasure.outerHTML
+    let measureCopy = new DOMParser().parseFromString(measureString, 'text/xml')
+
+    // Search for nodes to eliminate from the measure
+    const notationXPath = measureCopy.evaluate(
+      `//*[@xml:id]`,
+      measureCopy,
       this.namespaceResolver,
       XPathResult.ANY_TYPE,
       null
     )
 
+    // Maintain an array to remove, since we can't remove while iterating
     let notation = notationXPath.iterateNext()
-    // maintain an array to remove; can't remove while iterating
     const toRemove = []
     while (notation) {
       if (this.eliminatedIds.includes(notation.getAttribute('xml:id'))) {
@@ -329,10 +332,13 @@ class CredoToolkit {
       notation = notationXPath.iterateNext()
     }
 
-    // actually remove it now
+    console.log(toRemove)
+
+    // Remove nodes from measure
     toRemove.forEach(element => {
       element.setAttribute('visible', 'false')
       console.log(element.parentElement)
+      // Remove certain parent elements if all children are removed
       if (parentElementsToHide.includes(element.parentElement.nodeName)) {
         const notes = Array.from(element.parentElement.querySelectorAll('note'))
         console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
@@ -342,20 +348,60 @@ class CredoToolkit {
       }
     })
 
-    // remove colour from any remaining notes
-    const colouredNotation = Array.from(meiMeasure.querySelectorAll('[color]'))
-    colouredNotation.forEach(notation => {
-      notation.removeAttribute('color')
+    const body = {
+      'content': {
+        'mei': {
+          'detail': btoa(new XMLSerializer().serializeToString(measureCopy)),
+          'encoding': 'base64'
+        }
+      }
+    }
+    
+    // Merge the measure layers on the server and reinject into the meiDocument
+    return new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+          if (this.status === 200) {
+            const json = JSON.parse(this.responseText)
+            resolve(json)
+          } else {
+            reject()
+          }
+        }
+      }
+
+      xhttp.open('POST', this.resolutionUrl, true)
+      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
+      xhttp.setRequestHeader('Content-Type', 'application/json')
+      xhttp.send(JSON.stringify(body))
+    }).then(json => {
+      const resolvedMeasureString = atob(json.content.mei.detail)
+
+      // Update the mei string
+      // this.meiDocument = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
+      // this.mei = resolvedMeasureString
+
+      // rerender
+      this.renderMei()
+
+      // close the modal
+      this.resolveModalInstance.close()
+      
+      meiMeasure.outerHTML = resolvedMeasureString
+
+      // Remove colour from any remaining notes
+      const colouredNotation = Array.from(meiMeasure.querySelectorAll('[color]'))
+      colouredNotation.forEach(notation => {
+        notation.removeAttribute('color')
+      })
+
+      // Update the mei string
+      this.mei = new XMLSerializer().serializeToString(this.meiDocument)
+
+      // Rerender
+      this.renderMei()
     })
-
-    // update the mei string
-    this.mei = new XMLSerializer().serializeToString(this.meiDocument)
-
-    // rerender
-    this.renderMei()
-
-    // close the modal
-    this.resolveModalInstance.close()
   }
 
   /**
@@ -862,6 +908,7 @@ const jsonRequest = url =>
         resolve(json)
       }
     }
+
     xhttp.open('GET', url, true)
     xhttp.send()
   })

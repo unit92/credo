@@ -44,5 +44,6 @@ urlpatterns = [
     path('diff', views.diff),
     path('signup', views.signup, name='signup'),
     path('revise', views.make_revision),
-    path('login', views.login)
+    path('login', views.login),
+    path('merge', views.merge_measure_layers_json)
 ]

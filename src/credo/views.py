@@ -12,6 +12,8 @@ import json
 import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
+from credo.utils.mei.measure_utils import merge_measure_layers
+
 from .models import Comment, Edition, MEI, Revision, Song
 
 from .forms import SignUpForm
@@ -216,9 +218,6 @@ def compare(request):
     revisions = [Revision.objects.get(id=revision_id) for revision_id in
                  revision_ids]
 
-    print(editions)
-    print(revisions)
-
     title = 'Comparison'
     song = None
     if len(editions):
@@ -296,6 +295,39 @@ def diff(request):
             'sources': sources
         }
     }
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['POST'])
+def merge_measure_layers_json(request):
+    if request.content_type != 'application/json':
+        return HttpResponseBadRequest(content_type='application/json')
+
+    json_data = json.loads(request.body)
+    try:
+        measure = json_data['content']['mei']['detail']
+        measure = str(base64.b64decode(measure), encoding='utf-8')
+    except KeyError:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    measure_tree = et.XML(measure)
+
+    print(measure_tree)
+    merged_measure_tree = merge_measure_layers(measure_tree)
+    print(merged_measure_tree)
+
+    merged_measure = et.tostring(merged_measure_tree, encoding='utf-8')
+    measure_b64 = str(base64.b64encode(merged_measure), encoding='utf-8')
+
+    data = {
+        'content': {
+            'mei': {
+                'detail': measure_b64,
+                'encoding': 'base64'
+            }
+        }
+    }
+
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
