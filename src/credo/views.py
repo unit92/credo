@@ -323,9 +323,7 @@ def merge_measure_layers_json(request):
 
     measure_tree = et.XML(measure)
 
-    print(measure_tree)
     merged_measure_tree = merge_measure_layers(measure_tree)
-    print(merged_measure_tree)
 
     merged_measure = et.tostring(merged_measure_tree, encoding='utf-8')
     measure_b64 = str(base64.b64encode(merged_measure), encoding='utf-8')
