@@ -376,31 +376,25 @@ class CredoToolkit {
       xhttp.setRequestHeader('Content-Type', 'application/json')
       xhttp.send(JSON.stringify(body))
     }).then(json => {
+      // Decode from base 64
       const resolvedMeasureString = atob(json.content.mei.detail)
 
-      // Update the mei string
-      // this.meiDocument = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
-      // this.mei = resolvedMeasureString
-
-      // rerender
-      this.renderMei()
-
-      // close the modal
-      this.resolveModalInstance.close()
-      
-      meiMeasure.outerHTML = resolvedMeasureString
-
       // Remove colour from any remaining notes
-      const colouredNotation = Array.from(meiMeasure.querySelectorAll('[color]'))
+      const resolvedMeasure = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
+      const colouredNotation = Array.from(resolvedMeasure.querySelectorAll('[color]'))
       colouredNotation.forEach(notation => {
         notation.removeAttribute('color')
       })
 
-      // Update the mei string
-      this.mei = new XMLSerializer().serializeToString(this.meiDocument)
+      // Update measure on meiDocument
+      meiMeasure.outerHTML = new XMLSerializer().serializeToString(resolvedMeasure)
 
-      // Rerender
+      // Update the mei string and rerender
+      this.mei = new XMLSerializer().serializeToString(this.meiDocument)
       this.renderMei()
+
+      // close the modal
+      this.resolveModalInstance.close()
     })
   }
 
