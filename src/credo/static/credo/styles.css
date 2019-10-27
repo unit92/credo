@@ -83,3 +83,20 @@ svg.tooltipped:hover {
 .loading {
     box-shadow: none !important;
 }
+
+li.username-display {
+  padding-left: 0.25em;
+  padding-right: 1em;
+}
+
+span > .username-display {
+  padding-left: 0.25em;
+}
+
+.errorlist {
+  text-align: center;
+  text-shadow: 0 0 0.1em Silver;
+  margin: auto;
+  padding-top: 1em;
+  color: red;
+}
