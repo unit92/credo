@@ -17,7 +17,7 @@ import json
 import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
-from .models import Comment, Edition, MEI, Revision, Song
+from .models import Comment, Edition, MEI, Revision, Song, Composer
 
 from .forms import SignUpForm
 
@@ -378,19 +378,34 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def song_new(request):
-    breadcrumbs = [
-        {
-            'text': 'Songs',
-            'url': '/songs'
-        },
-        {
-            'text': 'New Song'
-        }
-    ]
-    return render(request, 'song_new.html', {
-        'breadcrumbs': breadcrumbs
-    })
+class NewSongView(View):
+
+    def get(self, request):
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': 'New Song'
+            }
+        ]
+        return render(request, 'song_new.html', {
+            'breadcrumbs': breadcrumbs,
+            'composers': Composer.objects.all().order_by('name')
+        })
+
+    def post(self, request):
+        print(request.POST)
+        if not ('composer' in request.POST and 'name' in request.POST):
+            return JsonResponse(
+                {'ok': False, 'reason': 'Missing name or composer field'}
+            )
+        composer = Composer.objects.get(id=request.POST['composer'][0])
+        new_song = Song(name=request.POST['name'], composer=composer)
+        new_song.save()
+        print(composer)
+        return song(request, new_song.id)
 
 
 def edition_new(request):

@@ -3,20 +3,43 @@
 <h2>New Song</h2>
 
 <div class="row">
-  <form class="col s12">
+  <form class="col s12" action="/songs/new" method="post">
+    {% csrf_token %}
     <div class="row">
-      <div class="input-field">
-        <input id="song_name" type="text" class="validate">
+      <div class="input-field col s12">
+        <input id="song_name" type="text" class="validate" name="name">
         <label for="song_name">Song Name</label>
       </div>
     </div>
+    <div class="row valign-wrapper">
+      <div class="input-field col s10">
+        <select id="composer" name="composer">
+          {% for composer in composers %}
+          <option value="{{ composer.id }}">{{ composer.name }}</option>
+          {% endfor %}
+        </select>
+        <label for="composer">Composer</label>
+      </div>
+      <a
+        class="btn waves-light waves-effect col s2"
+        href="/composer/new">
+        <i class="material-icons left">add_box</i>
+        New
+      </a>
+    </div>
     <div class="row">
       <div class="input-field">
-        <input id="composer" type="text" class="validate">
-        <label for="last_name">Composer</label>
+        <button type="submit" class="btn waves-light waves-effect">Create</button>
       </div>
     </div>
   </form>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems);
+  });
+</script>
 
 {% include 'footer.html' %}
