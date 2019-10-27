@@ -100,3 +100,8 @@ span > .username-display {
   padding-top: 1em;
   color: red;
 }
+
+.error {
+    padding: 10px;
+    border-radius: 5px;
+}

@@ -23,7 +23,10 @@ class Song(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.name} - {self.composer.name}'
+        if self.composer:
+            return f'{self.name} - {self.composer.name}'
+        else:
+            return f'{self.name} - Unknown'
 
 
 class MEI(models.Model):

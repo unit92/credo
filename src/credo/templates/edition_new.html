@@ -1,36 +1,38 @@
 {% include 'header.html' %}
 
-<h2>New Song</h2>
+<h2>New Edition</h2>
+
+{% if reason %}
+  <div class="row red lighten-3 error">{{ reason }}</div>
+{% endif %}
 
 <div class="row">
-  <form class="col s12" action="/songs/new" method="post">
+  <form class='col s12' action='/editions/new?song={{ song.id }}' method='post' enctype='multipart/form-data'>
     {% csrf_token %}
     <div class="row">
       <div class="input-field col s12">
-        <input id="song_name" type="text" class="validate" name="name">
-        <label for="song_name">Song Name</label>
+        <input id="edition_name" type="text" class="validate" name="name">
+        <label for="edition_name">Edition Name</label>
       </div>
     </div>
     <div class="row valign-wrapper">
-      <div class="input-field col s5">
-        <select id="composer" name="composer">
-          {% for composer in composers %}
-          <option value="{{ composer.id }}">{{ composer.name }}</option>
-          {% endfor %}
-        </select>
-        <label for="composer">Composer</label>
-      </div>
-      <div class="col s2 center">or</div>
-      <div class="input-field col s5">
-        <input id="new_composer" type="text" class="validate" name="new_composer">
-        <label for="new_composer">New Composer...</label>
+      <div class="file-field input-field col s12">
+        <div class="btn">
+          <span>Upload MEI</span>
+          <i class="material-icons left">attach_file</i>
+          <input type="file" name="mei">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text">
+        </div>
       </div>
     </div>
     <div class="row">
-      <div class="input-field">
+      <div class="input-field col s12">
         <button type="submit" class="btn waves-light waves-effect">Create</button>
       </div>
     </div>
+    <input type="hidden" name="song" value="{{ song.id }}">
   </form>
 </div>
 
@@ -51,3 +53,4 @@
 </script>
 
 {% include 'footer.html' %}
+

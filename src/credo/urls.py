@@ -42,6 +42,7 @@ urlpatterns = [
          views.RevisionView.as_view()),
     path('revisions/<revision_id>/comments', views.revision_comments),
     path('revisions/<revision_id>/comment', views.add_revision_comment),
+    path('editions/new', views.NewEditionView.as_view()),
     path('compare', views.compare),
     path('mei/<mei_id>', views.mei),
     path('diff', views.diff),
