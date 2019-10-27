@@ -1,20 +1,20 @@
 .main {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
 .body {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 
 .centeredSpinner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
 }
 
 svg.tooltipped {
@@ -48,7 +48,17 @@ svg.tooltipped:hover {
 }
 
 #makeRevisionSpan {
-  float: right;
+    float: right;
+    z-index: 10;
+}
+
+#downloadButton {
+    float: left;
+    z-index: 10;
+}
+
+#downloadSpan {
+    float: left;
     z-index: 10;
 }
 
@@ -63,14 +73,14 @@ svg.tooltipped:hover {
 }
 
 .breadcrumb-container {
-  padding-left: 10px;
+    padding-left: 10px;
 }
 
 .breadcrumb-vspace {
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
-  display: flex;
-  min-height: 48px;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    display: flex;
+    min-height: 48px;
 }
 
 #renderDiv {
@@ -85,18 +95,18 @@ svg.tooltipped:hover {
 }
 
 li.username-display {
-  padding-left: 0.25em;
-  padding-right: 1em;
+    padding-left: 0.25em;
+    padding-right: 1em;
 }
 
 span > .username-display {
-  padding-left: 0.25em;
+    padding-left: 0.25em;
 }
 
 .errorlist {
-  text-align: center;
-  text-shadow: 0 0 0.1em Silver;
-  margin: auto;
-  padding-top: 1em;
-  color: red;
+    text-align: center;
+    text-shadow: 0 0 0.1em Silver;
+    margin: auto;
+    padding-top: 1em;
+    color: red;
 }
