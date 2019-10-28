@@ -324,7 +324,18 @@ def merge_measure_layers_json(request):
 
     measure_tree = et.XML(measure)
 
-    merged_measure_tree = merge_measure_layers(measure_tree)
+    try:
+        merged_measure_tree = merge_measure_layers(measure_tree)
+    except ValueError:
+        data = {
+            'content': {
+                'resolved': 'false'
+            }
+        }
+        return HttpResponse(
+            json.dumps(data),
+            content_type='application/json'
+        )
 
     merged_measure = et.tostring(merged_measure_tree, encoding='utf-8')
     measure_b64 = str(base64.b64encode(merged_measure), encoding='utf-8')
@@ -334,7 +345,8 @@ def merge_measure_layers_json(request):
             'mei': {
                 'detail': measure_b64,
                 'encoding': 'base64'
-            }
+            },
+            'resolved': 'true'
         }
     }
 

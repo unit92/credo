@@ -131,6 +131,11 @@ class CredoToolkit {
       resolveModalSubmit.addEventListener('click', this.submitMeasureResolution.bind(this))
     }
 
+    const resolveModalCancel = document.getElementById('resolve-modal-cancel')
+    if (resolveModalCancel) {
+      resolveModalCancel.addEventListener('click', this.cancelMeasureResolution.bind(this))
+    }
+
     const resolveSwapLayersButton = document.getElementById('resolve-swap-layers')
     if (resolveSwapLayersButton) {
       resolveSwapLayersButton.addEventListener(
@@ -397,14 +402,14 @@ class CredoToolkit {
     toRemove.forEach(element => {
       element.setAttribute('visible', 'false')
       console.log(element.parentElement)
-      // Remove certain parent elements if all children are removed
-      if (groupedElements.includes(element.parentElement.nodeName)) {
-        const notes = Array.from(element.parentElement.querySelectorAll('note'))
-        console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
-        if (notes.reduce((a, b) => a && b.getAttribute('visible') == 'false')) {
-          element.parentElement.setAttribute('visible', 'false')
-        }
-      }
+      // // Remove certain parent elements if all children are removed
+      // if (groupedElements.includes(element.parentElement.nodeName)) {
+      //   const notes = Array.from(element.parentElement.querySelectorAll('note'))
+      //   console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
+      //   if (notes.reduce((a, b) => a && b.getAttribute('visible') == 'false')) {
+      //     element.parentElement.setAttribute('visible', 'false')
+      //   }
+      // }
     })
 
     const body = {
@@ -435,26 +440,38 @@ class CredoToolkit {
       xhttp.setRequestHeader('Content-Type', 'application/json')
       xhttp.send(JSON.stringify(body))
     }).then(json => {
-      // Decode from base 64
-      const resolvedMeasureString = atob(json.content.mei.detail)
+      if (json.content.resolved === 'true') {
+        // Decode from base 64
+        const resolvedMeasureString = atob(json.content.mei.detail)
 
-      // Remove colour from any remaining notes
-      const resolvedMeasure = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
-      const colouredNotation = Array.from(resolvedMeasure.querySelectorAll('[color]'))
-      colouredNotation.forEach(notation => {
-        notation.removeAttribute('color')
-      })
+        // Remove colour from any remaining notes
+        const resolvedMeasure = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
+        const colouredNotation = Array.from(resolvedMeasure.querySelectorAll('[color]'))
+        colouredNotation.forEach(notation => {
+          notation.removeAttribute('color')
+        })
 
-      // Update measure on meiDocument
-      meiMeasure.outerHTML = new XMLSerializer().serializeToString(resolvedMeasure)
+        // Update measure on meiDocument
+        meiMeasure.outerHTML = new XMLSerializer().serializeToString(resolvedMeasure)
 
-      // Update the mei string and rerender
-      this.mei = new XMLSerializer().serializeToString(this.meiDocument)
-      this.renderMei()
+        // Update the mei string and rerender
+        this.mei = new XMLSerializer().serializeToString(this.meiDocument)
+        this.renderMei()
 
-      // close the modal
-      this.resolveModalInstance.close()
+        // close the modal
+        this.resolveModalInstance.close()
+        const feedbackDiv = document.querySelector('#resolveError')
+        feedbackDiv.textContent = ''
+      } else {
+        const feedbackDiv = document.querySelector('#resolveError')
+        feedbackDiv.textContent = 'Some notes are still in conflict. Click on notes to toggle selection.'
+      }
     })
+  }
+
+  cancelMeasureResolution() {
+    const feedbackDiv = document.querySelector('#resolveError')
+    feedbackDiv.textContent = ''
   }
 
   /**

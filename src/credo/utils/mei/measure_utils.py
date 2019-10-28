@@ -2,14 +2,12 @@ import lxml.etree as et
 from typing import List
 from math import inf
 from copy import deepcopy
-from pprint import pprint
 
 from utils.mei.xml_namespaces import MEI_NS
 
 
 def merge_measure_layers(measure: et.ElementTree):
     id_attrib = et.QName(MEI_NS['xml'], 'id')
-    # print(et.tostring(measure, pretty_print=True).decode())
 
     # Loop through all staves, merging layers for each
     staff_qry = et.XPath('child::mei:staff', namespaces=MEI_NS)
@@ -44,7 +42,7 @@ def merge_measure_layers(measure: et.ElementTree):
         for layer in merged_layers:
             print(layer)
             staff.append(layer)
-    # print(et.tostring(measure, pretty_print=True).decode())
+
     return measure
 
 
@@ -89,7 +87,6 @@ def _merge_layers(layers):
         # Visibility tag
         visible_tag = duration_info.event.get('visible')
         visible = visible_tag is None or visible_tag == 'true'
-        print(visible)
 
         # 'space' events are regarded as invisible
         if et.QName(duration_info.event).localname == 'space' \
@@ -104,10 +101,7 @@ def _merge_layers(layers):
     # interval scheduling approach, so we can see which
     # elements are stopping the layers from merging if needed
     mergeable_events = get_max_subset_compatible_events(vis_event_dur_infos)
-    print('All:')
-    pprint(vis_event_dur_infos)
-    print('Mergeable:')
-    pprint(mergeable_events)
+
     if len(mergeable_events) == len(vis_event_dur_infos):
         # All events mergeable, sort by start times and add copies to
         # a new layer and return.
@@ -119,8 +113,7 @@ def _merge_layers(layers):
 
         return new_layer
 
-    # TODO: Raise exception and catch error in views.py
-    return et.Element(et.QName(MEI_NS['mei'], 'layer'))
+    raise ValueError('Could not merge layers, since they had overlaps.')
 
 
 class MEIEventDurationInfo:
@@ -173,8 +166,6 @@ def _get_duration_info(
                     break
             if not part_of_group:
                 events.append(event)
-
-    pprint(events)
 
     # Events that are returned first re displayed first,
     # so assume the first event in the list occurs first etc.
