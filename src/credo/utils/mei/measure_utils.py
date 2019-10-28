@@ -1,7 +1,10 @@
 import lxml.etree as et
-from utils.mei.xml_namespaces import MEI_NS
+from typing import List
+from math import inf
 from copy import deepcopy
 from pprint import pprint
+
+from utils.mei.xml_namespaces import MEI_NS
 
 
 def merge_measure_layers(measure: et.ElementTree):
@@ -56,62 +59,187 @@ def _merge_layers(layers):
 
     # Define tags that take up time in a bar, refer to
     # https://music-encoding.org/guidelines/v4/model-classes/model.eventlike.html
-    event_names = ['mei:note', 'mei:rest', 'mei:space']
+    event_names = [
+        'note',
+        'rest',
+        'space'
+    ]
+
+    event_group_names = [
+        'beam',
+        'chord'
+    ]
 
     for layer in layers:
         print(et.tostring(layer, pretty_print=True).decode())
 
+    event_dur_infos = []
     for layer in layers:
-        start_ends = _get_event_start_ends(layer, event_names)
-        pprint(start_ends)
+        duration_info = _get_duration_info(
+            layer,
+            event_names,
+            event_group_names
+        )
+        event_dur_infos += duration_info
 
-    return deepcopy(layers[0])
+    # Filter layer_duration_infos by visibility
+    vis_event_dur_infos = []
+    for duration_info in event_dur_infos:
+
+        # Visibility tag
+        visible_tag = duration_info.event.get('visible')
+        visible = visible_tag is None or visible_tag == 'true'
+        print(visible)
+
+        # 'space' events are regarded as invisible
+        if et.QName(duration_info.event).localname == 'space' \
+                and et.QName(duration_info.event).namespace == MEI_NS['mei']:
+            visible = False
+
+        if visible:
+            vis_event_dur_infos.append(duration_info)
+
+    # Perform merge, ensuring that start and ends for
+    # visible elements do not overlap. This is done using a greedy
+    # interval scheduling approach, so we can see which
+    # elements are stopping the layers from merging if needed
+    mergeable_events = get_max_subset_compatible_events(vis_event_dur_infos)
+    print('All:')
+    pprint(vis_event_dur_infos)
+    print('Mergeable:')
+    pprint(mergeable_events)
+    if len(mergeable_events) == len(vis_event_dur_infos):
+        # All events mergeable, sort by start times and add copies to
+        # a new layer and return.
+        mergeable_events = sorted(mergeable_events, key=lambda e: e.start)
+        new_layer = et.Element(et.QName(MEI_NS['mei'], 'layer'))
+
+        for event_info in mergeable_events:
+            new_layer.append(deepcopy(event_info.event))
+
+        return new_layer
+
+    # TODO: Raise exception and catch error in views.py
+    return et.Element(et.QName(MEI_NS['mei'], 'layer'))
 
 
-def _get_event_start_ends(layer, event_names):
+class MEIEventDurationInfo:
+    def __init__(self, event, start, duration):
+        self.event = event
+        self.start = start
+        self.duration = duration
+
+    @property
+    def finish(self):
+        return self.start + self.duration
+
+
+def get_max_subset_compatible_events(events: List[MEIEventDurationInfo]):
+    sorted_events = sorted(events, key=lambda e: e.finish)
+    selected = []
+    selected_finish = -inf
+    for i in range(len(sorted_events)):
+        if sorted_events[i].start >= selected_finish:
+            # Event is compatible
+            selected.append(sorted_events[i])
+            selected_finish = sorted_events[i].finish
+
+    return selected
+
+
+def _get_duration_info(
+        layer: et.Element,
+        event_names: list,
+        event_group_names: list
+        ) -> List[MEIEventDurationInfo]:
+
     events = []
     for e_name in event_names:
-        e_qry = et.XPath(f'.//{e_name}', namespaces=MEI_NS)
-        events += e_qry(layer)
+        e_qry = et.XPath(f'.//mei:{e_name}', namespaces=MEI_NS)
+        events_result = e_qry(layer)
+        for event in events_result:
+            part_of_group = False
+            # Check if elem has ancestor in event_group
+            for group_name in event_group_names:
+                group_qry = et.XPath(
+                    f'ancestor::mei:{group_name}',
+                    namespaces=MEI_NS
+                )
+                group = group_qry(event)
+                if len(group) > 0:
+                    if group[0] not in events:
+                        events.append(group[0])
+                    part_of_group = True
+                    break
+            if not part_of_group:
+                events.append(event)
+
+    pprint(events)
 
     # Events that are returned first re displayed first,
     # so assume the first event in the list occurs first etc.
-
-    start_ends = []
+    dur_info = []
     start = 0
     for e in events:
         duration = _get_duration(e)
-        end = start + duration
-        start_ends.append((start, end, e))
-        start = end
+        dur_info.append(MEIEventDurationInfo(e, start, duration))
+        start = start + duration
 
-    return start_ends
+    return dur_info
 
 
 def _get_duration(event):
     """
-    Returns the duration of a note, as a fraction.
+    Returns the duration of an event, as a fraction.
     e.g. a crotchet will return 0.25, a minim 0.5 etc.
     """
-    # Get relevant attributes
-    dur = event.get('dur')
-    dots = event.get('dots')
 
-    if dur is None:
-        return None
+    event_names = [
+        'note',
+        'rest',
+        'space',
+        'chord'
+    ]
 
-    try:
-        dur = int(dur)
-    except ValueError:
-        return None
+    event_group_names = [
+        'beam'
+    ]
 
-    if dots is None:
-        return 1/dur
+    # Check if we are getting the duration of a grouped element
+    if et.QName(event).localname in event_group_names and \
+            et.QName(event).namespace == MEI_NS['mei']:
+        sub_events = []
+        for e_name in event_names:
+            e_qry = et.XPath(f'child::mei:{e_name}', namespaces=MEI_NS)
+            sub_events += e_qry(event)
+
+        # Duration is sum of contained elements
+        return sum([_get_duration(e) for e in sub_events])
+
+    elif et.QName(event).localname in event_names and \
+            et.QName(event).namespace == MEI_NS['mei']:
+        # Get relevant attributes
+        dur = event.get('dur')
+        dots = event.get('dots')
+
+        if dur is None:
+            return None
+
+        try:
+            dur = int(dur)
+        except ValueError:
+            return None
+
+        if dots is None:
+            return 1/dur
+        else:
+            dots = int(dots)
+            length = 1/dur
+            mod = 1
+            for i in range(dots):
+                mod /= 2
+                length += mod*length
+            return length
+
     else:
-        dots = int(dots)
-        length = 1/dur
-        mod = 1
-        for i in range(dots):
-            mod /= 2
-            length += mod*length
-        return length
+        return None
