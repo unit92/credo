@@ -11,7 +11,7 @@ const toolColors = {
   resolve: "cyan darken-1"
 }
 
-const parentElementsToHide = [
+const groupedElements = [
     'chord', 'beam'
 ]
 
@@ -262,37 +262,96 @@ class CredoToolkit {
   resolveNote (event) {
     let target = event.target
     const lowAlpha = 0.5
-
     while (target && !target.id.match(/m-[0-9]*/)) {
       target = target.parentElement
     }
 
-    // don't affect the note if it's not coloured
+    // Don't affect the note if it's not coloured
     if (!target) {
       return
     }
 
-    let fillAttribute = target.getAttribute('fill') || target.parentElement.getAttribute('fill')
-    if (!fillAttribute) {
-      return
+    // If target is part of a group e.g. chord, beam, then toggle visibility for the group
+    const meiTarget = this.meiDocument.evaluate(
+      `//*[@xml:id="${target.id}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    ).iterateNext()
+
+    let meiGroupTarget = null
+    groupedElements.forEach(group_tag => {
+      const result = this.meiDocument.evaluate(
+        `ancestor-or-self::mei:${group_tag}`,
+        meiTarget,
+        this.namespaceResolver,
+        XPathResult.ANY_TYPE,
+        null
+      ).iterateNext()
+      if (result) {
+        meiGroupTarget = result
+      }
+    })
+
+    let targets = [target]
+    if (meiGroupTarget) {
+      // Find ID of group target
+      const meiGroupTargetId = this.meiDocument.evaluate(
+        `@xml:id`,
+        meiGroupTarget,
+        this.namespaceResolver,
+        XPathResult.ANY_TYPE,
+        null
+      ).iterateNext()
+
+      let svgGroupTarget = target
+
+      // Search SVG for group target ID
+      while (svgGroupTarget && svgGroupTarget.id !== meiGroupTargetId.value) {
+        svgGroupTarget = svgGroupTarget.parentElement
+      }
+
+      // Update visibility for all sub elements
+      targets = [svgGroupTarget]
+      targets.push.apply(targets, svgGroupTarget.querySelectorAll('g'))
+      targets = targets.filter(elem => elem.className.baseVal !== 'stem')
     }
 
-    if (fillAttribute.startsWith('hsl(')) {
-      // add transparency and add to list of IDs to eliminate
-      fillAttribute = fillAttribute.replace('hsl', 'hsla')
-      fillAttribute = fillAttribute.replace(')', `, ${lowAlpha})`)
-      if (!this.eliminatedIds.includes(target.id)) {
-        this.eliminatedIds.push(target.id)
+    console.log(targets)
+
+    targets.forEach(target => {
+
+      const eliminated = target.getAttribute('eliminated')
+      let fillAttribute = target.getAttribute('fill') || target.parentElement.getAttribute('fill')
+      if (!fillAttribute) {
+        return
       }
-    } else if (fillAttribute.startsWith('hsla')) {
-      // remove transparency and remove from list of IDs to eliminate
-      fillAttribute = fillAttribute.replace('hsla', 'hsl')
-      fillAttribute = fillAttribute.replace(/, [0-9\.]*\)/, ')')
-      this.eliminatedIds = this.eliminatedIds.filter(
-        id => id !== target.id
-      )
-    }
-    target.setAttribute('fill', fillAttribute)
+
+      if (eliminated === null || eliminated === 'false') {
+        target.setAttribute('eliminated', 'true')
+        // Add transparency and add to list of IDs to eliminate
+        if (fillAttribute.startsWith('hsl(')) {
+          fillAttribute = fillAttribute.replace('hsl', 'hsla')
+        }
+        fillAttribute = fillAttribute.replace(')', `, ${lowAlpha})`)
+        if (!this.eliminatedIds.includes(target.id)) {
+          this.eliminatedIds.push(target.id)
+        }
+      } else {
+        target.setAttribute('eliminated', 'false')
+        // remove transparency and remove from list of IDs to eliminate
+        if (fillAttribute.startsWith('hsla(')) {
+          fillAttribute = fillAttribute.replace('hsla', 'hsl')
+        }
+        fillAttribute = fillAttribute.replace(/, [0-9\.]*\)/, ')')
+        this.eliminatedIds = this.eliminatedIds.filter(
+          id => id !== target.id
+        )
+      }
+
+      target.setAttribute('fill', fillAttribute)
+    })
   }
 
   /**
@@ -339,7 +398,7 @@ class CredoToolkit {
       element.setAttribute('visible', 'false')
       console.log(element.parentElement)
       // Remove certain parent elements if all children are removed
-      if (parentElementsToHide.includes(element.parentElement.nodeName)) {
+      if (groupedElements.includes(element.parentElement.nodeName)) {
         const notes = Array.from(element.parentElement.querySelectorAll('note'))
         console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
         if (notes.reduce((a, b) => a && b.getAttribute('visible') == 'false')) {
