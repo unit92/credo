@@ -82,7 +82,7 @@ class MeiTransformer:
         In the future more tasks may be added to the normalisation process
         """
         self.remove_metadata()
-        self.strip_attribs(['color'])
+        self.strip_attribs(['color', 'visible'])
         self.generate_ids()
 
     def to_intermediate(self) -> None:

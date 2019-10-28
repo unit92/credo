@@ -18,6 +18,7 @@ import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
 from credo.utils.mei.measure_utils import merge_measure_layers
+from credo.utils.mei.resolve_utils import is_resolved
 
 from .models import Comment, Edition, MEI, Revision, Song
 
@@ -164,12 +165,13 @@ class RevisionView(View):
         data = json.loads(request.body)
         comments = data['comments']
         mei = data['mei']
-        print(data['mei'])
+        mei_tree = et.XML(mei)
 
         revision = Revision.objects.get(id=revision_id)
+        revision.mei.normalised = is_resolved(mei_tree)
 
-        with revision.mei.data.open('w') as f:
-            f.write(mei)
+        revision.mei.data.save('mei', ContentFile(mei))
+        revision.mei.save()
 
         # Delete existing comments
         revision.comment_set.all().delete()
