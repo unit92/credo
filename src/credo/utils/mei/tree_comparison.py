@@ -253,7 +253,6 @@ class TreeComparison(ComparisonStrategy):
                 insert_staff = insert_staffs[staff_idx]
 
                 # Loop through each layer in the staff
-
                 layer_qry = et.XPath('child::mei:layer', namespaces=MEI_NS)
                 base_layers = layer_qry(base_staff)
                 insert_layers = layer_qry(insert_staff)
@@ -273,23 +272,39 @@ class TreeComparison(ComparisonStrategy):
                     base_layer = base_layers[layer_idx]
                     insert_layer = deepcopy(insert_layers[layer_idx])
 
-                    base_layer.set(
-                        id_attrib.text,
-                        get_formatted_xml_id(id_idx, base_id_prefix)
-                    )
+                    # Check if all elements in the insert layer are hidden.
+                    all_invisible = True
+                    for elem in insert_layer.iter():
+                        if elem.get('visible') == 'true' and \
+                                elem != insert_layer:
+                            all_invisible = False
+                            break
 
-                    insert_layer.set(
-                        id_attrib.text,
-                        get_formatted_xml_id(id_idx, insert_id_prefix)
-                    )
-                    # Update n tag on layer to allow trills to connect properly
-                    insert_layer.set(
-                        'n',
-                        str(len(base_layers) + layer_idx + 1)
-                    )
+                    if all_invisible:
+                        # Only add the base layer, as there are no differences
+                        base_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, 'r')
+                        )
+                    else:
+                        base_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, base_id_prefix)
+                        )
+
+                        insert_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, insert_id_prefix)
+                        )
+                        # Update n tag on layer to allow trills
+                        # to connect properly
+                        insert_layer.set(
+                            'n',
+                            str(len(base_layers) + layer_idx + 1)
+                        )
+                        base_staff.append(insert_layer)
 
                     id_idx += 1
-                    base_staff.append(insert_layer)
                     layer_idx += 1
 
                 staff_idx += 1

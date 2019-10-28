@@ -5,6 +5,7 @@ from copy import deepcopy
 import logging
 
 from utils.mei.xml_namespaces import MEI_NS
+from utils.mei.id_formatters import get_formatted_xml_id
 
 
 def merge_measure_layers(measure: et.ElementTree):
@@ -29,8 +30,8 @@ def merge_measure_layers(measure: et.ElementTree):
 
         # Merge layer groups
         merged_layers = []
-        for layer_group in layer_groups.values():
-            merged = _merge_layers(layer_group)
+        for num_id, layer_group in layer_groups.items():
+            merged = _merge_layers(num_id, layer_group)
             if isinstance(merged, list):
                 for m in merged():
                     merged_layers.append(m)
@@ -47,10 +48,13 @@ def merge_measure_layers(measure: et.ElementTree):
     return measure
 
 
-def _merge_layers(layers):
+def _merge_layers(num_id, layers):
     logger = logging.getLogger(__name__)
     # Merge layers by determining positions of elements
     # in the measure across all layers.
+
+    if len(layers) == 1:
+        return layers[0]
 
     if len(layers) != 2:
         raise ValueError(
@@ -113,6 +117,11 @@ def _merge_layers(layers):
         for event_info in mergeable_events:
             new_layer.append(deepcopy(event_info.event))
 
+        # Set id of new layer.
+        new_layer.set(
+            et.QName(MEI_NS['xml'], 'id').text,
+            get_formatted_xml_id(num_id, 'r')
+        )
         return new_layer
 
     raise ValueError('Could not merge layers, since they had overlaps.')
