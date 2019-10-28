@@ -37,7 +37,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DJANGO_DEBUG'] == 'true'
 
-ALLOWED_HOSTS = ['localhost', 'aws']
+ALLOWED_HOSTS = ['localhost', 'credo.techlab.works']
 
 # Application definition
 
@@ -133,6 +133,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# Redirect to home URL after logging in
+LOGIN_REDIRECT_URL = 'index'
+
+# Redirect to home URL after logging out
+LOGOUT_REDIRECT_URL = 'index'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
