@@ -122,6 +122,7 @@ class TreeComparison(ComparisonStrategy):
             elem.set('visible', 'true')
 
         # Apply colours to modified nodes in a_modded and b_modded trees
+        node_groups = ['chord', 'beam']
         for node in patcher.nodes:
             if len(node.modifications) > 0:
                 self.logger.debug('\nOriginal: {}\nModified: {}\n{}\n'.format(
@@ -134,15 +135,40 @@ class TreeComparison(ComparisonStrategy):
                     # Set colours in b_modded
                     node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
+                    # If the modified node is in a chord or beam, mark all
+                    # elements in the chord/beam as modified as well.
+                    self.__apply_color_to_group(
+                        node.modified,
+                        node_groups,
+                        self.b_colour_str
+                    )
+
                 elif type(mod) in action_classes['delete']:
                     # Set colours in a_modded
                     node.original.set('color', self.a_colour_str)
+                    self.__apply_color_to_group(
+                        node.original,
+                        node_groups,
+                        self.a_colour_str
+                    )
                 elif type(mod) in action_classes['update']:
                     # Set colours in b_modded
                     node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
+                    # If the modified node is in a chord or beam, mark all
+                    # elements in the chord/beam as modified as well.
+                    self.__apply_color_to_group(
+                        node.modified,
+                        node_groups,
+                        self.b_colour_str
+                    )
                     # Set colours in a_modded
                     node.original.set('color', self.a_colour_str)
+                    self.__apply_color_to_group(
+                        node.original,
+                        node_groups,
+                        self.a_colour_str
+                    )
 
         # Merge a_modded and b_modded into a single diff tree
         diff = self.__naive_layer_merge(a_modded, b_modded)
@@ -178,6 +204,19 @@ class TreeComparison(ComparisonStrategy):
             elem.getparent().remove(elem)
 
         return diff
+
+    def __apply_color_to_group(self, node, group_tags, colour):
+        for g in group_tags:
+            g_qry = et.XPath(
+                f'ancestor::mei:{g}',
+                namespaces=MEI_NS
+            )
+            groups = g_qry(node)
+            if len(groups) > 0:
+                for elem in groups[0].iter():
+                    print(elem)
+                    elem.set('color', colour)
+                    elem.set('visible', 'true')
 
     def __naive_layer_merge(self, a: et.ElementTree, b: et.ElementTree) \
             -> et.ElementTree:
