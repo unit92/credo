@@ -2,6 +2,7 @@ import lxml.etree as et
 from typing import List
 from math import inf
 from copy import deepcopy
+import logging
 
 from utils.mei.xml_namespaces import MEI_NS
 
@@ -47,6 +48,7 @@ def merge_measure_layers(measure: et.ElementTree):
 
 
 def _merge_layers(layers):
+    logger = logging.getLogger(__name__)
     # Merge layers by determining positions of elements
     # in the measure across all layers.
 
@@ -69,7 +71,7 @@ def _merge_layers(layers):
     ]
 
     for layer in layers:
-        print(et.tostring(layer, pretty_print=True).decode())
+        logger.debug('\n' + et.tostring(layer, pretty_print=True).decode())
 
     event_dur_infos = []
     for layer in layers:
