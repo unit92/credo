@@ -208,7 +208,7 @@ class TreeComparison(ComparisonStrategy):
     def __apply_color_to_group(self, node, group_tags, colour):
         for g in group_tags:
             g_qry = et.XPath(
-                f'ancestor::mei:{g}',
+                f'ancestor-or-self::mei:{g}',
                 namespaces=MEI_NS
             )
             groups = g_qry(node)
@@ -276,7 +276,9 @@ class TreeComparison(ComparisonStrategy):
                     all_invisible = True
                     for elem in insert_layer.iter():
                         if elem.get('visible') == 'true' and \
-                                elem != insert_layer:
+                                elem != insert_layer and \
+                                et.QName(elem).localname != 'space' and \
+                                et.QName(elem).localname != 'pad':
                             all_invisible = False
                             break
 
