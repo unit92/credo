@@ -18,9 +18,11 @@ from .id_formatters import get_formatted_xml_id
 
 class MeiTransformer:
     _tree: ElementTree
+    _id_map: t.Dict[str, str]
 
     def __init__(self, tree: ElementTree):
         self._tree = tree
+        self._id_map = {}
 
     @classmethod
     def from_xml_file(cls, filename: str) -> MeiTransformer:
@@ -173,6 +175,8 @@ class MeiTransformer:
         """
         class_lookup = etree.ElementDefaultClassLookup()
 
+        self._id_map = {}
+
         # Find all trills in the MEI, as they reference other IDs
         trill_id_map = dict()
         for elem in self._tree.findall('//mei:trill', MEI_NS):
@@ -196,12 +200,19 @@ class MeiTransformer:
                 new_id = get_formatted_xml_id(index)
                 # Update trill reference
                 if id_val is not None:
+                    self._id_map[id_val] = new_id
                     if '#' + id_val in trill_id_map.keys():
                         trill_id_map['#' + id_val].set('startid', new_id)
 
                 # Set new ID
                 elem.set(id_attrib.text, new_id)
             index += 1
+
+    def get_id_map(self):
+        """
+        Return the mapping of old MEI IDs to new MEI IDs.
+        """
+        return self._id_map
 
 
 def main():
