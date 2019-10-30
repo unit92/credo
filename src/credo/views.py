@@ -168,10 +168,6 @@ class RevisionView(View):
         mei_tree = et.XML(mei)
 
         revision = Revision.objects.get(id=revision_id)
-        revision.mei.normalised = is_resolved(mei_tree)
-
-        revision.mei.data.save('mei', ContentFile(mei))
-        revision.mei.save()
 
         # Delete existing comments
         revision.comment_set.all().delete()
@@ -181,6 +177,11 @@ class RevisionView(View):
                     text=comments[comment],
                     user=request.user,
                     mei_element_id=comment).save()
+
+        revision.mei.normalised = is_resolved(mei_tree)
+
+        revision.mei.data.save('mei', ContentFile(mei))
+        revision.mei.save()
 
         return JsonResponse({'ok': True})
 
