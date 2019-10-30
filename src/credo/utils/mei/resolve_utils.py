@@ -16,6 +16,4 @@ def is_resolved(mei: et.ElementTree) -> bool:
         if not match('m-r[0-9]+', layer.get(id_attrib)):
             resolved = False
 
-    print('RESOLVED:', resolved)
-
     return resolved

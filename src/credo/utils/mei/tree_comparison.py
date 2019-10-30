@@ -214,7 +214,6 @@ class TreeComparison(ComparisonStrategy):
             groups = g_qry(node)
             if len(groups) > 0:
                 for elem in groups[0].iter():
-                    print(elem)
                     elem.set('color', colour)
                     elem.set('visible', 'true')
 
