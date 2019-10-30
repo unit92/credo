@@ -471,3 +471,13 @@ def server_error(request):
         },
         status=500
     )
+
+
+def wildwebmidi_data(request):
+    with open('credo/static/credo/midi/wildwebmidi.data', 'rb') as f:
+        data = f.read()
+    file_to_send = ContentFile(data)
+    response = HttpResponse(file_to_send, 'application/x-gzip')
+    response['Content-Length'] = file_to_send.size
+    response['Content-Disposition'] = 'attachment; filename="wildwebmidi.data"'
+    return response

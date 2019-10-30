@@ -472,7 +472,7 @@ class CredoToolkit {
    */
   playSnippet () {
     const song = 'data:audio/midi;base64,' + this.verovioToolkit.renderToMIDI()
-    document.getElementById('player').midiPlayer.play(song)
+    $('#player').midiPlayer.play(song)
   }
 
   /**

@@ -37,6 +37,7 @@ urlpatterns = [
     path('songs/<song_id>', views.song),
     path('songs/<song_id>/compare', views.song_compare_picker),
     path('editions/<edition_id>', views.edition),
+    path('revisions/wildwebmidi.data', views.wildwebmidi_data),
     path('revisions/<revision_id>', views.RevisionView.as_view()),
     path('revisions/<revision_id>/comments', views.revision_comments),
     path('revisions/<revision_id>/comment', views.add_revision_comment),
