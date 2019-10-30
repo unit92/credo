@@ -136,6 +136,13 @@ class CredoToolkit {
       resolveModalCancel.addEventListener('click', this.cancelMeasureResolution.bind(this))
     }
 
+    const resolvePlayButton = document.getElementById('resolve-play')
+    if (resolvePlayButton) {
+      resolvePlayButton.addEventListener(
+        'click',
+        this.playSnippet.bind(this)
+      )
+    }
     const resolveSwapLayersButton = document.getElementById('resolve-swap-layers')
     if (resolveSwapLayersButton) {
       resolveSwapLayersButton.addEventListener(
@@ -472,6 +479,14 @@ class CredoToolkit {
   cancelMeasureResolution() {
     const feedbackDiv = document.querySelector('#resolveError')
     feedbackDiv.textContent = ''
+  }
+
+  /**
+   * Converts the snippet open in the resolve tool into MIDI and plays it
+   */
+  playSnippet () {
+    const song = 'data:audio/midi;base64,' + this.verovioToolkit.renderToMIDI()
+    document.getElementById('player').midiPlayer.play(song)
   }
 
   /**
@@ -1011,3 +1026,5 @@ escapeHtmlCharacters = text => text
   .replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;')
+
+// vim: shiftwidth=2

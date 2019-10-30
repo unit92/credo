@@ -47,6 +47,7 @@
   </div>
   <div id="resolveError" class="errorlist"></div>
   <div class="modal-footer">
+    <a id="resolve-play" class="left waves-effect btn-flat">Play</a>
     <a id="resolve-swap-layers" class="left waves-effect btn-flat">Swap Layers</a>
     <a id="resolve-modal-submit" class="waves-effect btn-flat">Submit</a>
     <a id="resolve-modal-cancel" class="modal-close waves-effect btn-flat">Cancel</a>
@@ -56,6 +57,8 @@
 <div id="saving-modal" class="modal">
 </div>
 
+<div id="player"></div>
+
 <script
   src="{% static 'credo/verovio/verovio-toolkit.js' %}"
   type="text/javascript">
@@ -64,8 +67,21 @@
   src="{% static 'credo/credo-toolkit.js' %}"
   type="text/javascript">
 </script>
+<script
+  src="{% static 'credo/midi/wildwebmidi.js' %}"
+  type="text/javascript">
+</script>
+<script
+  src="{% static 'credo/midi/midiplayer.js' %}"
+  type="text/javascript">
+</script>
+
 {% block scripts %}
 <script type="text/javascript">
+
+    document.getElementById('player').midiPlayer({
+        width: 0
+    });
   const toolkit = new CredoToolkit(
     '{{ meiUrl }}',
     null,
