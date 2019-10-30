@@ -53,20 +53,6 @@ class TestMeiTransformer(TestCase):
         self.assertIsNone(midi_instrument)
         self.assertFalse(self.meiTransformer.is_intermediate)
 
-    def test_normalise_removes_color(self):
-        """Verify MEI normalisation removes color attributes
-
-        Asserts that normalisation removes the colour attributes by querying
-        the tree for the colour attributes before normalisation and after
-        and asserting that they exist beforehand and don't afterwards.
-        """
-        before = self.meiTransformer.tree.find('//*[@color]', MEI_NS)
-        self.meiTransformer.normalise()
-        after = self.meiTransformer.tree.find('//*[@color]', MEI_NS)
-        self.assertIsNotNone(before)
-        self.assertIsNone(after)
-        self.assertFalse(self.meiTransformer.is_intermediate)
-
     def test_is_intermediate(self):
         """Ensure MEI intermediate format transformations work as expected
 

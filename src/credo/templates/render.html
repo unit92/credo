@@ -27,6 +27,8 @@
   </div>
 </div>
 
+{% include 'footer.html' %}
+
 <div id="comment-modal" class="modal">
   <div class="modal-content">
     <h4>Edit Comment</h4>
@@ -38,7 +40,21 @@
   </div>
 </div>
 
-{% include 'footer.html' %}
+<div id="resolve-modal" class="modal">
+  <div class="modal-content">
+    <h4>Resolve Measure</h4>
+    <div id="resolveDiv"></div> 
+  </div>
+  <div id="resolveError" class="errorlist"></div>
+  <div class="modal-footer">
+    <a id="resolve-swap-layers" class="left waves-effect btn-flat">Swap Layers</a>
+    <a id="resolve-modal-submit" class="waves-effect btn-flat">Submit</a>
+    <a id="resolve-modal-cancel" class="modal-close waves-effect btn-flat">Cancel</a>
+  </div>
+</div>
+
+<div id="saving-modal" class="modal">
+</div>
 
 <script
   src="{% static 'credo/verovio/verovio-toolkit.js' %}"
@@ -52,6 +68,7 @@
 <script type="text/javascript">
   const toolkit = new CredoToolkit(
     '{{ meiUrl }}',
+    null,
     null,
     'renderDiv'
   )

@@ -38,7 +38,8 @@ class TestServerBlackBox(TestCase):
                 'comments': {
                     'm-1': 'hello',
                     'm-2': 'world',
-                }
+                },
+                'mei': '<music xml:id="m-22"></music>'
             }),
             content_type='application/json'
         )

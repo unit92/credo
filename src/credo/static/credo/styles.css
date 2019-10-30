@@ -80,6 +80,12 @@ svg.tooltipped:hover {
     margin-bottom: 50px;
 }
 
+#resolveDiv > svg {
+    width: 50%;
+    display: block;
+    margin: auto;
+}
+
 .loading {
     box-shadow: none !important;
 }

@@ -71,8 +71,8 @@ class TrackedPatcher(Patcher):
 
     def _handle_MoveNode(self, action, tree):
         node = tree.xpath(action.node)[0]
-        node.getparent().remove(node)
         target = tree.xpath(action.target)[0]
+        node.getparent().remove(node)
         target.insert(action.position, node)
         self.register_modification(action, tree, node)
 

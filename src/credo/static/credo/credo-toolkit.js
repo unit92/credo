@@ -1,16 +1,17 @@
-/**
- * This class wraps around the functionalities of the Verovio toolkit, and
- * presents them in a way that is tailored to our use case. We also extend upon
- * its rendering functionality to deliver our own functionality, in music
- * commenting.
- */
-
-toolColors = {
+const toolColors = {
   inspect: "cyan darken-1",
   comment: "cyan darken-1",
   resolve: "cyan darken-1"
 }
 
+const groupedElements = [
+    'chord', 'beam'
+]
+
+/**
+ * Wrapper for the functionalities of the Verovio toolkit,
+ * tailored to our use case.
+ */
 class CredoToolkit {
   // class variables
   meiUrl
@@ -18,11 +19,16 @@ class CredoToolkit {
   renderDiv
 
   mei
+  meiDocument // the mei string parsed into an XML document
   comments
 
   commentModalInstance
   // ID of the thing on which we are commenting
   commentModalId
+
+  resolveModalInstance
+  resolveMeasureId // ID of the measure we're resolving
+  eliminatedIds // IDs to eliminate
 
   savingModalInstance
 
@@ -42,6 +48,24 @@ class CredoToolkit {
     </svg>
  `
 
+  meiTemplate = `
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <mei meiversion="3.0.0" xmlns="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <music>
+      <body>
+        <mdiv>
+          <score>
+            {scoreDef}
+            <section>
+              {measures}
+            </section>
+          </score>
+        </mdiv>
+      </body>
+    </music>
+    </mei>
+  `
+
   // used for saving revisions
   csrftoken
 
@@ -51,23 +75,36 @@ class CredoToolkit {
    * @param {string} meiUrl The URL of the MEI file we wish to render.
    * @param {string} commentsUrl The URL of any associated comments, can be
    * null to indicate no comments.
+   * @param {string} resolutionUrl The URL used for merging layers within a measure,
+   * can be null to indicate no merge support.
    * @param {string} renderDiv The ID of the div to which we wish to render.
    * @param {string} saveUrl Optional. The URL to POST to when saving revisions.
    */
-  constructor (meiUrl, commentsUrl, renderDiv, saveUrl) {
+  constructor (meiUrl, commentsUrl, resolutionUrl, renderDiv, saveUrl) {
     this.meiUrl = meiUrl
     this.commentsUrl = commentsUrl
+    this.resolutionUrl = resolutionUrl
     this.renderDiv = renderDiv
     this.saveUrl = saveUrl
 
     this.verovioToolkit = new verovio.toolkit()
 
-    // initialise the comment modal
     document.addEventListener('DOMContentLoaded', () => {
-      const modals = document.querySelectorAll('.modal#comment-modal')
-      M.Modal.init(modals)
+      // initialise the comment modal
+      const commentModals = document.querySelectorAll('.modal#comment-modal')
+      M.Modal.init(commentModals)
       this.commentModalInstance = M.Modal
         .getInstance(document.getElementById('comment-modal'))
+
+      // initialise the resolve modal
+      const resolveModals = document.querySelectorAll('.modal#resolve-modal')
+      M.Modal.init(resolveModals, {
+        onCloseEnd: this.clearResolveModal
+      })
+      this.resolveModalInstance = M.Modal
+        .getInstance(document.getElementById('resolve-modal'))
+      document.getElementById('resolveDiv')
+        .addEventListener('click', this.resolveNote.bind(this))
     })
 
     // initialise the saving modal if there is a saveUrl
@@ -86,6 +123,24 @@ class CredoToolkit {
     const commentModalSubmit = document.getElementById('comment-modal-submit')
     if (commentModalSubmit) {
       commentModalSubmit.addEventListener('click', this.updateCommentFromModal.bind(this))
+    }
+
+    const resolveModalSubmit = document.getElementById('resolve-modal-submit')
+    if (resolveModalSubmit) {
+      resolveModalSubmit.addEventListener('click', this.submitMeasureResolution.bind(this))
+    }
+
+    const resolveModalCancel = document.getElementById('resolve-modal-cancel')
+    if (resolveModalCancel) {
+      resolveModalCancel.addEventListener('click', this.cancelMeasureResolution.bind(this))
+    }
+
+    const resolveSwapLayersButton = document.getElementById('resolve-swap-layers')
+    if (resolveSwapLayersButton) {
+      resolveSwapLayersButton.addEventListener(
+        'click',
+        this.swapResolutionLayers.bind(this)
+      )
     }
 
     // set up the toolbar listening, if applicable
@@ -120,7 +175,369 @@ class CredoToolkit {
   scoreInteractionListener (event) {
     if (this.currentToolMode === 'comment') {
       this.commmentEventListener(event)
+    } else if (this.currentToolMode === 'resolve') {
+      this.resolveEventListener(event)
     }
+  }
+
+  /**
+   * Reacts to the click event by reacting as if in resolve mode.
+   *
+   * @param {Event} event A HTML DOM event.
+   */
+  resolveEventListener (event) {
+    // get the event target
+    let target = event.target
+
+    // keep going upwards until we find an element with className 'measure'
+    // or the target is no longer truthy
+    while (target && !Array.from(target.classList).includes('measure')) {
+      target = target.parentElement
+    }
+
+    // if the target is null, we didn't match a measure, return
+    if (!target) {
+      return
+    }
+
+    this.openResolveModal(target.id)
+  }
+
+  /**
+   * Opens up the resolve modal for a given measure.
+   *
+   * @param {string} targetId The ID of the measure to resolve.
+   */
+  openResolveModal (targetId) {
+    this.eliminatedIds = []
+
+    const meiMeasure = this.meiDocument.evaluate(
+      `//mei:measure[@xml:id="${targetId}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    ).iterateNext()
+
+    const resolveMeiString = this.generateResolveMei(meiMeasure)
+
+    const resolveDiv = document.getElementById('resolveDiv')
+    resolveDiv.innerHTML = this.verovioToolkit.renderData(
+      resolveMeiString,
+      {
+        svgViewBox: true,
+        adjustPageHeight: true
+      }
+    )
+
+    const outerSvgElement = resolveDiv.children[0]
+    const innerSvgElement = outerSvgElement.querySelector('.definition-scale')
+    const marginElement = innerSvgElement.querySelector('.page-margin')
+    const measureElement = innerSvgElement.querySelector('.measure')
+
+    // I am painfully aware of how much of a hack the following is, but Verovio was
+    //  too inflexible to allow me to center and scale the measure onto the resolve modal.
+    setTimeout(() => {
+        const marginBBox = marginElement.getBBox()
+        innerSvgElement.setAttribute(
+          'viewBox',
+          `0 0 ${marginBBox.width} ${marginBBox.height + 200}`
+        )
+        resolveDiv.appendChild(innerSvgElement)
+        outerSvgElement.remove()
+        marginElement.setAttribute('transform', `translate(${measureElement.getBBox().x*-1},50)`)
+        // marginElement.setAttribute('transform', '')
+        // outerSvgElement.setAttribute(
+          // 'viewBox',
+          // `0 0 ${marginBBox.width / 9} ${marginBBox.height / 9}`
+        // )
+    }, 20)
+
+
+    this.resolveMeasureId = targetId
+    this.resolveModalInstance.open()
+  }
+
+  /**
+   * Attempts to resolve the notation clicked upon.
+   *
+   * @param {Event} The HTML DOM event.
+   */
+  resolveNote (event) {
+    let target = event.target
+    const lowAlpha = 0.5
+    while (target && !target.id.match(/m-[0-9]*/)) {
+      target = target.parentElement
+    }
+
+    // Don't affect the note if it's not coloured
+    if (!target) {
+      return
+    }
+
+    // If target is part of a group e.g. chord, beam, then toggle visibility for the group
+    const meiTarget = this.meiDocument.evaluate(
+      `//*[@xml:id="${target.id}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    ).iterateNext()
+
+    let meiGroupTarget = null
+    groupedElements.forEach(group_tag => {
+      const result = this.meiDocument.evaluate(
+        `ancestor-or-self::mei:${group_tag}`,
+        meiTarget,
+        this.namespaceResolver,
+        XPathResult.ANY_TYPE,
+        null
+      ).iterateNext()
+      if (result) {
+        meiGroupTarget = result
+      }
+    })
+
+    let targets = [target]
+    if (meiGroupTarget) {
+      // Find ID of group target
+      const meiGroupTargetId = this.meiDocument.evaluate(
+        `@xml:id`,
+        meiGroupTarget,
+        this.namespaceResolver,
+        XPathResult.ANY_TYPE,
+        null
+      ).iterateNext()
+
+      let svgGroupTarget = target
+
+      // Search SVG for group target ID
+      while (svgGroupTarget && svgGroupTarget.id !== meiGroupTargetId.value) {
+        svgGroupTarget = svgGroupTarget.parentElement
+      }
+
+      // Update visibility for all sub elements
+      targets = [svgGroupTarget]
+      targets.push.apply(targets, svgGroupTarget.querySelectorAll('g'))
+      targets = targets.filter(elem => elem.className.baseVal !== 'stem')
+    }
+
+    targets.forEach(target => {
+
+      const eliminated = target.getAttribute('eliminated')
+      let fillAttribute = target.getAttribute('fill') || target.parentElement.getAttribute('fill')
+      if (!fillAttribute) {
+        return
+      }
+
+      if (eliminated === null || eliminated === 'false') {
+        target.setAttribute('eliminated', 'true')
+        // Add transparency and add to list of IDs to eliminate
+        if (fillAttribute.startsWith('hsl(')) {
+          fillAttribute = fillAttribute.replace('hsl', 'hsla')
+        }
+        fillAttribute = fillAttribute.replace(')', `, ${lowAlpha})`)
+        if (!this.eliminatedIds.includes(target.id)) {
+          this.eliminatedIds.push(target.id)
+        }
+      } else {
+        target.setAttribute('eliminated', 'false')
+        // remove transparency and remove from list of IDs to eliminate
+        if (fillAttribute.startsWith('hsla(')) {
+          fillAttribute = fillAttribute.replace('hsla', 'hsl')
+        }
+        fillAttribute = fillAttribute.replace(/, [0-9\.]*\)/, ')')
+        this.eliminatedIds = this.eliminatedIds.filter(
+          id => id !== target.id
+        )
+      }
+
+      target.setAttribute('fill', fillAttribute)
+    })
+  }
+
+  /**
+   * Propagates the changes to the measure to the full piece.
+   */
+  submitMeasureResolution () {
+
+    const resolveDiv = document.getElementById('resolveDiv')
+
+    const meiMeasure = this.meiDocument.evaluate(
+      `//mei:measure[@xml:id="${this.resolveMeasureId}"]`,
+      this.meiDocument,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    ).iterateNext()
+
+    const measureString = meiMeasure.outerHTML
+    let measureCopy = new DOMParser().parseFromString(measureString, 'text/xml')
+
+    // Search for nodes to eliminate from the measure
+    const notationXPath = measureCopy.evaluate(
+      `//*[@xml:id]`,
+      measureCopy,
+      this.namespaceResolver,
+      XPathResult.ANY_TYPE,
+      null
+    )
+
+    // Maintain an array to remove, since we can't remove while iterating
+    let notation = notationXPath.iterateNext()
+    const toRemove = []
+    while (notation) {
+      if (this.eliminatedIds.includes(notation.getAttribute('xml:id'))) {
+        toRemove.push(notation)
+      }
+      notation = notationXPath.iterateNext()
+    }
+
+    // Remove nodes from measure
+    toRemove.forEach(element => {
+      element.setAttribute('visible', 'false')
+    })
+
+    const body = {
+      'content': {
+        'mei': {
+          'detail': btoa(new XMLSerializer().serializeToString(measureCopy)),
+          'encoding': 'base64'
+        }
+      }
+    }
+    
+    // Merge the measure layers on the server and reinject into the meiDocument
+    return new Promise((resolve, reject) => {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+          if (this.status === 200) {
+            const json = JSON.parse(this.responseText)
+            resolve(json)
+          } else {
+            reject()
+          }
+        }
+      }
+
+      xhttp.open('POST', this.resolutionUrl, true)
+      xhttp.setRequestHeader('X-CSRFToken', this.csrftoken)
+      xhttp.setRequestHeader('Content-Type', 'application/json')
+      xhttp.send(JSON.stringify(body))
+    }).then(json => {
+      if (json.content.resolved === 'true') {
+        // Decode from base 64
+        const resolvedMeasureString = atob(json.content.mei.detail)
+
+        // Remove colour from any remaining notes
+        const resolvedMeasure = new DOMParser().parseFromString(resolvedMeasureString, 'text/xml')
+        const colouredNotation = Array.from(resolvedMeasure.querySelectorAll('[color]'))
+        colouredNotation.forEach(notation => {
+          notation.removeAttribute('color')
+        })
+
+        // Update measure on meiDocument
+        meiMeasure.outerHTML = new XMLSerializer().serializeToString(resolvedMeasure)
+
+        // Update the mei string and rerender
+        this.mei = new XMLSerializer().serializeToString(this.meiDocument)
+        this.renderMei()
+
+        // close the modal
+        this.resolveModalInstance.close()
+        const feedbackDiv = document.querySelector('#resolveError')
+        feedbackDiv.textContent = ''
+      } else {
+        const feedbackDiv = document.querySelector('#resolveError')
+        feedbackDiv.textContent = 'Some notes are still in conflict. Click on notes to toggle selection.'
+      }
+    })
+  }
+
+  cancelMeasureResolution() {
+    const feedbackDiv = document.querySelector('#resolveError')
+    feedbackDiv.textContent = ''
+  }
+
+  /**
+   * Swaps the order in which the diff layers are rendered for the resolution.
+   */
+  swapResolutionLayers () {
+    // a dictionary keyed by colours used in the layer
+    const colourLayers = {}
+
+    const colouredNotation = Array.from(
+      document.querySelectorAll('#resolveDiv [fill]'))
+
+    colouredNotation.forEach(notation => {
+      // get the colour, and the layer of this notation
+      const colour = notation.getAttribute('fill')
+
+      // keep going upward until we're at a layer
+      let currentElement = notation
+      while (!Array.from(currentElement.classList).includes('layer')) {
+        if (!currentElement) {
+          return
+        }
+        currentElement = currentElement.parentElement
+      }
+
+      // add the colour and layer to the object tracking colours and layers
+      if (!colourLayers[colour]) {
+        colourLayers[colour] = [currentElement]
+      } else {
+        if (!colourLayers[colour].includes(currentElement)) {
+          colourLayers[colour].push(currentElement)
+        }
+      }
+    })
+
+    // reappend the children in the correct order
+    Object.values(colourLayers).reverse().forEach(colourLayerSet => {
+      colourLayerSet.forEach(layer => {
+        layer.parentElement.appendChild(layer)
+      })
+    })
+  }
+
+  /**
+   * Clears the resolve modal.
+   */
+  clearResolveModal () {
+    document.getElementById('resolveDiv').innerHTML = ''
+  }
+
+  /**
+   * Generates the MEI to display in the resolve modal.
+   *
+   * @param {Node} measure The measure to render.
+   * @return {string} The generated MEI as a string.
+   */
+  generateResolveMei (measure) {
+    let mei = this.meiTemplate
+    mei = mei.replace(
+      '{scoreDef}',
+      this.meiDocument.querySelector('scoreDef').outerHTML)
+    mei = mei.replace('{measures}', measure.outerHTML)
+
+    return mei
+  }
+
+  /**
+   * Namespace resolver for parsing MEI Document.
+   *
+   * @param {string} prefix The namespace prefix.
+   * @return {string} The resolved namespace.
+   */
+  namespaceResolver (prefix) {
+    const namespaces = {
+      'xml': 'http://www.w3.org/XML/1998/namespace',
+      'mei': 'http://www.music-encoding.org/ns/mei',
+      'xlink': 'http://www.w3.org/1999/xlink'
+    }
+
+    return namespaces[prefix] || null
   }
 
   /**
@@ -200,6 +617,7 @@ class CredoToolkit {
     return this.loadMei()
       .then(mei => {
         this.mei = mei
+        this.meiDocument = new DOMParser().parseFromString(mei, 'text/xml')
         this.verovioToolkit.loadData(mei)
       })
   }
@@ -456,7 +874,6 @@ class CredoToolkit {
 
     savingModalInstance.open()
 
-
     return new Promise((resolve, reject) => {
       const xhttp = new XMLHttpRequest()
       xhttp.onreadystatechange = function () {
@@ -547,6 +964,7 @@ const jsonRequest = url =>
         resolve(json)
       }
     }
+
     xhttp.open('GET', url, true)
     xhttp.send()
   })

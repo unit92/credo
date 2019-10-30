@@ -88,15 +88,6 @@ class TreeComparison(ComparisonStrategy):
         a_modded = deepcopy(a)
         b_modded = patcher.patch(diff_actions, a_modded)
 
-        # Make all nodes in b_modded invisible by default
-        # to avoid visual layer clashes
-        class_lookup = et.ElementDefaultClassLookup()
-        for elem in b_modded.iter():
-            # Ensure element can have attributes
-            if (not isinstance(elem, class_lookup.comment_class) and
-                    not isinstance(elem, class_lookup.entity_class)):
-                elem.set('visible', 'false')
-
         action_classes = {
             'insert': [
                 actions.InsertNode,
@@ -117,7 +108,21 @@ class TreeComparison(ComparisonStrategy):
             ]
         }
 
+        # Make all nodes in b_modded invisible by default, except for layers.
+        # to avoid visual layer clashes
+        class_lookup = et.ElementDefaultClassLookup()
+        for elem in b_modded.iter():
+            # Ensure element can have attributes
+            if (not isinstance(elem, class_lookup.comment_class) and
+                    not isinstance(elem, class_lookup.entity_class)):
+                elem.set('visible', 'false')
+
+        # Set all layers to be visible
+        for elem in b_modded.findall('//mei:layer', MEI_NS):
+            elem.set('visible', 'true')
+
         # Apply colours to modified nodes in a_modded and b_modded trees
+        node_groups = ['chord', 'beam']
         for node in patcher.nodes:
             if len(node.modifications) > 0:
                 self.logger.debug('\nOriginal: {}\nModified: {}\n{}\n'.format(
@@ -130,15 +135,40 @@ class TreeComparison(ComparisonStrategy):
                     # Set colours in b_modded
                     node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
+                    # If the modified node is in a chord or beam, mark all
+                    # elements in the chord/beam as modified as well.
+                    self.__apply_color_to_group(
+                        node.modified,
+                        node_groups,
+                        self.b_colour_str
+                    )
+
                 elif type(mod) in action_classes['delete']:
                     # Set colours in a_modded
                     node.original.set('color', self.a_colour_str)
+                    self.__apply_color_to_group(
+                        node.original,
+                        node_groups,
+                        self.a_colour_str
+                    )
                 elif type(mod) in action_classes['update']:
                     # Set colours in b_modded
                     node.modified.set('color', self.b_colour_str)
                     node.modified.set('visible', 'true')
+                    # If the modified node is in a chord or beam, mark all
+                    # elements in the chord/beam as modified as well.
+                    self.__apply_color_to_group(
+                        node.modified,
+                        node_groups,
+                        self.b_colour_str
+                    )
                     # Set colours in a_modded
                     node.original.set('color', self.a_colour_str)
+                    self.__apply_color_to_group(
+                        node.original,
+                        node_groups,
+                        self.a_colour_str
+                    )
 
         # Merge a_modded and b_modded into a single diff tree
         diff = self.__naive_layer_merge(a_modded, b_modded)
@@ -175,6 +205,18 @@ class TreeComparison(ComparisonStrategy):
 
         return diff
 
+    def __apply_color_to_group(self, node, group_tags, colour):
+        for g in group_tags:
+            g_qry = et.XPath(
+                f'ancestor-or-self::mei:{g}',
+                namespaces=MEI_NS
+            )
+            groups = g_qry(node)
+            if len(groups) > 0:
+                for elem in groups[0].iter():
+                    elem.set('color', colour)
+                    elem.set('visible', 'true')
+
     def __naive_layer_merge(self, a: et.ElementTree, b: et.ElementTree) \
             -> et.ElementTree:
 
@@ -210,7 +252,6 @@ class TreeComparison(ComparisonStrategy):
                 insert_staff = insert_staffs[staff_idx]
 
                 # Loop through each layer in the staff
-
                 layer_qry = et.XPath('child::mei:layer', namespaces=MEI_NS)
                 base_layers = layer_qry(base_staff)
                 insert_layers = layer_qry(insert_staff)
@@ -230,23 +271,41 @@ class TreeComparison(ComparisonStrategy):
                     base_layer = base_layers[layer_idx]
                     insert_layer = deepcopy(insert_layers[layer_idx])
 
-                    base_layer.set(
-                        id_attrib.text,
-                        get_formatted_xml_id(id_idx, base_id_prefix)
-                    )
+                    # Check if all elements in the insert layer are hidden.
+                    all_invisible = True
+                    for elem in insert_layer.iter():
+                        if elem.get('visible') == 'true' and \
+                                elem != insert_layer and \
+                                et.QName(elem).localname != 'space' and \
+                                et.QName(elem).localname != 'pad':
+                            all_invisible = False
+                            break
 
-                    insert_layer.set(
-                        id_attrib.text,
-                        get_formatted_xml_id(id_idx, insert_id_prefix)
-                    )
-                    # Update n tag on layer to allow trills to connect properly
-                    insert_layer.set(
-                        'n',
-                        str(len(base_layers) + layer_idx + 1)
-                    )
+                    if all_invisible:
+                        # Only add the base layer, as there are no differences
+                        base_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, 'r')
+                        )
+                    else:
+                        base_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, base_id_prefix)
+                        )
+
+                        insert_layer.set(
+                            id_attrib.text,
+                            get_formatted_xml_id(id_idx, insert_id_prefix)
+                        )
+                        # Update n tag on layer to allow trills
+                        # to connect properly
+                        insert_layer.set(
+                            'n',
+                            str(len(base_layers) + layer_idx + 1)
+                        )
+                        base_staff.append(insert_layer)
 
                     id_idx += 1
-                    base_staff.append(insert_layer)
                     layer_idx += 1
 
                 staff_idx += 1
