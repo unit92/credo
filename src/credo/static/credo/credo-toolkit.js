@@ -1,10 +1,3 @@
-/**
- * This class wraps around the functionalities of the Verovio toolkit, and
- * presents them in a way that is tailored to our use case. We also extend upon
- * its rendering functionality to deliver our own functionality, in music
- * commenting.
- */
-
 const toolColors = {
   inspect: "cyan darken-1",
   comment: "cyan darken-1",
@@ -15,6 +8,10 @@ const groupedElements = [
     'chord', 'beam'
 ]
 
+/**
+ * Wrapper for the functionalities of the Verovio toolkit,
+ * tailored to our use case.
+ */
 class CredoToolkit {
   // class variables
   meiUrl
@@ -78,6 +75,8 @@ class CredoToolkit {
    * @param {string} meiUrl The URL of the MEI file we wish to render.
    * @param {string} commentsUrl The URL of any associated comments, can be
    * null to indicate no comments.
+   * @param {string} resolutionUrl The URL used for merging layers within a measure,
+   * can be null to indicate no merge support.
    * @param {string} renderDiv The ID of the div to which we wish to render.
    * @param {string} saveUrl Optional. The URL to POST to when saving revisions.
    */
@@ -330,8 +329,6 @@ class CredoToolkit {
       targets = targets.filter(elem => elem.className.baseVal !== 'stem')
     }
 
-    console.log(targets)
-
     targets.forEach(target => {
 
       const eliminated = target.getAttribute('eliminated')
@@ -403,20 +400,9 @@ class CredoToolkit {
       notation = notationXPath.iterateNext()
     }
 
-    console.log(toRemove)
-
     // Remove nodes from measure
     toRemove.forEach(element => {
       element.setAttribute('visible', 'false')
-      console.log(element.parentElement)
-      // // Remove certain parent elements if all children are removed
-      // if (groupedElements.includes(element.parentElement.nodeName)) {
-      //   const notes = Array.from(element.parentElement.querySelectorAll('note'))
-      //   console.log(notes, notes.reduce((a, b) => a && b.getAttribute('visible') == 'false'))
-      //   if (notes.reduce((a, b) => a && b.getAttribute('visible') == 'false')) {
-      //     element.parentElement.setAttribute('visible', 'false')
-      //   }
-      // }
     })
 
     const body = {

@@ -99,9 +99,9 @@ def song_compare_picker(request, song_id):
     })
 
 
-def edition(request, song_id, edition_id):
-    song = Song.objects.get(id=song_id)
-    edition = Edition.objects.get(id=edition_id, song=song)
+def edition(request, edition_id):
+    edition = Edition.objects.get(id=edition_id)
+    song = edition.song
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -109,7 +109,7 @@ def edition(request, song_id, edition_id):
         },
         {
             'text': song.name,
-            'url': f'/songs/{song_id}'
+            'url': f'/songs/{song.id}'
         },
         {
             'text': edition.name,
@@ -133,11 +133,9 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
-
-    def get(self, request, song_id, revision_id):
-        song = Song.objects.get(id=song_id)
-        revision = Revision.objects.filter(
-                id=revision_id, editions__song=song).distinct('id')[0]
+    def get(self, request, revision_id):
+        revision = Revision.objects.get(id=revision_id)
+        song = revision.editions.all()[0].song
         breadcrumbs = [
             {
                 'text': 'Songs',
@@ -145,7 +143,7 @@ class RevisionView(View):
             },
             {
                 'text': song.name,
-                'url': f'/songs/{song_id}'
+                'url': f'/songs/{song.id}'
             },
             {
                 'text': revision.name or "Untitled Revision",
@@ -155,11 +153,11 @@ class RevisionView(View):
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'save_url': f'/revisions/{revision_id}',
             'breadcrumbs': breadcrumbs
         })
 
-    def post(self, request, song_id, revision_id):
+    def post(self, request, revision_id):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
         data = json.loads(request.body)
@@ -426,7 +424,7 @@ def make_revision(request):
     new_revision.save()
 
     return redirect(
-            f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+            f'/revisions/{new_revision.id}')
 
 
 @require_http_methods(['POST', 'GET'])

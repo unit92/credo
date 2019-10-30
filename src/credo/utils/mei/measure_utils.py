@@ -41,8 +41,8 @@ def merge_measure_layers(measure: et.ElementTree):
         # Remove all existing layers and replace with merged layers
         for layer in layers:
             staff.remove(layer)
+
         for layer in merged_layers:
-            print(layer)
             staff.append(layer)
 
     return measure
@@ -75,7 +75,10 @@ def _merge_layers(num_id, layers):
     ]
 
     for layer in layers:
-        logger.debug('\n' + et.tostring(layer, pretty_print=True).decode())
+        logger.debug(
+            '\nMerging Layers:\n' +
+            et.tostring(layer, pretty_print=True).decode()
+        )
 
     event_dur_infos = []
     for layer in layers:
@@ -142,11 +145,11 @@ def get_max_subset_compatible_events(events: List[MEIEventDurationInfo]):
     sorted_events = sorted(events, key=lambda e: e.finish)
     selected = []
     selected_finish = -inf
-    for i in range(len(sorted_events)):
-        if sorted_events[i].start >= selected_finish:
+    for event in sorted_events:
+        if event.start >= selected_finish:
             # Event is compatible
-            selected.append(sorted_events[i])
-            selected_finish = sorted_events[i].finish
+            selected.append(event)
+            selected_finish = event.finish
 
     return selected
 
@@ -238,7 +241,7 @@ def _get_duration(event):
             dots = int(dots)
             length = 1/dur
             mod = 1
-            for i in range(dots):
+            for _ in range(dots):
                 mod /= 2
                 length += mod*length
             return length

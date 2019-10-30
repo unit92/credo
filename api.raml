@@ -1,0 +1,68 @@
+#%RAML 1.0
+---
+title: CREDO
+baseUri: http://cre.do/
+version: v1
+
+/songs:
+  get: 
+    description: List of songs available
+  /{song_id}:
+    get:
+      description: Page showing metadata, editions and revisions of a song
+/editions:
+  /{edition_id}:
+    get:
+      description: Render an edition
+    /revise:
+      post:
+        description: Create a revision using this edition as a base
+/revisions:
+  /{revision_id}:
+    get:
+      description: Render a revision
+    /comments:
+      get:
+        description: List all comments on this revision
+        responses:
+          200:
+            description: Returns a mapping of MEI element IDs to comment texts for the specified revision.
+            body: 
+              application/json:
+                example: |
+                  {
+                    "m-40": "This is a comment!",
+                    "m-41": "This is another comment!"
+                    }
+      post:
+        description: Add a comment to a revision
+        body:
+          application/json:
+            properties:
+              elementId:
+                description: The ID of the MEI element the comment is attached to
+              text:
+                description: Comment text
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  { "ok": true }
+/comments:
+  /{comment_id}:
+    put:
+      description: Modify a comment
+      body:
+        application/json:
+          properties:
+            elementId:
+              description: The ID of the MEI element the comment is attached to
+            text:
+              description: Comment text
+    delete:
+      description: Delete a comment
+/mei:
+  /{mei_id}:
+    get:
+      description: Return MEI data from the database
