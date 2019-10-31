@@ -106,3 +106,7 @@ span > .username-display {
   padding-top: 1em;
   color: red;
 }
+
+#player {
+    display: none;
+}
