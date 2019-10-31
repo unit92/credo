@@ -1,3 +1,8 @@
+/* No copyright information available
+ * Taken from https://github.com/rism-ch/midi-player/,
+ *  originally from https://github.com/zz85/wild-web-midi
+ */
+
 var MidiModule = function(MidiModule) {
   MidiModule = MidiModule || {};
 

@@ -1,3 +1,9 @@
+/* Unknown copyright information, assumed to be the same as Verovio:
+ * Copyright (C) 2013 Etienne Darbellay, Jean-François Marti, Laurent Pugin, Rodolfo Zitellini and others
+ * Licenced under the LGPL license, see https://github.com/rism-ch/midi-player/blob/master/LICENSE
+ * Obtained from https://github.com/rism-ch/midi-player/
+ */
+
 /************************************************************************
  * Circular Web Audio Buffer Queue
  */
