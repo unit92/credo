@@ -436,7 +436,6 @@ def make_revision(request):
 
     new_revision = Revision(user=request.user,
                             mei=new_mei)
-    new_revision.save()
     new_revision.editions.set(base_editions)
     new_revision.save()
 
