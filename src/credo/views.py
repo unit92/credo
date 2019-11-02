@@ -429,9 +429,7 @@ def make_revision(request):
     else:
         return HttpResponseBadRequest(content_type='application/json')
 
-    print(new_mei.normalised)
     new_mei.save()
-    print(new_mei.normalised)
 
     new_revision = Revision(user=request.user,
                             mei=new_mei)
