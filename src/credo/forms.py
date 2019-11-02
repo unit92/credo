@@ -63,8 +63,9 @@ class SignUpForm(forms.ModelForm):
            password != password_confirmation):
             raise forms.ValidationError("Passwords do not match")
 
-        # Username validation
-        if username and User.objects.filter(username=username).exists():
+        # Case-insensitive Username validation
+        if username and \
+           User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError("Username already exists")
 
         # Email validation

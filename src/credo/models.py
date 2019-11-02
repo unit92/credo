@@ -33,6 +33,7 @@ class MEI(models.Model):
     data = models.FileField(upload_to='mei_files')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    normalised = models.BooleanField(default=True)
 
     def __str__(self):
         file_id = os.path.split(self.data.name)[-1].split("_")[-1]
@@ -40,10 +41,29 @@ class MEI(models.Model):
 
 
 @receiver(post_save, sender=MEI)
-def my_callback(sender, instance, *args, **kwargs):
+def normalise_callback(sender, instance, *args, **kwargs):
     mei_file = instance.data.file.open()
     transformer = MeiTransformer.from_xml_file(mei_file)
-    transformer.normalise()
+
+    if instance.normalised:
+        print('normalised')
+        transformer.normalise()
+        id_map = transformer.get_id_map()
+        print(id_map)
+        # get the comments which need to be re-keyed
+        revision_set = instance.revision_set.all()
+        print(revision_set)
+        relevant_comments = Comment.objects.filter(
+                revision__in=revision_set,
+                mei_element_id__in=id_map)
+        print(relevant_comments)
+        for comment in relevant_comments:
+            print(comment.mei_element_id, id_map[comment.mei_element_id])
+            comment.mei_element_id = id_map[comment.mei_element_id]
+            comment.save()
+    else:
+        transformer.remove_metadata()
+
     transformer.save_xml_file(instance.data.name)
 
 
@@ -66,7 +86,6 @@ class Revision(models.Model):
     editions = models.ManyToManyField(Edition)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    resolved = models.BooleanField(default=False)
 
     def song(self):
         return list({x.song for x in self.editions.all()})[0]
