@@ -90,6 +90,10 @@ svg.tooltipped:hover {
     box-shadow: none !important;
 }
 
+.center-img {
+    margin: auto;
+}
+
 li.username-display {
   padding-left: 0.25em;
   padding-right: 1em;

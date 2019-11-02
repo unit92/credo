@@ -50,7 +50,14 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions, user=request.user
+        ).distinct('id')
+    else:
+        revisions = []
+
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -71,11 +78,14 @@ def song(request, song_id):
 def song_compare_picker(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song, mei__normalised=True)
-    revisions = Revision.objects.filter(
-        editions__in=editions,
-        mei__normalised=True,
-        user=request.user
-    ).distinct('id')
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions,
+            mei__normalised=True,
+            user=request.user
+        ).distinct('id')
+    else:
+        revisions = []
 
     comparables = [{
         'id': f'e{edition.id}',
@@ -160,6 +170,7 @@ class RevisionView(View):
     def post(self, request, revision_id):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
+
         data = json.loads(request.body)
         comments = data['comments']
         mei = data['mei']
@@ -176,7 +187,10 @@ class RevisionView(View):
                     user=request.user,
                     mei_element_id=comment).save()
 
-        revision.mei.normalised = is_resolved(mei_tree)
+        # This assumes that once the MEI is resolved, there
+        # is no way for it to be un-resolved.
+        if not revision.mei.normalised:
+            revision.mei.normalised = is_resolved(mei_tree)
 
         revision.mei.data.save('mei', ContentFile(mei))
         revision.mei.save()
