@@ -100,6 +100,11 @@ def song_compare_picker(request, song_id):
 
 
 def edition(request, edition_id):
+    try:
+        edition_id = int(edition_id)
+    except ValueError:
+        return HttpResponseBadRequest()
+
     edition = Edition.objects.get(id=edition_id)
     song = edition.song
     breadcrumbs = [
@@ -134,6 +139,11 @@ def add_revision_comment(request, revision_id):
 
 class RevisionView(View):
     def get(self, request, revision_id):
+        try:
+            revision_id = int(revision_id)
+        except ValueError:
+            return HttpResponseBadRequest()
+
         revision = Revision.objects.get(id=revision_id)
         song = revision.editions.all()[0].song
         breadcrumbs = [
@@ -160,8 +170,15 @@ class RevisionView(View):
         })
 
     def post(self, request, revision_id):
+
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
+
+        try:
+            revision_id = int(revision_id)
+        except ValueError:
+            return HttpResponseBadRequest()
+
         data = json.loads(request.body)
         comments = data['comments']
         mei = data['mei']
