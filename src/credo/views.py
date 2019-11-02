@@ -187,7 +187,10 @@ class RevisionView(View):
                     user=request.user,
                     mei_element_id=comment).save()
 
-        revision.mei.normalised = is_resolved(mei_tree)
+        # This assumes that once the MEI is resolved, there
+        # is no way for it to be un-resolved.
+        if not revision.mei.normalised:
+            revision.mei.normalised = is_resolved(mei_tree)
 
         revision.mei.data.save('mei', ContentFile(mei))
         revision.mei.save()
@@ -426,7 +429,10 @@ def make_revision(request):
     else:
         return HttpResponseBadRequest(content_type='application/json')
 
+    print(new_mei.normalised)
+
     new_mei.save()
+    print(new_mei.normalised)
 
     new_revision = Revision(user=request.user,
                             mei=new_mei)
