@@ -37,9 +37,16 @@
 </div>
 
 <script type="text/javascript">
+  $('#player').midiPlayer({
+      width: 250,
+      onUpdate: () => {},
+      onStop: () => {},
+      color: "red"
+  });
   const toolkit = new CredoToolkit(
     '/mei/{{ revision.mei.id }}',
     '/revisions/{{ revision.id }}/comments',
+    '/merge',
     'renderDiv',
     '{{ save_url }}'
   )

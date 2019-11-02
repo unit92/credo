@@ -22,7 +22,7 @@ class TestServerBlackBox(TestCase):
 
     def test_revision_GET(self):
         """Ensure revisions can be retrived at their appropriate endpoint."""
-        response = self.authed_client.get('/songs/1/revisions/1')
+        response = self.authed_client.get('/revisions/1')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('revision.html')
 
@@ -33,12 +33,13 @@ class TestServerBlackBox(TestCase):
         """
 
         response = self.authed_client.post(
-            '/songs/1/revisions/1',
+            '/revisions/1',
             json.dumps({
                 'comments': {
                     'm-1': 'hello',
                     'm-2': 'world',
-                }
+                },
+                'mei': '<music xml:id="m-22"></music>'
             }),
             content_type='application/json'
         )
@@ -66,7 +67,7 @@ class TestServerBlackBox(TestCase):
         """Ensure comments cannot be added if a user is not logged in."""
 
         response = self.client.post(
-            '/songs/1/revisions/1',
+            '/revisions/1',
             json.dumps({
                 'comments': {
                     'm-1': 'hello',
