@@ -54,7 +54,7 @@ def song(request, song_id):
     if request.user.is_authenticated:
         revisions = Revision.objects.filter(
             editions__in=editions, user=request.user
-        )
+        ).distinct('id')
     else:
         revisions = []
 
@@ -430,12 +430,12 @@ def make_revision(request):
         return HttpResponseBadRequest(content_type='application/json')
 
     print(new_mei.normalised)
-
     new_mei.save()
     print(new_mei.normalised)
 
     new_revision = Revision(user=request.user,
                             mei=new_mei)
+    new_revision.save()
     new_revision.editions.set(base_editions)
     new_revision.save()
 
