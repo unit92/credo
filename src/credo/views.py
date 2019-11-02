@@ -152,6 +152,7 @@ class RevisionView(View):
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
+            'resolved': revision.mei.normalised,
             'authenticated': request.user.is_authenticated,
             'save_url': f'/revisions/{revision_id}',
             'revision_id': revision_id,
