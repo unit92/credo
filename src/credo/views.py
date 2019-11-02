@@ -50,9 +50,14 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(
-        editions__in=editions, user=request.user
-    )
+
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions, user=request.user
+        )
+    else:
+        revisions = []
+
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -73,11 +78,14 @@ def song(request, song_id):
 def song_compare_picker(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song, mei__normalised=True)
-    revisions = Revision.objects.filter(
-        editions__in=editions,
-        mei__normalised=True,
-        user=request.user
-    ).distinct('id')
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions,
+            mei__normalised=True,
+            user=request.user
+        ).distinct('id')
+    else:
+        revisions = []
 
     comparables = [{
         'id': f'e{edition.id}',
@@ -162,6 +170,7 @@ class RevisionView(View):
     def post(self, request, revision_id):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
+
         data = json.loads(request.body)
         comments = data['comments']
         mei = data['mei']
