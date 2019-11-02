@@ -119,6 +119,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication backends
+"""
+When authentication() is called, Django goes through each backend found in
+AUTHENTICATION_BACKENDS for authentication until it obtains a positive match.
+This CaseInsensitiveBackend extends the default ModelBackend used by all models
+to contain case insensitive matching on the USERNAME_FIELD provided
+by any model.
+"""
+AUTHENTICATION_BACKENDS = [
+    'credo.backends.CaseInsensitiveBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

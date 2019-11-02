@@ -90,6 +90,12 @@ svg.tooltipped:hover {
     margin-bottom: 50px;
 }
 
+#resolveDiv > svg {
+    width: 50%;
+    display: block;
+    margin: auto;
+}
+
 .loading {
     box-shadow: none !important;
 }
@@ -109,4 +115,8 @@ span > .username-display {
     margin: auto;
     padding-top: 1em;
     color: red;
+}
+
+#player {
+    display: none;
 }

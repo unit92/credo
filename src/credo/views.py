@@ -17,6 +17,9 @@ import json
 import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
+from credo.utils.mei.measure_utils import merge_measure_layers
+from credo.utils.mei.resolve_utils import is_resolved
+
 from .models import Comment, Edition, MEI, Revision, Song
 
 from .forms import SignUpForm
@@ -67,8 +70,13 @@ def song(request, song_id):
 
 def song_compare_picker(request, song_id):
     song = Song.objects.get(id=song_id)
-    editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+    editions = Edition.objects.filter(song=song, mei__normalised=True)
+    revisions = Revision.objects.filter(
+        editions__in=editions,
+        mei__normalised=True,
+        user=request.user
+    ).distinct('id')
+
     comparables = [{
         'id': f'e{edition.id}',
         'name': edition.name
@@ -91,9 +99,9 @@ def song_compare_picker(request, song_id):
     })
 
 
-def edition(request, song_id, edition_id):
-    song = Song.objects.get(id=song_id)
-    edition = Edition.objects.get(id=edition_id, song=song)
+def edition(request, edition_id):
+    edition = Edition.objects.get(id=edition_id)
+    song = edition.song
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -101,7 +109,7 @@ def edition(request, song_id, edition_id):
         },
         {
             'text': song.name,
-            'url': f'/songs/{song_id}'
+            'url': f'/songs/{song.id}'
         },
         {
             'text': edition.name,
@@ -125,10 +133,9 @@ def add_revision_comment(request, revision_id):
 
 
 class RevisionView(View):
-    def get(self, request, song_id, revision_id):
-        song = Song.objects.get(id=song_id)
-        revision = Revision.objects.filter(
-                id=revision_id, editions__song=song).distinct('id')[0]
+    def get(self, request, revision_id):
+        revision = Revision.objects.get(id=revision_id)
+        song = revision.editions.all()[0].song
         breadcrumbs = [
             {
                 'text': 'Songs',
@@ -136,7 +143,7 @@ class RevisionView(View):
             },
             {
                 'text': song.name,
-                'url': f'/songs/{song_id}'
+                'url': f'/songs/{song.id}'
             },
             {
                 'text': revision.name or "Untitled Revision",
@@ -146,16 +153,18 @@ class RevisionView(View):
             'revision': revision,
             'comments': True,
             'authenticated': request.user.is_authenticated,
-            'save_url': f'/songs/{song_id}/revisions/{revision_id}',
+            'save_url': f'/revisions/{revision_id}',
             'revision_id': revision_id,
             'breadcrumbs': breadcrumbs
         })
 
-    def post(self, request, song_id, revision_id):
+    def post(self, request, revision_id):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
         data = json.loads(request.body)
         comments = data['comments']
+        mei = data['mei']
+        mei_tree = et.XML(mei)
 
         revision = Revision.objects.get(id=revision_id)
 
@@ -167,6 +176,11 @@ class RevisionView(View):
                     text=comments[comment],
                     user=request.user,
                     mei_element_id=comment).save()
+
+        revision.mei.normalised = is_resolved(mei_tree)
+
+        revision.mei.data.save('mei', ContentFile(mei))
+        revision.mei.save()
 
         return JsonResponse({'ok': True})
 
@@ -271,6 +285,9 @@ def diff(request):
     if len(meis) != 2:
         return HttpResponseBadRequest(content_type='application/json')
 
+    if not meis[0].normalised or not meis[1].normalised:
+        return HttpResponseBadRequest(content_type='application/json')
+
     engine = TreeComparison()
     out_meis = engine.compare_meis(meis[0], meis[1])
     diff, *sources = [et.tostring(mei, encoding='utf-8') for mei in out_meis]
@@ -292,6 +309,49 @@ def diff(request):
             'sources': sources
         }
     }
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+@require_http_methods(['POST'])
+def merge_measure_layers_json(request):
+    if request.content_type != 'application/json':
+        return HttpResponseBadRequest(content_type='application/json')
+
+    json_data = json.loads(request.body)
+    try:
+        measure = json_data['content']['mei']['detail']
+        measure = str(base64.b64decode(measure), encoding='utf-8')
+    except KeyError:
+        return HttpResponseBadRequest(content_type='application/json')
+
+    measure_tree = et.XML(measure)
+
+    try:
+        merged_measure_tree = merge_measure_layers(measure_tree)
+    except ValueError:
+        data = {
+            'content': {
+                'resolved': 'false'
+            }
+        }
+        return HttpResponse(
+            json.dumps(data),
+            content_type='application/json'
+        )
+
+    merged_measure = et.tostring(merged_measure_tree, encoding='utf-8')
+    measure_b64 = str(base64.b64encode(merged_measure), encoding='utf-8')
+
+    data = {
+        'content': {
+            'mei': {
+                'detail': measure_b64,
+                'encoding': 'base64'
+            },
+            'resolved': 'true'
+        }
+    }
+
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 
@@ -324,14 +384,30 @@ def make_revision(request):
     new_mei = MEI()
 
     if len(meis) == 1:
+        # Ensure the MEI we are copying is normalised.
+        if not meis[0].normalised:
+            return HttpResponseBadRequest(content_type='application/json')
+
+        # Ensure we normalise before saving
+        new_mei.normalised = True
+
         # copy if just revising a single MEI
         file_content = ContentFile(meis[0].data.file.read())
         new_mei.data.save('mei', file_content)
 
         # IMPORTANT - must close the file, otherwise Django breaks
         meis[0].data.file.close()
+
     elif len(meis) == 2:
-        # compare if there are two MEIs
+        # Ensure the MEIs we are generating the diff from are normalised
+        if not meis[0].normalised or not meis[1].normalised:
+            return HttpResponseBadRequest(content_type='application/json')
+
+        # Do not normalise, since we are making a revision from a comparison.
+        # Normalisation occurs after resolving the revision.
+        new_mei.normalised = False
+
+        # Compare
         engine = TreeComparison()
         out_meis = engine.compare_meis(meis[0], meis[1])
         diff, *sources = [et.tostring(mei, encoding='utf-8')
@@ -340,7 +416,6 @@ def make_revision(request):
     else:
         return HttpResponseBadRequest(content_type='application/json')
 
-    # duplicate the mei
     new_mei.save()
 
     new_revision = Revision(user=request.user,
@@ -349,8 +424,7 @@ def make_revision(request):
     new_revision.editions.set(base_editions)
     new_revision.save()
 
-    return redirect(
-        f'/songs/{new_revision.song().id}/revisions/{new_revision.id}')
+    return redirect(f'/revisions/{new_revision.id}')
 
 
 @require_http_methods(['POST', 'GET'])
@@ -425,3 +499,13 @@ def server_error(request):
         },
         status=500
     )
+
+
+def wildwebmidi_data(request):
+    with open('credo/static/credo/midi/wildwebmidi.data', 'rb') as f:
+        data = f.read()
+    file_to_send = ContentFile(data)
+    response = HttpResponse(file_to_send, 'application/x-gzip')
+    response['Content-Length'] = file_to_send.size
+    response['Content-Disposition'] = 'attachment; filename="wildwebmidi.data"'
+    return response

@@ -36,10 +36,10 @@ urlpatterns = [
     path('songs/', views.song_list),
     path('songs/<song_id>', views.song),
     path('songs/<song_id>/compare', views.song_compare_picker),
-    path('songs/<song_id>/editions/<edition_id>', views.edition),
+    path('editions/<edition_id>', views.edition),
     path('editions/<edition_id>/download', views.download_edition),
-    path('songs/<song_id>/revisions/<revision_id>',
-         views.RevisionView.as_view()),
+    path('revisions/<revision_id>', views.RevisionView.as_view()),
+    path('revisions/wildwebmidi.data', views.wildwebmidi_data),
     path('revisions/<revision_id>/comments', views.revision_comments),
     path('revisions/<revision_id>/comment', views.add_revision_comment),
     path('revisions/<revision_id>/download', views.download_revision),
@@ -48,8 +48,10 @@ urlpatterns = [
     path('diff', views.diff),
     path('signup', views.signup, name='signup'),
     path('revise', views.make_revision),
-    path('login', auth_views.LoginView.as_view(template_name='login.html',
-                                               form_class=LoginForm),
-         name='login'),
+    path('merge', views.merge_measure_layers_json),
+    path('login', auth_views.LoginView.as_view(
+            template_name='login.html',
+            form_class=LoginForm
+        ), name='login'),
     path('logout', auth_views.LogoutView.as_view(), name='logout'),
 ]
