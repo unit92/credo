@@ -55,6 +55,7 @@ svg.tooltipped:hover {
 #downloadButton {
     float: left;
     z-index: 10;
+    margin-right: 0.25em;
 }
 
 #downloadSpan {
