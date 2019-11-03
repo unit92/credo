@@ -547,7 +547,6 @@ class NewSongView(View):
         })
 
     def post(self, request):
-        print(request.POST)
         if not (('composer' in request.POST or 'new_composer' in request.POST)
                 and 'name' in request.POST):
             return JsonResponse(
@@ -557,11 +556,9 @@ class NewSongView(View):
             composer = Composer(name=request.POST['new_composer'])
             composer.save()
         else:
-            print(request.POST['composer'])
             composer = Composer.objects.get(id=request.POST['composer'][0])
         new_song = Song(name=request.POST['name'], composer=composer)
         new_song.save()
-        print(composer)
         return song(request, new_song.id)
 
 
