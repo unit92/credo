@@ -659,6 +659,21 @@ class CredoToolkit {
   }
 
   /**
+   * Goes over a rendered SVG in the renderDiv, and proceeds to make notation
+   * more easily clickable.
+   */
+  improveClickHitboxes () {
+    // get all clickable notation
+    // the ID parameter matches IDs starting with the given term
+    const interactables = document.querySelectorAll('#renderDiv [id^="m-"]')
+
+    for (let interactable of interactables) {
+      // add this property to each, to make mouse events use the bounding box
+      interactable.setAttribute('pointer-events', 'bounding-box')
+    }
+  }
+
+  /**
    * Renders the MEI file, and any comments associated.
    */
   async render () {
@@ -669,6 +684,9 @@ class CredoToolkit {
 
     // render the MEI
     this.renderMei()
+
+    // post-verovio render, modify the SVG to have better click hitboxes
+    this.improveClickHitboxes()
 
     if (this.commentsUrl) {
       // if there are comments, load the comments
