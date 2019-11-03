@@ -518,6 +518,8 @@ class NewEditionView(View):
             # TODO: Test more exceptions
         except XMLSyntaxError:
             return self.get(request, reason='Could not process file.')
+        except KeyError:
+            return self.get(request, reason='Please attach an MEI file.')
         new_edition = Edition(
             name=request.POST['name'],
             song=edition_song,
