@@ -2,9 +2,7 @@
 
 <h2>Songs</h2>
 
-{% if request.user.is_authenticated %}
-
-{% if request.user.is_staff %}
+{% if request.user.is_authenticated and request.user.is_staff %}
 <div class="row">
     <div id="toolbar">
         <a href="/songs/new" class="waves-effect waves-light btn right">
@@ -13,8 +11,6 @@
         </a>
     </div>
 </div>
-
-{% endif %}
 {% endif %}
 
 <div class="collection">
