@@ -1,0 +1,53 @@
+{% include 'header.html' %}
+
+<h2>New Song</h2>
+
+<div class="row">
+  <form class="col s12" action="/songs/new" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="song_name" type="text" class="validate" name="name">
+        <label for="song_name">Song Name</label>
+      </div>
+    </div>
+    <div class="row valign-wrapper">
+      <div class="input-field col s5">
+        <select id="composer" name="composer">
+          {% for composer in composers %}
+          <option value="{{ composer.id }}">{{ composer.name }}</option>
+          {% endfor %}
+        </select>
+        <label for="composer">Composer</label>
+      </div>
+      <div class="col s2 center">or</div>
+      <div class="input-field col s5">
+        <input id="new_composer" type="text" class="validate" name="new_composer">
+        <label for="new_composer">New Composer...</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field">
+        <button type="submit" class="btn waves-light waves-effect">Create</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const elems = document.querySelectorAll('select');
+    const instances = M.FormSelect.init(elems);
+  });
+
+  const onselectchange = function() {
+    const select = document.getElementById('composer').parentElement.querySelector('input');
+    console.log(this.value)
+    if (this.value) select.setAttribute('disabled', '')
+    else select.removeAttribute('disabled')
+  }
+
+  document.getElementById('new_composer').onkeyup = onselectchange
+</script>
+
+{% include 'footer.html' %}

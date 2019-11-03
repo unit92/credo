@@ -2,14 +2,25 @@
 
 <h2>Songs</h2>
 
+{% if request.user.is_authenticated and request.user.is_staff %}
+<div class="row">
+    <div id="toolbar">
+        <a href="/songs/new" class="waves-effect waves-light btn right">
+            <i class="material-icons left">add_box</i>
+            Add New
+        </a>
+    </div>
+</div>
+{% endif %}
+
 <div class="collection">
-  {% for song in songs %}
+    {% for song in songs %}
     <a
-      href="/songs/{{ song.id }}"
-      class="collection-item teal-text text-darken-1">
-      {{ song }}
+        href="/songs/{{ song.id }}"
+        class="collection-item teal-text text-darken-1">
+        {{ song }}
     </a>
-  {% endfor %}
+    {% endfor %}
 </div>
 
 {% include 'footer.html' %}

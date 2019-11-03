@@ -1,0 +1,56 @@
+{% include 'header.html' %}
+
+<h2>New Edition</h2>
+
+{% if reason %}
+  <div class="row red lighten-3 error">{{ reason }}</div>
+{% endif %}
+
+<div class="row">
+  <form class='col s12' action='/editions/new?song={{ song.id }}' method='post' enctype='multipart/form-data'>
+    {% csrf_token %}
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="edition_name" type="text" class="validate" name="name">
+        <label for="edition_name">Edition Name</label>
+      </div>
+    </div>
+    <div class="row valign-wrapper">
+      <div class="file-field input-field col s12">
+        <div class="btn">
+          <span>Upload MEI</span>
+          <i class="material-icons left">attach_file</i>
+          <input type="file" name="mei" required>
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <button type="submit" class="btn waves-light waves-effect">Create</button>
+      </div>
+    </div>
+    <input type="hidden" name="song" value="{{ song.id }}">
+  </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const elems = document.querySelectorAll('select');
+    const instances = M.FormSelect.init(elems);
+  });
+
+  const onselectchange = function() {
+    const select = document.getElementById('composer').parentElement.querySelector('input');
+    console.log(this.value)
+    if (this.value) select.setAttribute('disabled', '')
+    else select.removeAttribute('disabled')
+  }
+
+  document.getElementById('new_composer').onkeyup = onselectchange
+</script>
+
+{% include 'footer.html' %}
+

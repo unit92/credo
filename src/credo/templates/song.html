@@ -3,16 +3,24 @@
 
 <h2>{{ song }}</h2>
 
-{% if editions or revisions %}
+{% comment %} turns out () is invalid in if statements {% endcomment %}
+{% if request.user.is_authenticated %}
 
 <div class="row">
-  <div id="toolbar">
-    <a href="/songs/{{ song.id }}/compare" class="waves-effect waves-light btn right">
+  <div id="toolbar" class="right">
+    {% if request.user.is_staff %}
+    <a href="/editions/new?song={{ song.id }}" class="waves-effect waves-light btn">
+      <i class="material-icons left">add_box</i>
+      Add New
+    </a>
+    {% endif %}
+{% if editions or revisions %}
+    <a href="/songs/{{ song.id }}/compare" class="waves-effect waves-light btn">
       Compare
     </a>
+{% endif %}
   </div>
 </div>
-
 {% endif %}
 
 {% if editions %}

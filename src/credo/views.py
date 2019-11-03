@@ -1,6 +1,7 @@
 from django.http import HttpResponse, \
                         HttpResponseBadRequest, \
                         HttpResponseForbidden, \
+                        HttpResponseRedirect, \
                         JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
@@ -12,15 +13,17 @@ from django.contrib.auth.signals import user_logged_out
 from django.dispatch import receiver
 from django.contrib import messages
 
+from lxml.etree import XMLSyntaxError
+
 import base64
 import json
 import lxml.etree as et
 
 from credo.utils.mei.tree_comparison import TreeComparison
+
+from .models import Comment, Edition, MEI, Revision, Song, Composer
 from credo.utils.mei.measure_utils import merge_measure_layers
 from credo.utils.mei.resolve_utils import is_resolved
-
-from .models import Comment, Edition, MEI, Revision, Song
 
 from .forms import SignUpForm
 
@@ -43,7 +46,8 @@ def song_list(request):
     ]
     return render(request, 'song_list.html', {
         'songs': Song.objects.all(),
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'request': request
     })
 
 
@@ -480,6 +484,84 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+class NewEditionView(View):
+    def get(self, request, reason=''):
+        edition_song = Song.objects.get(id=request.GET['song'])
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': edition_song.name,
+                'url': f'/songs/{edition_song.id}'
+            },
+            {
+                'text': 'New Edition'
+            }
+        ]
+        return render(request, 'edition_new.html', {
+            'reason': reason,
+            'breadcrumbs': breadcrumbs,
+            'song': edition_song
+        })
+
+    def post(self, request):
+        edition_song = Song.objects.get(id=request.POST['song'])
+        if not request.POST['name']:
+            return self.get(request, reason='An edition name is required.')
+        try:
+            edition_mei = MEI(data=request.FILES['mei'])
+            edition_mei.save()
+            # TODO: Test more exceptions
+        except XMLSyntaxError:
+            return self.get(request, reason='Could not process file.')
+        except KeyError:
+            return self.get(request, reason='Please attach an MEI file.')
+        new_edition = Edition(
+            name=request.POST['name'],
+            song=edition_song,
+            uploader=request.user,
+            mei=edition_mei
+        )
+        new_edition.save()
+        return HttpResponseRedirect(
+            f'/editions/{new_edition.id}'
+        )
+
+
+class NewSongView(View):
+    def get(self, request):
+        breadcrumbs = [
+            {
+                'text': 'Songs',
+                'url': '/songs'
+            },
+            {
+                'text': 'New Song'
+            }
+        ]
+        return render(request, 'song_new.html', {
+            'breadcrumbs': breadcrumbs,
+            'composers': Composer.objects.all().order_by('name')
+        })
+
+    def post(self, request):
+        if not (('composer' in request.POST or 'new_composer' in request.POST)
+                and 'name' in request.POST):
+            return JsonResponse(
+                {'ok': False, 'reason': 'Missing name or composer field'}
+            )
+        if 'new_composer' in request.POST and request.POST['new_composer']:
+            composer = Composer(name=request.POST['new_composer'])
+            composer.save()
+        else:
+            composer = Composer.objects.get(id=request.POST['composer'][0])
+        new_song = Song(name=request.POST['name'], composer=composer)
+        new_song.save()
+        return song(request, new_song.id)
 
 
 def download_revision(request, revision_id):
