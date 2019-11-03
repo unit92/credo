@@ -46,19 +46,14 @@ def normalise_callback(sender, instance, *args, **kwargs):
     transformer = MeiTransformer.from_xml_file(mei_file)
 
     if instance.normalised:
-        print('normalised')
         transformer.normalise()
         id_map = transformer.get_id_map()
-        print(id_map)
         # get the comments which need to be re-keyed
         revision_set = instance.revision_set.all()
-        print(revision_set)
         relevant_comments = Comment.objects.filter(
                 revision__in=revision_set,
                 mei_element_id__in=id_map)
-        print(relevant_comments)
         for comment in relevant_comments:
-            print(comment.mei_element_id, id_map[comment.mei_element_id])
             comment.mei_element_id = id_map[comment.mei_element_id]
             comment.save()
     else:

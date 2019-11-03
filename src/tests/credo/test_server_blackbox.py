@@ -4,7 +4,8 @@ import logging
 import json
 
 from django.test import TestCase, Client
-from credo.models import Comment, Revision, User
+from django.core.files.base import ContentFile
+from credo.models import Comment, Revision, User, Edition, Composer, Song, MEI
 
 
 class TestServerBlackBox(TestCase):
@@ -12,13 +13,55 @@ class TestServerBlackBox(TestCase):
         logging.basicConfig(filename='/tmp/credo-test.log')
         self.logger = logging.getLogger(__name__)
 
-        user = User.objects.create(username='testuser')
-        user.set_password('12345')
-        user.save()
+        self.user = User(username='testuser')
+        self.user.set_password('12345')
+        self.user.save()
+
+        unowned_user = User(username='unowned')
+        unowned_user.save()
 
         self.authed_client = Client()
         self.authed_client.login(username='testuser', password='12345')
         self.client = Client()
+
+        # Create test data
+        self.composer = Composer(name="Test Composer")
+        self.song = Song(name="Test Song", composer=self.composer)
+
+        self.composer.save()
+        self.song.save()
+
+        with open("tests/credo/utils/mei/data/test_a.mei") as f:
+            self.mei = MEI()
+            self.mei.data.save('test', ContentFile(f.read()))
+
+        self.mei.save()
+
+        self.edition = Edition(
+            name="Test Edition Owned",
+            song=self.song,
+            mei=self.mei,
+            uploader=self.user
+        )
+
+        self.edition.save()
+
+        self.revision_owned = Revision(
+            name="Test Revision Owned",
+            user=self.user,
+            mei=self.mei
+        )
+        self.revision_unowned = Revision(
+            name="Test Revision Unowned",
+            user=unowned_user,
+            mei=self.mei
+        )
+
+        self.revision_owned.save()
+        self.revision_unowned.save()
+
+        self.revision_owned.editions.add(self.edition)
+        self.revision_unowned.editions.add(self.edition)
 
     def test_revision_GET(self):
         """Ensure revisions can be retrived at their appropriate endpoint."""
@@ -92,3 +135,34 @@ class TestServerBlackBox(TestCase):
 
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Revision.objects.count(), num_revisions + 1)
+
+    def test_download_edition(self):
+        # Unauthed user => 403
+        response = self.client.get(f'/editions/{self.edition.id}/download')
+        self.assertEquals(response.status_code, 403)
+
+        # Authed user => 200
+        response = self.authed_client.get(
+            f'/editions/{self.edition.id}/download'
+        )
+        self.assertEquals(response.status_code, 200)
+
+    def test_download_revision(self):
+        # Unauthed user => 403
+        response = self.client.get(
+            f'/revisions/{self.revision_owned.id}/download'
+        )
+        self.assertEquals(response.status_code, 403)
+
+        # Authed user, unowned revision => 403
+        response = self.authed_client.get(
+            f'/revisions/{self.revision_unowned.id}/download'
+        )
+        self.assertEquals(response.status_code, 403)
+
+        # Authed user, owned revision => 200
+        response = self.authed_client.get(
+            f'/revisions/{self.revision_owned.id}/download'
+        )
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response['Content-Type'], 'text/xml')

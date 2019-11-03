@@ -54,7 +54,14 @@ def song_list(request):
 def song(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song)
-    revisions = Revision.objects.filter(editions__in=editions).distinct('id')
+
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions, user=request.user
+        ).distinct('id')
+    else:
+        revisions = []
+
     breadcrumbs = [
         {
             'text': 'Songs',
@@ -75,11 +82,14 @@ def song(request, song_id):
 def song_compare_picker(request, song_id):
     song = Song.objects.get(id=song_id)
     editions = Edition.objects.filter(song=song, mei__normalised=True)
-    revisions = Revision.objects.filter(
-        editions__in=editions,
-        mei__normalised=True,
-        user=request.user
-    ).distinct('id')
+    if request.user.is_authenticated:
+        revisions = Revision.objects.filter(
+            editions__in=editions,
+            mei__normalised=True,
+            user=request.user
+        ).distinct('id')
+    else:
+        revisions = []
 
     comparables = [{
         'id': f'e{edition.id}',
@@ -104,6 +114,11 @@ def song_compare_picker(request, song_id):
 
 
 def edition(request, edition_id):
+    try:
+        edition_id = int(edition_id)
+    except ValueError:
+        return HttpResponseBadRequest()
+
     edition = Edition.objects.get(id=edition_id)
     song = edition.song
     breadcrumbs = [
@@ -138,6 +153,11 @@ def add_revision_comment(request, revision_id):
 
 class RevisionView(View):
     def get(self, request, revision_id):
+        try:
+            revision_id = int(revision_id)
+        except ValueError:
+            return HttpResponseBadRequest()
+
         revision = Revision.objects.get(id=revision_id)
         song = revision.editions.all()[0].song
         breadcrumbs = [
@@ -156,14 +176,23 @@ class RevisionView(View):
         return render(request, 'revision.html', {
             'revision': revision,
             'comments': True,
+            'resolved': revision.mei.normalised,
             'authenticated': request.user.is_authenticated,
             'save_url': f'/revisions/{revision_id}',
+            'revision_id': revision_id,
             'breadcrumbs': breadcrumbs
         })
 
     def post(self, request, revision_id):
+
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
+
+        try:
+            revision_id = int(revision_id)
+        except ValueError:
+            return HttpResponseBadRequest()
+
         data = json.loads(request.body)
         comments = data['comments']
         mei = data['mei']
@@ -180,7 +209,10 @@ class RevisionView(View):
                     user=request.user,
                     mei_element_id=comment).save()
 
-        revision.mei.normalised = is_resolved(mei_tree)
+        # This assumes that once the MEI is resolved, there
+        # is no way for it to be un-resolved.
+        if not revision.mei.normalised:
+            revision.mei.normalised = is_resolved(mei_tree)
 
         revision.mei.data.save('mei', ContentFile(mei))
         revision.mei.save()
@@ -427,8 +459,7 @@ def make_revision(request):
     new_revision.editions.set(base_editions)
     new_revision.save()
 
-    return redirect(
-            f'/revisions/{new_revision.id}')
+    return redirect(f'/revisions/{new_revision.id}')
 
 
 @require_http_methods(['POST', 'GET'])
@@ -532,6 +563,34 @@ class NewSongView(View):
         new_song.save()
         print(composer)
         return song(request, new_song.id)
+
+
+def download_revision(request, revision_id):
+    revision = Revision.objects.get(id=revision_id)
+    if not (request.user.is_authenticated and revision.user == request.user):
+        return HttpResponseForbidden()
+    song = revision.editions.all()[0].song
+    if revision.name:
+        filename = f'{revision.name} - {song.name}.mei'
+    else:
+        filename = f'Untitled Revision - {song.name}.mei'
+    response = HttpResponse(revision.mei.data, content_type='text/xml')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+def download_edition(request, edition_id):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+    edition = Edition.objects.get(id=edition_id)
+    song = edition.song
+    if edition.name:
+        filename = f'{edition.name} - {song.name}.mei'
+    else:
+        filename = f'Untitled Revision - {song.name}.mei'
+    response = HttpResponse(edition.mei.data, content_type='text/xml')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 
 def page_not_found(request, exception):

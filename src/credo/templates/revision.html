@@ -22,10 +22,33 @@
       Resolve
     </a>
   </span>
-  <a class="waves-effect waves-light btn teal" id="saveButton">
-    <i class="material-icons left">save</i>
-    Save
-  </a>
+  <span id="tools-right">
+    {% if resolved %}
+    <a class="waves-effect waves-light btn teal" id="downloadButton" href="/revisions/{{ revision_id }}/download">
+      <i class="material-icons left">cloud_download</i>
+      Download
+    </a>
+    {% else %}
+    <div
+        id="downloadSpan"
+        class="tooltipped"
+        data-position="bottom"
+        data-tooltip="Finish resolving the revision before downloading.">
+        <a
+            class="waves-effect waves-light btn disabled teal"
+            id="downloadButton"
+            href="/editions/{{ revision_id }}/download">
+            <i class="material-icons left">cloud_download</i>
+            Download
+        </a>
+    </div>
+    {% endif %}
+    
+    <a class="waves-effect waves-light btn teal" id="saveButton">
+      <i class="material-icons left">save</i>
+      Save
+    </a>
+  </span>
 </div>
 
 {% endif %}
