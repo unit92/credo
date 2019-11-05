@@ -9,12 +9,12 @@
 {% if authenticated %}
 
 <div id="toolbar">
-    <a class="waves-effect waves-light btn teal"
+  <button class="waves-effect waves-light btn teal"
        id="makeRevisionButton"
-       href="/revise?e={{ edition.id }}">
+       target="/revise?e={{ edition.id }}">
         <i class="material-icons left">create</i>
         Make Revision
-    </a>
+    </button>
     <a class="waves-effect waves-light btn teal" id="downloadButton" href="/editions/{{ edition.id }}/download">
         <i class="material-icons left">cloud_download</i>
         Download
@@ -22,6 +22,7 @@
 </div>
 
 {% else %}
+
 
 <div id="toolbar">
     <div

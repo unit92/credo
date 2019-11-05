@@ -30,6 +30,8 @@ class CredoToolkit {
   resolveMeasureId // ID of the measure we're resolving
   eliminatedIds // IDs to eliminate
 
+  nameModalInstance
+
   savingModalInstance
 
   verovioToolkit
@@ -105,6 +107,29 @@ class CredoToolkit {
         .getInstance(document.getElementById('resolve-modal'))
       document.getElementById('resolveDiv')
         .addEventListener('click', this.resolveNote.bind(this))
+
+      const makeRevisionButton = document.querySelector('button#makeRevisionButton')
+      if (makeRevisionButton) {
+        const nameModals = document.querySelectorAll('.modal#name-modal')
+        M.Modal.init(nameModals)
+        this.nameModalInstance = M.Modal
+          .getInstance(document.getElementById('name-modal'))
+        makeRevisionButton.addEventListener('click', this.openNameModal.bind(this))
+      }
+
+      const nameModalSubmit = document.getElementById('name-modal-submit')
+      if (nameModalSubmit) {
+        nameModalSubmit.addEventListener('click', function() {
+          const makeRevisionButton = document.querySelector('button#makeRevisionButton')
+          const revisionNameInput = document.querySelector('input#revision-name-input')
+          window.location.href = makeRevisionButton.getAttribute('target') + '&name=' + encodeURI(revisionNameInput.value)
+        })
+      }
+
+      const nameModalClose = document.getElementById('name-modal-close')
+      if (nameModalClose) {
+        nameModalClose.addEventListener('click', this.clearNameModal.bind(this))
+      }
     })
 
     // initialise the saving modal if there is a saveUrl
@@ -185,6 +210,14 @@ class CredoToolkit {
     } else if (this.currentToolMode === 'resolve') {
       this.resolveEventListener(event)
     }
+  }
+
+  openNameModal (event) {
+    this.nameModalInstance.open()
+  }
+
+  clearNameModal (event) {
+    this.nameModalInstance.close()
   }
 
   /**
@@ -616,9 +649,9 @@ class CredoToolkit {
     return jsonRequest(this.meiUrl)
       .then(json => {
         if (json.content.mei) {
-          return atob(json.content.mei.detail);
+          return atob(json.content.mei.detail)
         } else if (json.content.diff) {
-          return atob(json.content.diff.detail);
+          return atob(json.content.diff.detail)
         }
       })
   }
