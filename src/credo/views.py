@@ -394,6 +394,10 @@ def merge_measure_layers_json(request):
 def make_revision(request):
     edition_ids = request.GET.getlist('e')
     revision_ids = request.GET.getlist('r')
+    if 'name' in request.GET:
+        name = request.GET['name']
+    else:
+        name = 'Untitled Revision'
 
     try:
         edition_ids = [int(id) for id in edition_ids]
@@ -453,8 +457,7 @@ def make_revision(request):
 
     new_mei.save()
 
-    new_revision = Revision(user=request.user,
-                            mei=new_mei)
+    new_revision = Revision(user=request.user, mei=new_mei, name=name)
     new_revision.save()
     new_revision.editions.set(base_editions)
     new_revision.save()
