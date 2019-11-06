@@ -1,6 +1,8 @@
 {% include 'header.html' %}
 {% load static %}
 
+<title></title>
+
 <h2>{{ song }}</h2>
 
 {% comment %} turns out () is invalid in if statements {% endcomment %}
@@ -64,5 +66,9 @@
 </div>
 
 {% endif %}
+
+<script type="text/javascript">
+    document.title = "Credo - {{ song.name }}"
+</script>
 
 {% include 'footer.html' %}
