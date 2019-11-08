@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Developer Manual - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojify.js/1.1.0/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @charset "UTF-8";@import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{display:block;background:#fff;padding:.5em;color:#333;overflow-x:auto}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{color:#55a532;background-color:#eaffea}.hljs-deletion{color:#bd2c00;background-color:#ffecec}.hljs-link{text-decoration:underline}.markdown-body{font-size:16px;line-height:1.5;word-wrap:break-word}.markdown-body:after,.markdown-body:before{display:table;content:""}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;padding-right:4px;margin-left:-20px;line-height:1}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body hr{height:.25em;padding:0;margin:24px 0;background-color:#e7e7e7;border:0}.markdown-body blockquote{font-size:16px;padding:0 1em;color:#777;border-left:.25em solid #ddd}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{display:inline-block;padding:3px 5px;font-size:11px;line-height:10px;color:#555;vertical-align:middle;background-color:#fcfcfc;border:1px solid #ccc;border-bottom-color:#bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{padding-bottom:.3em;border-bottom:1px solid #eee}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#777}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{padding:0;list-style-type:none}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{margin-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #ddd}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{max-width:none;vertical-align:text-top;background-color:transparent}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{display:block;float:left;width:auto;padding:7px;margin:13px 0 0;overflow:hidden;border:1px solid #ddd}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{display:block;padding:5px 0 0;clear:both;color:#333}.markdown-body span.align-center{display:block;overflow:hidden;clear:both}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{display:block;overflow:hidden;clear:both}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{padding:0;padding-top:.2em;padding-bottom:.2em;margin:0;font-size:85%;background-color:rgba(0,0,0,.04);border-radius:3px}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{letter-spacing:-.2em;content:"\00a0"}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:transparent;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f7f7f7;border-radius:3px}.markdown-body pre code,.markdown-body pre tt{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{padding:5px;overflow:hidden;font-size:12px;line-height:1;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{padding:10px 8px 9px;text-align:right;background:#fff;border:0}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{font-weight:700;background:#f8f8f8;border-top:0}.news .alert .markdown-body blockquote{padding:0 0 0 40px;border:0 none}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle;cursor:default!important}.markdown-body{padding-top:40px;padding-bottom:40px;max-width:758px;overflow:visible!important}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{text-align:right;position:relative;display:inline-block;cursor:default;z-index:4;padding:0 8px 0 0;min-width:20px;box-sizing:content-box;color:#afafaf!important;border-right:3px solid #6ce26c!important}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-left:none;border-top:none;border-bottom:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-spacing:0;border-collapse:inherit!important}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{overflow:unset;margin-bottom:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert>p{margin-bottom:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram{text-align:center;background-color:inherit;border-radius:0;white-space:inherit}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg{max-width:100%;height:100%}.markdown-body pre>code.wrap{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}.markdown-body .alert>p,.markdown-body .alert>ul{margin-bottom:0}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{cursor:pointer;display:table;text-align:center;background-position:50%;background-repeat:no-repeat;background-size:contain;background-color:#000;overflow:hidden}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{width:100%;object-fit:contain;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{width:100%;height:100%;position:absolute;top:0;left:0}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{position:absolute;height:auto;width:auto;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;opacity:.3;transition:opacity .2s;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{position:absolute;top:0;bottom:0;left:0;right:0;width:100%;height:100%}.MJX_Assistive_MathML{display:none}.ui-infobar{position:relative;z-index:2;max-width:760px;margin:25px auto -25px;padding:0 15px;color:#777}.toc .invisable-node{list-style-type:none}.ui-toc{position:fixed;bottom:20px;z-index:998}.ui-toc-label{opacity:.3;background-color:#ccc;border:none;transition:opacity .2s}.ui-toc .open .ui-toc-label{opacity:1;color:#fff;transition:opacity .2s}.ui-toc-label:focus{opacity:.3;background-color:#ccc;color:#000}.ui-toc-label:hover{opacity:1;background-color:#ccc;transition:opacity .2s}.ui-toc-dropdown{margin-top:23px;margin-bottom:20px;padding-left:10px;padding-right:10px;max-width:45vw;width:25vw;max-height:70vh;overflow:auto;text-align:inherit}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{padding-right:0;letter-spacing:.0029em}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{display:block;padding:4px 20px;font-size:13px;font-weight:500;color:#767676}.ui-toc-dropdown .nav>li:first-child:last-child > ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{padding-left:19px;color:#000;text-decoration:none;background-color:transparent;border-left:1px solid #000}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{padding-right:19px;border-left:none;border-right:1px solid #000}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{padding-left:18px;font-weight:700;color:#000;background-color:transparent;border-left:2px solid #000}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{padding-right:18px;border-left:none;border-right:2px solid #000}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{padding-top:1px;padding-bottom:1px;padding-left:40px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{padding-left:28px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{padding-left:38px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{position:fixed;top:0;max-width:15vw;max-height:70vh;overflow:auto}.back-to-top,.expand-toggle,.go-to-bottom{display:block;padding:4px 10px;margin-top:10px;margin-left:10px;font-size:12px;font-weight:500;color:#999}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{width:20px;height:20px;display:block;border-radius:3px;margin-top:2px;margin-bottom:2px;margin-right:5px;background-position:50%;background-repeat:no-repeat;background-size:cover}.ui-user-icon.small{width:18px;height:18px;display:inline-block;vertical-align:middle;margin:0 0 .2em}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-published-note{color:#337ab7}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{position:relative;z-index:1;color:#222}.markdown-body.slides:before{content:"";display:block;position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;background-color:currentColor;box-shadow:0 0 0 50vw}.markdown-body.slides section[data-markdown]{position:relative;margin-bottom:1.5em;background-color:#fff;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{position:absolute;top:50%;left:1em;right:1em;transform:translateY(-50%);max-height:100%;overflow:hidden}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{content:"";position:absolute;top:-1.5em;right:1em;height:1.5em;border:3px solid #777}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;text-shadow:0 0 1em transparent,1px 1px 1.2px rgba(0,0,0,.004);-webkit-overflow-scrolling:touch;letter-spacing:.025em}.focus,:focus{outline:none!important}::-moz-focus-inner{border:0!important}body{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true" style="position: relative;"><p><span class="toc"><ul>
+<li><a href="#Introduction" title="Introduction">Introduction</a><ul>
+<li><a href="#Quick-Setup" title="Quick Setup">Quick Setup</a></li>
+<li><a href="#Testing" title="Testing">Testing</a></li>
+<li><a href="#Terminology" title="Terminology">Terminology</a></li>
+</ul>
+</li>
+<li><a href="#System-Overview" title="System Overview">System Overview</a><ul>
+<li><a href="#Backend" title="Backend">Backend</a></li>
+<li><a href="#Frontend" title="Frontend">Frontend</a></li>
+</ul>
+</li>
+<li><a href="#Django" title="Django">Django</a><ul>
+<li><a href="#Models" title="Models">Models</a><ul>
+<li><a href="#Database-Schema" title="Database Schema">Database Schema</a></li>
+</ul>
+</li>
+<li><a href="#Routes-and-Views" title="Routes and Views">Routes and Views</a></li>
+</ul>
+</li>
+<li><a href="#Deployment" title="Deployment">Deployment</a><ul>
+<li><a href="#Deployment-Stack" title="Deployment Stack">Deployment Stack</a></li>
+<li><a href="#Continuous-Deployment" title="Continuous Deployment">Continuous Deployment</a></li>
+</ul>
+</li>
+<li><a href="#Continuous-Integration-Pipelines" title="Continuous Integration (Pipelines)">Continuous Integration (Pipelines)</a></li>
+<li><a href="#Music-Comparison-Engine" title="Music Comparison Engine">Music Comparison Engine</a><ul>
+<li><a href="#Overview-by-Class" title="Overview by Class">Overview by Class</a><ul>
+<li><a href="#ComparisonStrategy" title="ComparisonStrategy">ComparisonStrategy</a></li>
+<li><a href="#TreeComparison" title="TreeComparison">TreeComparison</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#Credo-Toolkit" title="Credo Toolkit">Credo Toolkit</a><ul>
+<li><a href="#Usage-Guide" title="Usage Guide">Usage Guide</a></li>
+<li><a href="#Overview" title="Overview">Overview</a><ul>
+<li><a href="#Rendering-MEI" title="Rendering MEI">Rendering MEI</a></li>
+<li><a href="#Revisions" title="Revisions">Revisions</a></li>
+</ul>
+</li>
+<li><a href="#By-Method" title="By Method">By Method</a><ul>
+<li><a href="#Constructor" title="Constructor">Constructor</a></li>
+<li><a href="#scoreInteractionListener" title="scoreInteractionListener">scoreInteractionListener</a></li>
+<li><a href="#resolveEventListener" title="resolveEventListener">resolveEventListener</a></li>
+<li><a href="#openResolveModal" title="openResolveModal">openResolveModal</a></li>
+<li><a href="#resolveNote" title="resolveNote">resolveNote</a></li>
+<li><a href="#submitMeasureResolution" title="submitMeasureResolution">submitMeasureResolution</a></li>
+<li><a href="#playSnippet" title="playSnippet">playSnippet</a></li>
+<li><a href="#swapResolutionLayers" title="swapResolutionLayers">swapResolutionLayers</a></li>
+<li><a href="#clearResolveModal" title="clearResolveModal">clearResolveModal</a></li>
+<li><a href="#generateResolveMei" title="generateResolveMei">generateResolveMei</a></li>
+<li><a href="#nameSpaceResolver" title="nameSpaceResolver">nameSpaceResolver</a></li>
+<li><a href="#commentEventListener" title="commentEventListener">commentEventListener</a></li>
+<li><a href="#updateCommentFromModal" title="updateCommentFromModal">updateCommentFromModal</a></li>
+<li><a href="#loadMei" title="loadMei">loadMei</a></li>
+<li><a href="#loadAndStoreMei" title="loadAndStoreMei">loadAndStoreMei</a></li>
+<li><a href="#loadComments" title="loadComments">loadComments</a></li>
+<li><a href="#loadAndStoreComments" title="loadAndStoreComments">loadAndStoreComments</a></li>
+<li><a href="#improveClickHitBoxes" title="improveClickHitBoxes">improveClickHitBoxes</a></li>
+<li><a href="#render" title="render">render</a></li>
+<li><a href="#renderDiff" title="renderDiff">renderDiff</a></li>
+<li><a href="#renderMei" title="renderMei">renderMei</a></li>
+<li><a href="#renderComments" title="renderComments">renderComments</a></li>
+<li><a href="#renderCommentIcon" title="renderCommentIcon">renderCommentIcon</a></li>
+<li><a href="#addComment" title="addComment">addComment</a></li>
+<li><a href="#updateComment" title="updateComment">updateComment</a></li>
+<li><a href="#deleteComment" title="deleteComment">deleteComment</a></li>
+<li><a href="#handleTooltips" title="handleTooltips">handleTooltips</a></li>
+<li><a href="#attachTooltipPositioningListener" title="attachTooltipPositioningListener">attachTooltipPositioningListener</a></li>
+<li><a href="#getNotation" title="getNotation">getNotation</a></li>
+<li><a href="#saveRevision" title="saveRevision">saveRevision</a></li>
+<li><a href="#updateCurrentToolMode" title="updateCurrentToolMode">updateCurrentToolMode</a></li>
+<li><a href="#jsonRequest" title="jsonRequest">jsonRequest</a></li>
+<li><a href="#getCookie" title="getCookie">getCookie</a></li>
+<li><a href="#escapeHtmlCharacters" title="escapeHtmlCharacters">escapeHtmlCharacters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#References" title="References">References</a></li>
+</ul>
+</span></p><h1 id="Introduction"><a class="anchor hidden-xs" href="#Introduction" title="Introduction"><span class="octicon octicon-link"></span></a>Introduction</h1><p>Credo is an online tool for music comparison.</p><h2 id="Quick-Setup"><a class="anchor hidden-xs" href="#Quick-Setup" title="Quick-Setup"><span class="octicon octicon-link"></span></a>Quick Setup</h2><div class="alert alert-info">
+<p>Use of a Python virtualenv is recommended.</p>
+</div><p>Install dependencies:</p><pre><code class="bash hljs">$ pip install -r dev-requirements.txt --user
+$ pip install -r ci-requirements.txt --user
+$ pip install -r requirements.txt --user
+</code></pre><p>Install git hooks:</p><pre><code class="bash hljs">$ pre-commit install
+</code></pre><p>Set up environment variables:</p><pre><code class="bash hljs">$ cp .env.example .env
+</code></pre><p>To run the containerised database:</p><pre><code class="bash hljs">$ <span class="hljs-built_in">cd</span> docker
+$ docker-compose up
+</code></pre><div class="alert alert-info">
+<p>This requires <code>docker-compose</code> to be installed.</p>
+</div><p>To run the Django server:</p><pre><code class="bash hljs">$ <span class="hljs-built_in">cd</span> src
+$ python manage.py runserver
+</code></pre><h2 id="Testing"><a class="anchor hidden-xs" href="#Testing" title="Testing"><span class="octicon octicon-link"></span></a>Testing</h2><p>All unit tests should be located in <code>./src/tests/*</code>. Test discovery will find any tests in a file named <code>test*.py</code> in the current working directory.</p><p>To run tests:</p><pre><code class="bash hljs">$ python -Wa manage.py <span class="hljs-built_in">test</span>
+</code></pre><p>The <code>-Wa</code> flag tells Python to display deprecation warnings for Postgres, etc.</p><h2 id="Terminology"><a class="anchor hidden-xs" href="#Terminology" title="Terminology"><span class="octicon octicon-link"></span></a>Terminology</h2><dl>
+<dt>Song</dt>
+<dd>
+<p>A piece of music, which allows for a set of differing <em>editions</em>.</p>
+</dd>
+<dt>Edition</dt>
+<dd>
+<p>A primary source of a song, provided on Credo by an administrator.</p>
+</dd>
+<dt>Revision</dt>
+<dd>
+<p>A user-created version of a song, created off one or more editions/revisions.</p>
+</dd>
+<dt>MEI</dt>
+<dd>
+<p><a href="https://music-encoding.org/" target="_blank" rel="noopener">Music Encoding Initiative (MEI)</a> is an encoding created to represent musical documentation.</p>
+<p>All Credo songs, editions and revisions are written and downloadable as an MEI file.</p>
+</dd>
+</dl><h1 id="System-Overview"><a class="anchor hidden-xs" href="#System-Overview" title="System-Overview"><span class="octicon octicon-link"></span></a>System Overview</h1><h2 id="Backend"><a class="anchor hidden-xs" href="#Backend" title="Backend"><span class="octicon octicon-link"></span></a>Backend</h2><p>Credo’s backend is a Django app hosted on an AWS server. It is written for Python 3.7 upward, as we use newer features such as f-strings and type annotations.</p><p>Additionally, the backend utilises a custom made music comparison engine, designed to be modular, should a different algorithm for comparing music be desired in the future.</p><p>All Python code is written to be compliant to PEP-8.</p><h2 id="Frontend"><a class="anchor hidden-xs" href="#Frontend" title="Frontend"><span class="octicon octicon-link"></span></a>Frontend</h2><p>The frontend consists of HTML, CSS, and JavaScript, served by the Django server. <a href="https://materializecss.com" target="_blank" rel="noopener">Materialize</a> is used and served statically. <a href="https://www.verovio.org/javascript.xhtml" target="_blank" rel="noopener">Verovio Toolkit</a> is a JavaScript library used to render MEI into an SVG.</p><p>A custom JS library is Credo Toolkit. This file wraps around Verovio Toolkit to expose and make the required functionality of Verovio Toolkit more straightforward for the intended uses. Additionally, it serves to drive and handle interactions:</p><ul>
+<li>Requesting MEI files to render</li>
+<li>Requesting comments for a revision and rendering them onto the SVG
+<ul>
+<li>Escaping HTML characters in comments</li>
+</ul>
+</li>
+<li>Driving the toolbar on the revision page</li>
+<li>Resolving conflicting measures in revisions</li>
+<li>Naming and sending a request to make a new revision</li>
+</ul><p>All in-house JavaScript is written to adhere to <a href="https://standardjs.com/" target="_blank" rel="noopener">Standard JS</a>.</p><h1 id="Django"><a class="anchor hidden-xs" href="#Django" title="Django"><span class="octicon octicon-link"></span></a>Django</h1><h2 id="Models"><a class="anchor hidden-xs" href="#Models" title="Models"><span class="octicon octicon-link"></span></a>Models</h2><h3 id="Database-Schema"><a class="anchor hidden-xs" href="#Database-Schema" title="Database-Schema"><span class="octicon octicon-link"></span></a>Database Schema</h3><p><img src="https://i.imgur.com/ZVm1EaB.png" alt="Database Schema"></p><div class="alert alert-info">
+<p>The MEI object has a post-save hook that calls our normalization function on any uploaded MEI file.</p>
+</div><p>It is important to note that we do not interface with the database directly (i.e. through PostgreSQL); we interact with it through the Django ORM. This can be accessed through the <code>manage.py</code> Django interface:</p><pre><code class="bash hljs">$ python3 manage.py shell
+</code></pre><h2 id="Routes-and-Views"><a class="anchor hidden-xs" href="#Routes-and-Views" title="Routes-and-Views"><span class="octicon octicon-link"></span></a>Routes and Views</h2><p>The following is a table listing all routes with their associated methods and views, and what level of authentication is required to access the route.</p><table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Method</th>
+<th>View</th>
+<th>Description</th>
+<th>Login Conditions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td><code>GET</code></td>
+<td><code>index()</code></td>
+<td><em>Page</em> - Homepage of Credo</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/songs</code></td>
+<td><code>GET</code></td>
+<td><code>song_list()</code></td>
+<td><em>Page</em> - List of songs</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/songs/&lt;id&gt;</code></td>
+<td><code>GET</code></td>
+<td><code>song()</code></td>
+<td><em>Page</em> - Editions and revisions on a song</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/songs/&lt;id&gt;/compare</code></td>
+<td><code>GET</code></td>
+<td><code>song_compare_picker()</code></td>
+<td><em>Page</em> - Pick editions and revisions to compare</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/editions/&lt;id&gt;</code></td>
+<td><code>GET</code></td>
+<td><code>edition()</code></td>
+<td><em>Page</em> - Render an edition</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/revisions/&lt;id&gt;/comment</code></td>
+<td><code>POST</code></td>
+<td><code>add_revision_comment()</code></td>
+<td><em>API</em> - Add a comment to a revision</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/revisions/&lt;id&gt;</code></td>
+<td><code>GET</code></td>
+<td><code>RevisionView()</code></td>
+<td><em>Page</em> - Render a revision</td>
+<td>Logged in and own revision</td>
+</tr>
+<tr>
+<td><code>/revisions/&lt;id&gt;</code></td>
+<td><code>POST</code></td>
+<td><code>RevisionView()</code></td>
+<td><em>API</em> - Save a revision</td>
+<td>Logged in and own revision</td>
+</tr>
+<tr>
+<td><code>/revisions/&lt;id&gt;/comments</code></td>
+<td><code>GET</code></td>
+<td><code>revision_comments()</code></td>
+<td><em>API</em> - List revision comments</td>
+<td>Logged in and own revision</td>
+</tr>
+<tr>
+<td><code>/mei/&lt;id&gt;</code></td>
+<td><code>GET</code></td>
+<td><code>mei()</code></td>
+<td><em>API</em> - Get MEI data</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/compare</code></td>
+<td><code>GET</code></td>
+<td><code>compare()</code></td>
+<td><em>Page</em> - Compare two editions/revisions</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/diff</code></td>
+<td><code>GET</code></td>
+<td><code>diff()</code></td>
+<td><em>API</em> - Run the diff algorithm</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/merge</code></td>
+<td><code>POST</code></td>
+<td><code>merge_measure_layers_json()</code></td>
+<td><em>API</em> - Merge two measures together</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/revise</code></td>
+<td><code>GET</code></td>
+<td><code>make_revision()</code></td>
+<td><em>Page</em> - Create a revision</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/signup</code></td>
+<td><code>GET</code></td>
+<td><code>signup()</code></td>
+<td><em>Page</em> - Signup page</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/signup</code></td>
+<td><code>POST</code></td>
+<td><code>signup()</code></td>
+<td><em>API</em> - Sign up a user</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/editions/new</code></td>
+<td><code>GET</code></td>
+<td><code>NewEditionView()</code></td>
+<td><em>Page</em> - Create a new edition</td>
+<td>Administrator</td>
+</tr>
+<tr>
+<td><code>/editions/new</code></td>
+<td><code>POST</code></td>
+<td><code>NewEditionView()</code></td>
+<td><em>API</em> - Create a new edition</td>
+<td>Administrator</td>
+</tr>
+<tr>
+<td><code>/songs/new</code></td>
+<td><code>GET</code></td>
+<td><code>NewSongView()</code></td>
+<td><em>Page</em> - Create a new song</td>
+<td>Administrator</td>
+</tr>
+<tr>
+<td><code>/songs/new</code></td>
+<td><code>POST</code></td>
+<td><code>NewSongView()</code></td>
+<td><em>API</em> - Create a new song</td>
+<td>Administrator</td>
+</tr>
+<tr>
+<td><code>/revisions/&lt;id&gt;/download</code></td>
+<td><code>GET</code></td>
+<td><code>download_revision()</code></td>
+<td><em>API</em> - Download a revision MEI</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>/editions/&lt;id&gt;/download</code></td>
+<td><code>GET</code></td>
+<td><code>download_edition()</code></td>
+<td><em>API</em> - Download a edition MEI</td>
+<td>Logged in</td>
+</tr>
+<tr>
+<td><code>[404 page]</code></td>
+<td><code>GET</code></td>
+<td><code>page_not_found()</code></td>
+<td><em>Page</em> - 404 page</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>[5XX page]</code></td>
+<td><code>GET</code></td>
+<td><code>server_error()</code></td>
+<td><em>Page</em> - 5XX page</td>
+<td>Anonymous</td>
+</tr>
+<tr>
+<td><code>/editions/wildwebmidi</code></td>
+<td><code>GET</code></td>
+<td><code>wildwebmidi_data()</code></td>
+<td><em>API</em> - Return MIDI data for playback</td>
+<td>Anonymous</td>
+</tr>
+</tbody>
+</table><h1 id="Deployment"><a class="anchor hidden-xs" href="#Deployment" title="Deployment"><span class="octicon octicon-link"></span></a>Deployment</h1><h2 id="Deployment-Stack"><a class="anchor hidden-xs" href="#Deployment-Stack" title="Deployment-Stack"><span class="octicon octicon-link"></span></a>Deployment Stack</h2><p>The deployment stack is ever so slightly different to the development stack, as it is unsafe to run Django in development mode on a publicly accessible server.</p><p>We use nginx to serve static content, an example configuration is provided at: <code>./config/nginx/credo.conf</code>.</p><p>We use gunicorn as the production Django server, this is not required for developers locally however. Gunicorn connects to nginx over a unix socket.</p><p>We currently run the Postgres server in a docker container on the server, however you may easily migrate this to AWS RDS in the future if it is found to be too slow.</p><p>The Postgres docker container, dockerd, gunicorn and nginx are all started via systemd. Nginx comes with a default systemd unit so there was no need to create any configuartions for this, however the others did require configuration and have been included here: <code>./deployment/config/systemd</code></p><h2 id="Continuous-Deployment"><a class="anchor hidden-xs" href="#Continuous-Deployment" title="Continuous-Deployment"><span class="octicon octicon-link"></span></a>Continuous Deployment</h2><div class="alert alert-warning">
+<p>This setup is not recommended for future development</p>
+</div><p>The deployment is done automatically through a cronjob that runs every 5 minutes. The script is located at <code>./deployment/restart-if-updated.sh</code>. The script itself is heavily commented, and is intended to be run in a cronjob. In essence the bash script will pull from the repo at a specified branch (or develop if none is specified). If there are any updates from origin, it will merge them in and rebuild the static content, install any new dependencies, run any pending migrations and restart the server. This is quite janky, I would propose that in future developers move away from this and use something like AWS CodeDeploy. Also note that the server has its public SSH key set up on Bitbucket as a read only key, allowing us to clone the repo on the server without having to hard code any credentials in the script. A similiar set up can be achived on github if required.</p><p>This works fine the majority of the time, there is however a bit of a hickup as there is no way for us to currently automatically update the .env file, so someone manually has to SSH in and do this. I would suggest setting environment variables thorugh AWS Parameter Store in future, or perhaps there is a better solution involving AWS CodeDeploy.</p><h1 id="Continuous-Integration-Pipelines"><a class="anchor hidden-xs" href="#Continuous-Integration-Pipelines" title="Continuous-Integration-Pipelines"><span class="octicon octicon-link"></span></a>Continuous Integration (Pipelines)</h1><p>We do our CI through Bitbucket Pipelines, they won’t work with Github Actions, or any other CI platform you choose. See <code>./bitbucket-pipelines.yml</code> for more info. In essence every PR has to pass a build which consists of:</p><ul>
+<li>Installing the runtime dependencies</li>
+<li>Installing the CI dependencies</li>
+<li>Setting up the environment</li>
+<li>Running all tests with coverage</li>
+<li>Generating a coverage report</li>
+</ul><p>The tests also run Postgres in a docker container, there should be a way to do this with your CI platform of choice, if not, you can start the docker container manually.</p><h1 id="Music-Comparison-Engine"><a class="anchor hidden-xs" href="#Music-Comparison-Engine" title="Music-Comparison-Engine"><span class="octicon octicon-link"></span></a>Music Comparison Engine</h1><p>The music comparison engine is designed to follow the strategy pattern, so new comparison algorithms can be created and swapped out as desired.</p><h2 id="Overview-by-Class"><a class="anchor hidden-xs" href="#Overview-by-Class" title="Overview-by-Class"><span class="octicon octicon-link"></span></a>Overview by Class</h2><h3 id="ComparisonStrategy"><a class="anchor hidden-xs" href="#ComparisonStrategy" title="ComparisonStrategy"><span class="octicon octicon-link"></span></a><code>ComparisonStrategy</code></h3><h4 id="compare_meis"><a class="anchor hidden-xs" href="#compare_meis" title="compare_meis"><span class="octicon octicon-link"></span></a><code>compare_meis</code></h4><p>Defines a method <code>compare_meis</code> which accepts two MEI models, and calls <code>compare_trees</code>, the main method that is to be implemented by any concrete comparison strategy.</p><h4 id="compare_trees"><a class="anchor hidden-xs" href="#compare_trees" title="compare_trees"><span class="octicon octicon-link"></span></a><code>compare_trees</code></h4><p><code>compare_trees</code> should accept two <code>lxml.etree.ElementTrees</code> representing MEI files, <code>a</code> and <code>b</code>. It should return a tuple of <code>lxml.etree.ElementTrees</code>, where the first tree represents the difference of <code>a</code> and <code>b</code>, the second is <code>a</code>, containing any additional modifications made to it as needed, and the third is <code>b</code>, containing any additional modifications.</p><h3 id="TreeComparison"><a class="anchor hidden-xs" href="#TreeComparison" title="TreeComparison"><span class="octicon octicon-link"></span></a><code>TreeComparison</code></h3><p>This class implements the <code>compare_trees</code> method of <code>ComparisonStrategy</code>.</p><h4 id="compare_trees1"><a class="anchor hidden-xs" href="#compare_trees1" title="compare_trees1"><span class="octicon octicon-link"></span></a><code>compare_trees</code></h4><p>Trees are converted to intermediate form, then compared using the <code>__get_diff_tree</code> method, returned to plain MEI form, and then their IDs are regenerated to aid the resolve tool on the front end.</p><h4 id="__get_diff_tree"><a class="anchor hidden-xs" href="#__get_diff_tree" title="__get_diff_tree"><span class="octicon octicon-link"></span></a><code>__get_diff_tree</code></h4><p>The <code>__get_diff_tree</code> method accepts two<br>
+<code>lxml.etree.ElementTrees</code> <code>a</code> and <code>b</code>. These trees are given to the main method of <code>xmldiff</code>, which returns a list of actions required to turn tree <code>a</code> into tree <code>b</code>. The <code>TrackedPatcher</code> class is used to generate two modified versions of <code>a</code> and <code>b</code>, keeping track of which nodes in <code>a</code> were moved/inserted/deleted, and which node in <code>b</code> they correspond to. This allows colours and visibilities of elements to be modified only for those elements that had move/inserte/delete operations applied to them. Note that colours are applied to an entire chord or beam if any of the elements in the chord or beam were modified, as these elements are treated as groups by the front end.</p><p>The following functionality is important to note, since a lot of the front end functionality in the <code>Credo Toolkit</code> relies on colours and visibility of nodes for its operations:</p><ul>
+<li>All nodes in the <code>b_modded</code> tree are hidden by default, unless modifications were applied to them. This is to avoid doubling up on rendering of notes that are common to both <code>a</code> and <code>b</code>.</li>
+</ul><p><code>__naive_layer_merge</code> is then called to create the diff tree, and the method returns the <code>diff</code>, <code>a</code> and <code>b</code> trees.</p><h4 id="__naive_layer_merge"><a class="anchor hidden-xs" href="#__naive_layer_merge" title="__naive_layer_merge"><span class="octicon octicon-link"></span></a><code>__naive_layer_merge</code></h4><p>Once the colour/visibility attributes on the <code>a_modded</code> and <code>b_modded</code> trees have been updated, these two trees are merged into one, where corresponding layers from <code>a_modded</code> and <code>b_modded</code> are inserted into the new tree under the same measure tag. This allows the diff to be rendered properly in Verovio.</p><p>This method makes a lot of assumptions and might need to be updated in the future, but works well as a proof of concept.</p><p>Note that layers that came from <code>a_modded</code> should have an <code>xml:id</code> of the format <code>m-a[0-9]+</code>, and layers that came from <code>b_modded</code> should have an <code>xml:id</code> of the format <code>m-b[0-9]+</code>. This is essential as the Credo Toolkit uses this to determine which layers came from which source during resolution. Also note that if layers are <em>corresponding</em>, i.e. they have the same <code>n</code> value, then the number after the <code>a</code> or the <code>b</code> in their <code>xml:id</code> should be identical.</p><h1 id="Credo-Toolkit"><a class="anchor hidden-xs" href="#Credo-Toolkit" title="Credo-Toolkit"><span class="octicon octicon-link"></span></a>Credo Toolkit</h1><p>Credo Toolkit is a custom-written JavaScript file to drive Credo’s interactions.</p><h2 id="Usage-Guide"><a class="anchor hidden-xs" href="#Usage-Guide" title="Usage-Guide"><span class="octicon octicon-link"></span></a>Usage Guide</h2><p>The following script inclusions are required for Credo Toolkit:</p><pre><code class="htmlmixed hljs"><div class="wrapper"><div class="gutter linenumber"><span data-linenumber="1"></span>
+<span data-linenumber="2"></span>
+<span data-linenumber="3"></span>
+<span data-linenumber="4"></span>
+<span data-linenumber="5"></span>
+<span data-linenumber="6"></span>
+<span data-linenumber="7"></span>
+<span data-linenumber="8"></span></div><div class="code"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"{% static 'credo/verovio/verovio-toolkit.js' %}"</span>
+  <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="undefined">
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"{% static 'credo/credo-toolkit.js' %}"</span>
+  <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="undefined">
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</div></div></code></pre><p>Additionally, if MIDI playing is desired (like on the revision pages), the following imports are also required:</p><pre><code class="htmlmixed hljs"><div class="wrapper"><div class="gutter linenumber"><span data-linenumber="1"></span>
+<span data-linenumber="2"></span>
+<span data-linenumber="3"></span>
+<span data-linenumber="4"></span>
+<span data-linenumber="5"></span>
+<span data-linenumber="6"></span>
+<span data-linenumber="7"></span>
+<span data-linenumber="8"></span>
+<span data-linenumber="9"></span>
+<span data-linenumber="10"></span>
+<span data-linenumber="11"></span>
+<span data-linenumber="12"></span>
+<span data-linenumber="13"></span></div><div class="code"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+    <span class="hljs-attr">src</span>=<span class="hljs-string">"https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"</span>
+    <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="undefined">
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"{% static 'credo/midi/wildwebmidi.js' %}"</span>
+  <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="undefined">
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"{% static 'credo/midi/midiplayer.js' %}"</span>
+  <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="undefined">
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+
+</div></div></code></pre><p>The above static files are:</p><ul>
+<li>jQuery</li>
+<li><a href="https://github.com/zz85/wild-web-midi" target="_blank" rel="noopener">Wild Web Midi</a></li>
+<li>Midiplayer.js</li>
+</ul><div class="alert alert-info">
+<p>This is the only place jQuery is used.</p>
+</div><p>Then, to use Credo Toolkit:</p><pre><code class="htmlmixed hljs"><div class="wrapper"><div class="gutter linenumber"><span data-linenumber="1"></span>
+<span data-linenumber="2"></span>
+<span data-linenumber="3"></span>
+<span data-linenumber="4"></span>
+<span data-linenumber="5"></span>
+<span data-linenumber="6"></span>
+<span data-linenumber="7"></span>
+<span data-linenumber="8"></span>
+<span data-linenumber="9"></span></div><div class="code">&lt;script&gt;
+  <span class="hljs-keyword">const</span> toolkit = <span class="hljs-keyword">new</span> CredoToolkit(
+    <span class="hljs-string">'{{ meiUrl }}'</span>,
+    <span class="hljs-literal">null</span>,
+    <span class="hljs-literal">null</span>,
+    <span class="hljs-string">'renderDiv'</span>
+  )
+  toolkit.render()
+&lt;/script&gt;
+</div></div></code></pre><p>The arguments the constructor takes are:</p><ol>
+<li>A URL from which to load the MEI file.</li>
+<li>A URL from which to load comments (optional, used in revisions).</li>
+<li>A URL to invoke during measure resolution (optional, used in revisions).</li>
+<li>An ID of a <code>&lt;div&gt;</code> in which to insert any rendered music.</li>
+<li>A URL to invoke when saving a revision (optional, used in revisions).</li>
+</ol><h2 id="Overview"><a class="anchor hidden-xs" href="#Overview" title="Overview"><span class="octicon octicon-link"></span></a>Overview</h2><h3 id="Rendering-MEI"><a class="anchor hidden-xs" href="#Rendering-MEI" title="Rendering-MEI"><span class="octicon octicon-link"></span></a>Rendering MEI</h3><p>As a whole, rendering is handled by an asynchronous <code>render</code> function, which requests and stores the MEI, if it is not already loaded, and calls <code>renderMei</code>.</p><p><code>renderMei</code> finds the desired <code>&lt;div&gt;</code> in which to render the MEI, renders the MEI using Verovio Toolkit, and inserts the output SVG into the desired element.</p><h3 id="Revisions"><a class="anchor hidden-xs" href="#Revisions" title="Revisions"><span class="octicon octicon-link"></span></a>Revisions</h3><h4 id="Toolbar"><a class="anchor hidden-xs" href="#Toolbar" title="Toolbar"><span class="octicon octicon-link"></span></a>Toolbar</h4><p>Credo Toolkit drives the interactions with the toolbar, with an event listener on the tools used to switch tools depending on which button in the toolbar is pressed, and updates the toolbar UI to reflect this.</p><p>The current tool affects which functions are invoked when a sheet music element is clicked.</p><h4 id="Comments"><a class="anchor hidden-xs" href="#Comments" title="Comments"><span class="octicon octicon-link"></span></a>Comments</h4><p>Comments are handled and rendered in the <code>render</code> function, which requests and renders comments from a given URL. Comments are rendered onto SVG sheet music by getting the notation with a matching ID, then adding a comment SVG to said notation, which has a Materialize tooltip containing the comment message. Note that this tooltip had to be manually positioned using JavaScript.</p><p>If a note is clicked upon while in commenting mode, a modal is presented, where you can add, edit, or remove a comment.</p><h4 id="Resolution"><a class="anchor hidden-xs" href="#Resolution" title="Resolution"><span class="octicon octicon-link"></span></a>Resolution</h4><p>The resolution tool presents a modal containing only the measure that the user wishes to resolve. From there, event listeners on this measure capture and maintain a state of notes which are desired to be kept and removed.</p><h4 id="Saving"><a class="anchor hidden-xs" href="#Saving" title="Saving"><span class="octicon octicon-link"></span></a>Saving</h4><p>Saving simply makes a request to an endpoint which takes the MEI and comments in a JSON object.</p><h4 id="Downloading"><a class="anchor hidden-xs" href="#Downloading" title="Downloading"><span class="octicon octicon-link"></span></a>Downloading</h4><p>Downloading makes a request to an endpoint which downloads the MEI for the edition or revision in question. Note that, for revisions, you can only download the revision once all conflicts have been resolved.</p><h2 id="By-Method"><a class="anchor hidden-xs" href="#By-Method" title="By-Method"><span class="octicon octicon-link"></span></a>By Method</h2><h3 id="Constructor"><a class="anchor hidden-xs" href="#Constructor" title="Constructor"><span class="octicon octicon-link"></span></a>Constructor</h3><p>Constructs the Credo Toolkit.</p><h4 id="Arguments"><a class="anchor hidden-xs" href="#Arguments" title="Arguments"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>meiUrl</td>
+<td>string</td>
+<td>The URL of the MEI file we wish to render.</td>
+</tr>
+<tr>
+<td>commentsUrl</td>
+<td>string or null</td>
+<td>The URL of any associated comments, can be null to indicate no comments.</td>
+</tr>
+<tr>
+<td>resolutionUrl</td>
+<td>string or null</td>
+<td>The URL used for merging layers within a measure, can be null to indicate no merge support.</td>
+</tr>
+<tr>
+<td>renderDiv</td>
+<td>string</td>
+<td>The ID of the div to which we wish to render.</td>
+</tr>
+<tr>
+<td>saveUrl</td>
+<td>string or null</td>
+<td>Optional. The URL to POST when saving revisions.</td>
+</tr>
+</tbody>
+</table><h4 id="Description"><a class="anchor hidden-xs" href="#Description" title="Description"><span class="octicon octicon-link"></span></a>Description</h4><p>The Credo Toolkit constructor is responsible for the following:</p><ul>
+<li>Initialising event listeners once the DOM has loaded
+<ul>
+<li>Comment modal functionality</li>
+<li>Resolve modal functionality
+<ul>
+<li>The “Play” button</li>
+<li>Swapping resolve layers</li>
+<li>Selecting/deselecting notes</li>
+</ul>
+</li>
+<li>The “Make Revision” button</li>
+<li>The naming modal for making revisions</li>
+<li>The modal to show while saving a revision</li>
+<li>The “Save” button</li>
+<li>Revision toolbar</li>
+</ul>
+</li>
+<li>Initialising a Verovio Toolkit instance</li>
+<li>Getting the CSRF token from a cookie and storing it</li>
+</ul><h3 id="scoreInteractionListener"><a class="anchor hidden-xs" href="#scoreInteractionListener" title="scoreInteractionListener"><span class="octicon octicon-link"></span></a><code>scoreInteractionListener</code></h3><p>Listens to click events on the score, and performs behaviour appropriate to the current editing mode.</p><h4 id="Arguments1"><a class="anchor hidden-xs" href="#Arguments1" title="Arguments1"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>A HTML DOM event.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value"><a class="anchor hidden-xs" href="#Return-Value" title="Return-Value"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description1"><a class="anchor hidden-xs" href="#Description1" title="Description1"><span class="octicon octicon-link"></span></a>Description</h4><p>Invokes <code>commentEventListener</code>, <code>resolveEventListener</code>, with <code>event</code>, or neither, depending on the state of <code>this.currentToolMode</code>.</p><h3 id="resolveEventListener"><a class="anchor hidden-xs" href="#resolveEventListener" title="resolveEventListener"><span class="octicon octicon-link"></span></a><code>resolveEventListener</code></h3><p>Responds to the click event by reacting as if in resolve mode.</p><h4 id="Arguments2"><a class="anchor hidden-xs" href="#Arguments2" title="Arguments2"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>A HTML DOM event.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value1"><a class="anchor hidden-xs" href="#Return-Value1" title="Return-Value1"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description2"><a class="anchor hidden-xs" href="#Description2" title="Description2"><span class="octicon octicon-link"></span></a>Description</h4><p>Using <code>event.target</code>, this method attempts to go upwards through the DOM until it reaches an element marked as a measure in the <code>classList</code>. If it doesn’t find a measure, nothing occurs. If it does find a measure, it opens the resolve modal, using the ID of the measure.</p><h3 id="openResolveModal"><a class="anchor hidden-xs" href="#openResolveModal" title="openResolveModal"><span class="octicon octicon-link"></span></a><code>openResolveModal</code></h3><p>Opens up the resolve modal for a given measure.</p><h4 id="Arguments3"><a class="anchor hidden-xs" href="#Arguments3" title="Arguments3"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>targetId</td>
+<td>string</td>
+<td>The ID of the measure to resolve.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value2"><a class="anchor hidden-xs" href="#Return-Value2" title="Return-Value2"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description3"><a class="anchor hidden-xs" href="#Description3" title="Description3"><span class="octicon octicon-link"></span></a>Description</h4><p>Populates the contents of the resolve modal with a rendered MEI of the measure in question. Once it has done that, the resolve modal is opened.</p><h3 id="resolveNote"><a class="anchor hidden-xs" href="#resolveNote" title="resolveNote"><span class="octicon octicon-link"></span></a><code>resolveNote</code></h3><p>Attempts to resolve the notation clicked upon.</p><h4 id="Arguments4"><a class="anchor hidden-xs" href="#Arguments4" title="Arguments4"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>A HTML DOM event.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value3"><a class="anchor hidden-xs" href="#Return-Value3" title="Return-Value3"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description4"><a class="anchor hidden-xs" href="#Description4" title="Description4"><span class="octicon octicon-link"></span></a>Description</h4><p>Maintains a list of notations which are eliminated, and toggles the state of the notation clicked upon. Also updates the visuals of the note to reflect this change, changing the alpha value to be transparent.</p><h3 id="submitMeasureResolution"><a class="anchor hidden-xs" href="#submitMeasureResolution" title="submitMeasureResolution"><span class="octicon octicon-link"></span></a><code>submitMeasureResolution</code></h3><p>Propagates changes to the measure to the full piece.</p><h4 id="Return-Value4"><a class="anchor hidden-xs" href="#Return-Value4" title="Return-Value4"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;void&gt;</code>: A promise indicating completion of the attempt to propagate the changes.</p><h4 id="Description5"><a class="anchor hidden-xs" href="#Description5" title="Description5"><span class="octicon octicon-link"></span></a>Description</h4><p>Removes notation in the resolve modal that was marked as to remove by the user, then makes a request to the server to complete measure resolution, takes the result, and if it is resolved, updates the measure in the piece locally, and closes the modal. If the response indicates the measure is not resolvable, prompt the user with an error message.</p><h3 id="playSnippet"><a class="anchor hidden-xs" href="#playSnippet" title="playSnippet"><span class="octicon octicon-link"></span></a><code>playSnippet</code></h3><p>Converts the snippet open in the resolve tool into MIDI and plays it.</p><h4 id="Return-Value5"><a class="anchor hidden-xs" href="#Return-Value5" title="Return-Value5"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description6"><a class="anchor hidden-xs" href="#Description6" title="Description6"><span class="octicon octicon-link"></span></a>Description</h4><p>This method uses jQuery.<br>
+Forms a MIDI datablock by invoking <code>renderToMIDI</code> on Verovio Toolkit and uses MIDI Player to play the resulting song.</p><h3 id="swapResolutionLayers"><a class="anchor hidden-xs" href="#swapResolutionLayers" title="swapResolutionLayers"><span class="octicon octicon-link"></span></a><code>swapResolutionLayers</code></h3><p>Swaps the order in which the diff layers are rendered for resolution.</p><h4 id="Return-Value6"><a class="anchor hidden-xs" href="#Return-Value6" title="Return-Value6"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description7"><a class="anchor hidden-xs" href="#Description7" title="Description7"><span class="octicon octicon-link"></span></a>Description</h4><p>Uses a object to track layers and DOM manipulation to ensure all notes of a certain colour are re-rendered in reverse order in which they appear.</p><h3 id="clearResolveModal"><a class="anchor hidden-xs" href="#clearResolveModal" title="clearResolveModal"><span class="octicon octicon-link"></span></a><code>clearResolveModal</code></h3><p>Clears the resolve modal.</p><h4 id="Return-Value7"><a class="anchor hidden-xs" href="#Return-Value7" title="Return-Value7"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h3 id="generateResolveMei"><a class="anchor hidden-xs" href="#generateResolveMei" title="generateResolveMei"><span class="octicon octicon-link"></span></a><code>generateResolveMei</code></h3><p>Generates the MEI to display in the resolve modal.</p><h4 id="Arguments5"><a class="anchor hidden-xs" href="#Arguments5" title="Arguments5"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>measure</td>
+<td>Node</td>
+<td>The measure to render.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value8"><a class="anchor hidden-xs" href="#Return-Value8" title="Return-Value8"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>string</code>: The generated MEI as a string.</p><h4 id="Description8"><a class="anchor hidden-xs" href="#Description8" title="Description8"><span class="octicon octicon-link"></span></a>Description</h4><p>In order to render a single measure of a piece, it needs to be made into its own MEI encoding. This is done by using a single-measure template, taking metadata from the piece’s MEI, and inserting the measure of the MEI into the body.</p><h3 id="nameSpaceResolver"><a class="anchor hidden-xs" href="#nameSpaceResolver" title="nameSpaceResolver"><span class="octicon octicon-link"></span></a><code>nameSpaceResolver</code></h3><p>Namespace resolver for parsing MEI Document.</p><h4 id="Arguments6"><a class="anchor hidden-xs" href="#Arguments6" title="Arguments6"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prefix</td>
+<td>string</td>
+<td>The namespace prefix.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value9"><a class="anchor hidden-xs" href="#Return-Value9" title="Return-Value9"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>string</code> or <code>null</code>: The resolved namespace.</p><h4 id="Description9"><a class="anchor hidden-xs" href="#Description9" title="Description9"><span class="octicon octicon-link"></span></a>Description</h4><p>Namespace resolution is required for navigating the MEI XML using XPath.</p><h3 id="commentEventListener"><a class="anchor hidden-xs" href="#commentEventListener" title="commentEventListener"><span class="octicon octicon-link"></span></a><code>commentEventListener</code></h3><p>Reacts to the click event by reacting as if in comment mode.</p><h4 id="Arguments7"><a class="anchor hidden-xs" href="#Arguments7" title="Arguments7"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>A HTML DOM event.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value10"><a class="anchor hidden-xs" href="#Return-Value10" title="Return-Value10"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description10"><a class="anchor hidden-xs" href="#Description10" title="Description10"><span class="octicon octicon-link"></span></a>Description</h4><p>This method gets the notation clicked on in the DOM, and opens a comment modal to receive text input. If a comment already exists for the clicked notation, populate the textarea with the comment text.</p><h3 id="updateCommentFromModal"><a class="anchor hidden-xs" href="#updateCommentFromModal" title="updateCommentFromModal"><span class="octicon octicon-link"></span></a><code>updateCommentFromModal</code></h3><p>Updates the comments from the modal.</p><h4 id="Return-Value11"><a class="anchor hidden-xs" href="#Return-Value11" title="Return-Value11"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description11"><a class="anchor hidden-xs" href="#Description11" title="Description11"><span class="octicon octicon-link"></span></a>Description</h4><p>Updates its internal comments object. Gets the text value from the comment modal’s text area, and using the ID of the notation clicked on, add, update, or delete the comment associated with that notation, depending on whether the comment existed already, and if the text area is empty or not.</p><h3 id="loadMei"><a class="anchor hidden-xs" href="#loadMei" title="loadMei"><span class="octicon octicon-link"></span></a><code>loadMei</code></h3><p>Loads the MEI from the URL.</p><h4 id="Return-Value12"><a class="anchor hidden-xs" href="#Return-Value12" title="Return-Value12"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;string&gt;</code>: A promise resolving to the MEI.</p><h3 id="loadAndStoreMei"><a class="anchor hidden-xs" href="#loadAndStoreMei" title="loadAndStoreMei"><span class="octicon octicon-link"></span></a><code>loadAndStoreMei</code></h3><p>Loads the MEI, and stores it on the object and the Verovio toolkit.</p><h4 id="Return-Value13"><a class="anchor hidden-xs" href="#Return-Value13" title="Return-Value13"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;void&gt;</code>: Resolves upon completion.</p><h3 id="loadComments"><a class="anchor hidden-xs" href="#loadComments" title="loadComments"><span class="octicon octicon-link"></span></a><code>loadComments</code></h3><p>Loads the comments from the URL.</p><h4 id="Return-Value14"><a class="anchor hidden-xs" href="#Return-Value14" title="Return-Value14"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;Object[]&gt;</code>: A promise resolving to a series of comments.</p><h3 id="loadAndStoreComments"><a class="anchor hidden-xs" href="#loadAndStoreComments" title="loadAndStoreComments"><span class="octicon octicon-link"></span></a><code>loadAndStoreComments</code></h3><p>Loads the comments, and saves them to a member variable.</p><h4 id="Return-Value15"><a class="anchor hidden-xs" href="#Return-Value15" title="Return-Value15"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;void&gt;</code>: Resolves upon completion.</p><h3 id="improveClickHitBoxes"><a class="anchor hidden-xs" href="#improveClickHitBoxes" title="improveClickHitBoxes"><span class="octicon octicon-link"></span></a><code>improveClickHitBoxes</code></h3><p>Goes over a rendered SVG in the renderDiv, and proceeds to make notation more easily clickable.</p><h4 id="Return-Value16"><a class="anchor hidden-xs" href="#Return-Value16" title="Return-Value16"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description12"><a class="anchor hidden-xs" href="#Description12" title="Description12"><span class="octicon octicon-link"></span></a>Description</h4><div class="alert alert-warning">
+<p>This only affects users on Chromium.</p>
+</div><p>Finds every interactable notation in the rendered SVG, and adds an attribute to them, that changes how they listen to click events. The attribute set is <code>pointer-events="bounding-box"</code>, and prevents holes, such as those in minims and semibreves, from being clickable.</p><h3 id="render"><a class="anchor hidden-xs" href="#render" title="render"><span class="octicon octicon-link"></span></a><code>render</code></h3><p>Renders the MEI file, and any comments associated.</p><h4 id="Return-Value17"><a class="anchor hidden-xs" href="#Return-Value17" title="Return-Value17"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;void&gt;</code></p><h4 id="Description13"><a class="anchor hidden-xs" href="#Description13" title="Description13"><span class="octicon octicon-link"></span></a>Description</h4><p>Loads the MEI, requesting it if not already stored and renders the MEI through Verovio Toolkit. It inserts the rendered SVG into the designated render target, and calls <code>improveClickHitboxes</code>. Then, it loads comments if they haven’t been loaded before, and renders those onto the SVG.</p><h3 id="renderDiff"><a class="anchor hidden-xs" href="#renderDiff" title="renderDiff"><span class="octicon octicon-link"></span></a><code>renderDiff</code></h3><div class="alert alert-danger">
+<p>This method is no longer used.</p>
+</div><p>Renders the MEI diffs, to a list of inline SVGs.</p><h3 id="renderMei"><a class="anchor hidden-xs" href="#renderMei" title="renderMei"><span class="octicon octicon-link"></span></a><code>renderMei</code></h3><p>Renders the given MEI to an inline SVG to be contained in the element specified at construction.</p><h4 id="Return-Value18"><a class="anchor hidden-xs" href="#Return-Value18" title="Return-Value18"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description14"><a class="anchor hidden-xs" href="#Description14" title="Description14"><span class="octicon octicon-link"></span></a>Description</h4><p>This method neatly wraps around Verovio Toolkit, to render the MEI to an SVG, and insert it into the DOM at the designated render target.<br>
+Used in <code>render</code>.</p><h3 id="renderComments"><a class="anchor hidden-xs" href="#renderComments" title="renderComments"><span class="octicon octicon-link"></span></a><code>renderComments</code></h3><p>Renders all comments.</p><h4 id="Return-Value19"><a class="anchor hidden-xs" href="#Return-Value19" title="Return-Value19"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description15"><a class="anchor hidden-xs" href="#Description15" title="Description15"><span class="octicon octicon-link"></span></a>Description</h4><p>Renders the comment icon for each comment, and then adjusts Materialize tooltips for all comments.</p><h3 id="renderCommentIcon"><a class="anchor hidden-xs" href="#renderCommentIcon" title="renderCommentIcon"><span class="octicon octicon-link"></span></a><code>renderCommentIcon</code></h3><h4 id="Arguments8"><a class="anchor hidden-xs" href="#Arguments8" title="Arguments8"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value20"><a class="anchor hidden-xs" href="#Return-Value20" title="Return-Value20"><span class="octicon octicon-link"></span></a>Return Value</h4><h4 id="Description16"><a class="anchor hidden-xs" href="#Description16" title="Description16"><span class="octicon octicon-link"></span></a>Description</h4><h3 id="addComment"><a class="anchor hidden-xs" href="#addComment" title="addComment"><span class="octicon octicon-link"></span></a><code>addComment</code></h3><p>Renders the comment icon onto the rendered SVG. Also does some tooltip text setup.</p><h4 id="Arguments9"><a class="anchor hidden-xs" href="#Arguments9" title="Arguments9"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elementId</td>
+<td>string</td>
+<td>The ID of the MEI element to which we attach the comment icon.</td>
+</tr>
+<tr>
+<td>text</td>
+<td>string</td>
+<td>The comment text.</td>
+</tr>
+</tbody>
+</table><div class="alert alert-info">
+<p>These two arguments are destructured from a single array argument.</p>
+</div><h4 id="Return-Value21"><a class="anchor hidden-xs" href="#Return-Value21" title="Return-Value21"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description17"><a class="anchor hidden-xs" href="#Description17" title="Description17"><span class="octicon octicon-link"></span></a>Description</h4><p>This method inserts a comment SVG into the DOM, as a child of the notation with the given element ID. It performs some positioning logic to do this. Additionally, it sets an attribute on the comment SVG, <code>data-tooltip</code>, which is used by Materialize to determine the text content of tooltips.</p><h3 id="updateComment"><a class="anchor hidden-xs" href="#updateComment" title="updateComment"><span class="octicon octicon-link"></span></a><code>updateComment</code></h3><p>Updates an already existing comment.</p><h4 id="Arguments10"><a class="anchor hidden-xs" href="#Arguments10" title="Arguments10"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elementId</td>
+<td>string</td>
+<td>The ID of the MEI element whose comment we wish to update.</td>
+</tr>
+<tr>
+<td>text</td>
+<td>string</td>
+<td>The comment text.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value22"><a class="anchor hidden-xs" href="#Return-Value22" title="Return-Value22"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description18"><a class="anchor hidden-xs" href="#Description18" title="Description18"><span class="octicon octicon-link"></span></a>Description</h4><p>This method updates the internal object maintaining comments. It finds the element in question, finds the comment SVG on that element, and updates its <code>data-tooltip</code> attribute to use the new comment text.</p><h3 id="deleteComment"><a class="anchor hidden-xs" href="#deleteComment" title="deleteComment"><span class="octicon octicon-link"></span></a><code>deleteComment</code></h3><p>Delete an existing comment.</p><h4 id="Arguments11"><a class="anchor hidden-xs" href="#Arguments11" title="Arguments11"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elementId</td>
+<td>string</td>
+<td>The MEI element whose comment we wish to delete.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value23"><a class="anchor hidden-xs" href="#Return-Value23" title="Return-Value23"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description19"><a class="anchor hidden-xs" href="#Description19" title="Description19"><span class="octicon octicon-link"></span></a>Description</h4><p>Removes the entry for the given comment in the comment object, and removes the comment SVG for that element from the DOM.</p><h3 id="handleTooltips"><a class="anchor hidden-xs" href="#handleTooltips" title="handleTooltips"><span class="octicon octicon-link"></span></a><code>handleTooltips</code></h3><p>Handles the tooltips’ positioning and rendering.</p><h4 id="Return-Value24"><a class="anchor hidden-xs" href="#Return-Value24" title="Return-Value24"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description20"><a class="anchor hidden-xs" href="#Description20" title="Description20"><span class="octicon octicon-link"></span></a>Description</h4><p>This method invokes Materialize’s tooltip initialisation. Additionally, for each comment, it attaches a tooltip positioning listener.</p><h3 id="attachTooltipPositioningListener"><a class="anchor hidden-xs" href="#attachTooltipPositioningListener" title="attachTooltipPositioningListener"><span class="octicon octicon-link"></span></a><code>attachTooltipPositioningListener</code></h3><p>Attaches a listener to position the tooltip popover as it renders.</p><h4 id="Arguments12"><a class="anchor hidden-xs" href="#Arguments12" title="Arguments12"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elementId</td>
+<td>string</td>
+<td>The ID of the MEI element whose tooltip we wish to position.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value25"><a class="anchor hidden-xs" href="#Return-Value25" title="Return-Value25"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description21"><a class="anchor hidden-xs" href="#Description21" title="Description21"><span class="octicon octicon-link"></span></a>Description</h4><p>This method attaches an event listener to every comment SVG icon, which is triggered upon mouseover of the comment icon.</p><p>Whenever this event listener fires, it positions the tooltip rectangle that appears such that it appears below the comment icon, and centred over it (bounded by the screen dimensions, though).</p><p>This is done on every mouse over instead of just once in the case that the window size is changed since the last mouse over.</p><div class="alert alert-warning">
+<p>While Materialize tooltips normally self-position, by invoking them from within an SVG, this functionality was lost, and hence we must position them ourselves.</p>
+</div><h3 id="getNotation"><a class="anchor hidden-xs" href="#getNotation" title="getNotation"><span class="octicon octicon-link"></span></a><code>getNotation</code></h3><p>Gets the commentable notation from the event target.</p><h4 id="Arguments13"><a class="anchor hidden-xs" href="#Arguments13" title="Arguments13"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>The event for which we want to find the relevant notation.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value26"><a class="anchor hidden-xs" href="#Return-Value26" title="Return-Value26"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Element | null</code>: The clickable note element. Null if no clickable notation found.</p><h4 id="Description22"><a class="anchor hidden-xs" href="#Description22" title="Description22"><span class="octicon octicon-link"></span></a>Description</h4><p>This method is responsible for determining which “clickable” notation was clicked.</p><p>Starting from an element in the DOM, it traverses upwards through the DOM tree until it finds an element that is directly represented in the MEI.</p><div class="alert alert-info">
+<p>An element is “clickable” if it’s ID also appears in the MEI file. That is, it directly corresponds to a piece of MEI notation (not an SVG path, stroke, etc.).</p>
+</div><div class="alert alert-info">
+<p>All clickable notation has an ID matching the following regex: <code>m-[0-9]*</code>.</p>
+</div><h3 id="saveRevision"><a class="anchor hidden-xs" href="#saveRevision" title="saveRevision"><span class="octicon octicon-link"></span></a><code>saveRevision</code></h3><p>Saves the revision to the backend.</p><h4 id="Return-Value27"><a class="anchor hidden-xs" href="#Return-Value27" title="Return-Value27"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;void&gt;</code>: Resolves upon completion.</p><h4 id="Description23"><a class="anchor hidden-xs" href="#Description23" title="Description23"><span class="octicon octicon-link"></span></a>Description</h4><p>This makes a request to the server, containing the updated MEI and any associated comments.</p><p>While saving, it also manages presenting a modal to give the user feedback; it could be saving, finished saving successully, or failed.</p><h3 id="updateCurrentToolMode"><a class="anchor hidden-xs" href="#updateCurrentToolMode" title="updateCurrentToolMode"><span class="octicon octicon-link"></span></a><code>updateCurrentToolMode</code></h3><p>Depending on what toolbar button was pressed, update the <code>currentToolMode</code> property on this object.</p><h4 id="Arguments14"><a class="anchor hidden-xs" href="#Arguments14" title="Arguments14"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td>Event</td>
+<td>A DOM event.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value28"><a class="anchor hidden-xs" href="#Return-Value28" title="Return-Value28"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>void</code></p><h4 id="Description24"><a class="anchor hidden-xs" href="#Description24" title="Description24"><span class="octicon octicon-link"></span></a>Description</h4><p>This listener looks for an ID on the button that was pressed in the toolbar. While finding that, it also sets that button to appear active, and sets the other buttons to appear inactive.</p><p>An internal class variable, <code>currentToolMode</code> is also updated to reflect the new interaction mode.</p><h3 id="jsonRequest"><a class="anchor hidden-xs" href="#jsonRequest" title="jsonRequest"><span class="octicon octicon-link"></span></a><code>jsonRequest</code></h3><p>Makes a GET request, and parses the response as JSON.</p><h4 id="Arguments15"><a class="anchor hidden-xs" href="#Arguments15" title="Arguments15"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url</td>
+<td>string</td>
+<td>The URL to request.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value29"><a class="anchor hidden-xs" href="#Return-Value29" title="Return-Value29"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>Promise&lt;Object&gt;</code>: The JSON object received from the response.</p><h4 id="Description25"><a class="anchor hidden-xs" href="#Description25" title="Description25"><span class="octicon octicon-link"></span></a>Description</h4><p>Generates and sends an HTTP request, and wraps around XHTTP’s callback interface to provide a Promise interface.</p><h3 id="getCookie"><a class="anchor hidden-xs" href="#getCookie" title="getCookie"><span class="octicon octicon-link"></span></a><code>getCookie</code></h3><p>Gets the value of a cookie with given name.</p><h4 id="Arguments16"><a class="anchor hidden-xs" href="#Arguments16" title="Arguments16"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The cookie whose value we wish to retrieve.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value30"><a class="anchor hidden-xs" href="#Return-Value30" title="Return-Value30"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>string | null</code>: The cookie value. <code>null</code> if not found.</p><h4 id="Description26"><a class="anchor hidden-xs" href="#Description26" title="Description26"><span class="octicon octicon-link"></span></a>Description</h4><p>Wraps around <code>document.cookie</code> to provide easier access to cookies.</p><h3 id="escapeHtmlCharacters"><a class="anchor hidden-xs" href="#escapeHtmlCharacters" title="escapeHtmlCharacters"><span class="octicon octicon-link"></span></a><code>escapeHtmlCharacters</code></h3><p>Takes in a string and escapes HTML characters.</p><h4 id="Arguments17"><a class="anchor hidden-xs" href="#Arguments17" title="Arguments17"><span class="octicon octicon-link"></span></a>Arguments</h4><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>text</td>
+<td>string</td>
+<td>The text to escape.</td>
+</tr>
+</tbody>
+</table><h4 id="Return-Value31"><a class="anchor hidden-xs" href="#Return-Value31" title="Return-Value31"><span class="octicon octicon-link"></span></a>Return Value</h4><p><code>string</code>: The escaped text.</p><h4 id="Description27"><a class="anchor hidden-xs" href="#Description27" title="Description27"><span class="octicon octicon-link"></span></a>Description</h4><p>Performs a series of text substitutions to escape characters used in HTML. Used to make comment text safe.</p><h1 id="References"><a class="anchor hidden-xs" href="#References" title="References"><span class="octicon octicon-link"></span></a>References</h1><ul>
+<li><a href="https://docs.djangoproject.com/en/2.2/" target="_blank" rel="noopener">Django</a></li>
+<li><a href="https://www.verovio.org/javascript.xhtml" target="_blank" rel="noopener">Verovio JS Toolkit</a></li>
+<li><a href="https://materializecss.com/" target="_blank" rel="noopener">Materialize</a></li>
+<li><a href="https://github.com/zz85/wild-web-midi" target="_blank" rel="noopener">Wild Web Midi</a></li>
+<li><a href="https://github.com/rism-ch/midi-player/" target="_blank" rel="noopener">Midiplayer.js</a></li>
+<li><a href="https://xmldiff.readthedocs.io/en/stable/" target="_blank" rel="noopener">XMLdiff</a></li>
+</ul></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li class=""><a href="#Introduction" title="Introduction">Introduction</a><ul class="nav">
+<li class=""><a href="#Quick-Setup" title="Quick Setup">Quick Setup</a></li>
+<li class=""><a href="#Testing" title="Testing">Testing</a></li>
+<li><a href="#Terminology" title="Terminology">Terminology</a></li>
+</ul>
+</li>
+<li><a href="#System-Overview" title="System Overview">System Overview</a><ul class="nav">
+<li><a href="#Backend" title="Backend">Backend</a></li>
+<li><a href="#Frontend" title="Frontend">Frontend</a></li>
+</ul>
+</li>
+<li><a href="#Django" title="Django">Django</a><ul class="nav">
+<li><a href="#Models" title="Models">Models</a><ul class="nav">
+<li><a href="#Database-Schema" title="Database Schema">Database Schema</a></li>
+</ul>
+</li>
+<li><a href="#Routes-and-Views" title="Routes and Views">Routes and Views</a></li>
+</ul>
+</li>
+<li><a href="#Deployment" title="Deployment">Deployment</a><ul class="nav">
+<li><a href="#Deployment-Stack" title="Deployment Stack">Deployment Stack</a></li>
+<li><a href="#Continuous-Deployment" title="Continuous Deployment">Continuous Deployment</a></li>
+</ul>
+</li>
+<li><a href="#Continuous-Integration-Pipelines" title="Continuous Integration (Pipelines)">Continuous Integration (Pipelines)</a></li>
+<li><a href="#Music-Comparison-Engine" title="Music Comparison Engine">Music Comparison Engine</a><ul class="nav">
+<li><a href="#Overview-by-Class" title="Overview by Class">Overview by Class</a><ul class="nav">
+<li><a href="#ComparisonStrategy" title="ComparisonStrategy">ComparisonStrategy</a></li>
+<li><a href="#TreeComparison" title="TreeComparison">TreeComparison</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#Credo-Toolkit" title="Credo Toolkit">Credo Toolkit</a><ul class="nav">
+<li><a href="#Usage-Guide" title="Usage Guide">Usage Guide</a></li>
+<li><a href="#Overview" title="Overview">Overview</a><ul class="nav">
+<li><a href="#Rendering-MEI" title="Rendering MEI">Rendering MEI</a></li>
+<li><a href="#Revisions" title="Revisions">Revisions</a></li>
+</ul>
+</li>
+<li><a href="#By-Method" title="By Method">By Method</a><ul class="nav">
+<li><a href="#Constructor" title="Constructor">Constructor</a></li>
+<li><a href="#scoreInteractionListener" title="scoreInteractionListener">scoreInteractionListener</a></li>
+<li><a href="#resolveEventListener" title="resolveEventListener">resolveEventListener</a></li>
+<li><a href="#openResolveModal" title="openResolveModal">openResolveModal</a></li>
+<li><a href="#resolveNote" title="resolveNote">resolveNote</a></li>
+<li><a href="#submitMeasureResolution" title="submitMeasureResolution">submitMeasureResolution</a></li>
+<li><a href="#playSnippet" title="playSnippet">playSnippet</a></li>
+<li><a href="#swapResolutionLayers" title="swapResolutionLayers">swapResolutionLayers</a></li>
+<li><a href="#clearResolveModal" title="clearResolveModal">clearResolveModal</a></li>
+<li><a href="#generateResolveMei" title="generateResolveMei">generateResolveMei</a></li>
+<li><a href="#nameSpaceResolver" title="nameSpaceResolver">nameSpaceResolver</a></li>
+<li><a href="#commentEventListener" title="commentEventListener">commentEventListener</a></li>
+<li><a href="#updateCommentFromModal" title="updateCommentFromModal">updateCommentFromModal</a></li>
+<li><a href="#loadMei" title="loadMei">loadMei</a></li>
+<li><a href="#loadAndStoreMei" title="loadAndStoreMei">loadAndStoreMei</a></li>
+<li><a href="#loadComments" title="loadComments">loadComments</a></li>
+<li><a href="#loadAndStoreComments" title="loadAndStoreComments">loadAndStoreComments</a></li>
+<li><a href="#improveClickHitBoxes" title="improveClickHitBoxes">improveClickHitBoxes</a></li>
+<li><a href="#render" title="render">render</a></li>
+<li><a href="#renderDiff" title="renderDiff">renderDiff</a></li>
+<li><a href="#renderMei" title="renderMei">renderMei</a></li>
+<li><a href="#renderComments" title="renderComments">renderComments</a></li>
+<li><a href="#renderCommentIcon" title="renderCommentIcon">renderCommentIcon</a></li>
+<li><a href="#addComment" title="addComment">addComment</a></li>
+<li><a href="#updateComment" title="updateComment">updateComment</a></li>
+<li><a href="#deleteComment" title="deleteComment">deleteComment</a></li>
+<li><a href="#handleTooltips" title="handleTooltips">handleTooltips</a></li>
+<li><a href="#attachTooltipPositioningListener" title="attachTooltipPositioningListener">attachTooltipPositioningListener</a></li>
+<li><a href="#getNotation" title="getNotation">getNotation</a></li>
+<li><a href="#saveRevision" title="saveRevision">saveRevision</a></li>
+<li><a href="#updateCurrentToolMode" title="updateCurrentToolMode">updateCurrentToolMode</a></li>
+<li><a href="#jsonRequest" title="jsonRequest">jsonRequest</a></li>
+<li><a href="#getCookie" title="getCookie">getCookie</a></li>
+<li><a href="#escapeHtmlCharacters" title="escapeHtmlCharacters">escapeHtmlCharacters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#References" title="References">References</a></li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
+        <div class="toc"><ul class="nav">
+<li class=""><a href="#Introduction" title="Introduction">Introduction</a><ul class="nav">
+<li class=""><a href="#Quick-Setup" title="Quick Setup">Quick Setup</a></li>
+<li class=""><a href="#Testing" title="Testing">Testing</a></li>
+<li><a href="#Terminology" title="Terminology">Terminology</a></li>
+</ul>
+</li>
+<li><a href="#System-Overview" title="System Overview">System Overview</a><ul class="nav">
+<li><a href="#Backend" title="Backend">Backend</a></li>
+<li><a href="#Frontend" title="Frontend">Frontend</a></li>
+</ul>
+</li>
+<li><a href="#Django" title="Django">Django</a><ul class="nav">
+<li><a href="#Models" title="Models">Models</a><ul class="nav">
+<li><a href="#Database-Schema" title="Database Schema">Database Schema</a></li>
+</ul>
+</li>
+<li><a href="#Routes-and-Views" title="Routes and Views">Routes and Views</a></li>
+</ul>
+</li>
+<li><a href="#Deployment" title="Deployment">Deployment</a><ul class="nav">
+<li><a href="#Deployment-Stack" title="Deployment Stack">Deployment Stack</a></li>
+<li><a href="#Continuous-Deployment" title="Continuous Deployment">Continuous Deployment</a></li>
+</ul>
+</li>
+<li><a href="#Continuous-Integration-Pipelines" title="Continuous Integration (Pipelines)">Continuous Integration (Pipelines)</a></li>
+<li><a href="#Music-Comparison-Engine" title="Music Comparison Engine">Music Comparison Engine</a><ul class="nav">
+<li><a href="#Overview-by-Class" title="Overview by Class">Overview by Class</a><ul class="nav">
+<li><a href="#ComparisonStrategy" title="ComparisonStrategy">ComparisonStrategy</a></li>
+<li><a href="#TreeComparison" title="TreeComparison">TreeComparison</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#Credo-Toolkit" title="Credo Toolkit">Credo Toolkit</a><ul class="nav">
+<li><a href="#Usage-Guide" title="Usage Guide">Usage Guide</a></li>
+<li><a href="#Overview" title="Overview">Overview</a><ul class="nav">
+<li><a href="#Rendering-MEI" title="Rendering MEI">Rendering MEI</a></li>
+<li><a href="#Revisions" title="Revisions">Revisions</a></li>
+</ul>
+</li>
+<li><a href="#By-Method" title="By Method">By Method</a><ul class="nav">
+<li><a href="#Constructor" title="Constructor">Constructor</a></li>
+<li><a href="#scoreInteractionListener" title="scoreInteractionListener">scoreInteractionListener</a></li>
+<li><a href="#resolveEventListener" title="resolveEventListener">resolveEventListener</a></li>
+<li><a href="#openResolveModal" title="openResolveModal">openResolveModal</a></li>
+<li><a href="#resolveNote" title="resolveNote">resolveNote</a></li>
+<li><a href="#submitMeasureResolution" title="submitMeasureResolution">submitMeasureResolution</a></li>
+<li><a href="#playSnippet" title="playSnippet">playSnippet</a></li>
+<li><a href="#swapResolutionLayers" title="swapResolutionLayers">swapResolutionLayers</a></li>
+<li><a href="#clearResolveModal" title="clearResolveModal">clearResolveModal</a></li>
+<li><a href="#generateResolveMei" title="generateResolveMei">generateResolveMei</a></li>
+<li><a href="#nameSpaceResolver" title="nameSpaceResolver">nameSpaceResolver</a></li>
+<li><a href="#commentEventListener" title="commentEventListener">commentEventListener</a></li>
+<li><a href="#updateCommentFromModal" title="updateCommentFromModal">updateCommentFromModal</a></li>
+<li><a href="#loadMei" title="loadMei">loadMei</a></li>
+<li><a href="#loadAndStoreMei" title="loadAndStoreMei">loadAndStoreMei</a></li>
+<li><a href="#loadComments" title="loadComments">loadComments</a></li>
+<li><a href="#loadAndStoreComments" title="loadAndStoreComments">loadAndStoreComments</a></li>
+<li><a href="#improveClickHitBoxes" title="improveClickHitBoxes">improveClickHitBoxes</a></li>
+<li><a href="#render" title="render">render</a></li>
+<li><a href="#renderDiff" title="renderDiff">renderDiff</a></li>
+<li><a href="#renderMei" title="renderMei">renderMei</a></li>
+<li><a href="#renderComments" title="renderComments">renderComments</a></li>
+<li><a href="#renderCommentIcon" title="renderCommentIcon">renderCommentIcon</a></li>
+<li><a href="#addComment" title="addComment">addComment</a></li>
+<li><a href="#updateComment" title="updateComment">updateComment</a></li>
+<li><a href="#deleteComment" title="deleteComment">deleteComment</a></li>
+<li><a href="#handleTooltips" title="handleTooltips">handleTooltips</a></li>
+<li><a href="#attachTooltipPositioningListener" title="attachTooltipPositioningListener">attachTooltipPositioningListener</a></li>
+<li><a href="#getNotation" title="getNotation">getNotation</a></li>
+<li><a href="#saveRevision" title="saveRevision">saveRevision</a></li>
+<li><a href="#updateCurrentToolMode" title="updateCurrentToolMode">updateCurrentToolMode</a></li>
+<li><a href="#jsonRequest" title="jsonRequest">jsonRequest</a></li>
+<li><a href="#getCookie" title="getCookie">getCookie</a></li>
+<li><a href="#escapeHtmlCharacters" title="escapeHtmlCharacters">escapeHtmlCharacters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#References" title="References">References</a></li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
